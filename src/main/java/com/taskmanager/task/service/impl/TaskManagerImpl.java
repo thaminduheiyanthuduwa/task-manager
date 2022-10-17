@@ -36,6 +36,7 @@ public class TaskManagerImpl implements TaskManager {
         taskListEntity.setBlockedTask(createTask.getBlockedTask());
         taskListEntity.setStatus(1);
         taskListEntity.setIsActive(1);
+        taskListEntity.setPriority(createTask.getPriority());
         taskListEntity.setLastUpdatedUser(createTask.getLastUpdatedUser());
         taskListEntity.setLastUpdatedDate(new Date());
 

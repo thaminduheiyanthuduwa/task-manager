@@ -60,6 +60,9 @@ public class TaskListEntity {
     @Column(name = "is_active")
     private Integer isActive;
 
+    @Column(name = "priority")
+    private String priority;
+
     @Column(name = "rating")
     private Integer rating;
 

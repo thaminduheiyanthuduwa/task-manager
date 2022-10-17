@@ -26,6 +26,9 @@ public class CreateTask {
     @JsonProperty("start_date")
     private String startDate;
 
+    @JsonProperty("priority")
+    private String priority;
+
     @JsonProperty("end_date")
     private String endDate;
 
