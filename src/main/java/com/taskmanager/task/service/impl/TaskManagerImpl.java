@@ -8,6 +8,7 @@ import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +65,27 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
+    public ResponseList getMyTaskById(int id, int task) {
+
+        Optional<TaskListEntity> list = taskListRepository.findById(task);
+
+        List<TaskListEntity> objSet = new ArrayList<>();
+
+        if (!list.isEmpty()){
+
+            objSet.add(list.get());
+        }
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(objSet);
+
+        return responseList;
+
+    }
+
+    @Override
     public ResponseList deleteRequest(int taskId, int userId) {
 
         Optional<TaskListEntity> optObj = taskListRepository.findById(taskId);
@@ -73,6 +95,8 @@ public class TaskManagerImpl implements TaskManager {
         obj.setStatus(2);
         obj.setLastUpdatedUser(userId);
         obj.setLastUpdatedDate(new Date());
+
+        taskListRepository.save(obj);
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
@@ -94,17 +118,23 @@ public class TaskManagerImpl implements TaskManager {
 
             if (createTask.getRating() != null)
                 obj.setRating(createTask.getRating());
+            if (createTask.getEstimate() != null)
+                obj.setEstimate(createTask.getEstimate());
             if (createTask.getRatingComment() != null)
                 obj.setRatingComment(createTask.getRatingComment());
             if (createTask.getSupervisorRating() != null)
                 obj.setSupervisorRating(createTask.getSupervisorRating());
             if (createTask.getSupervisorComment() != null)
                 obj.setSupervisorComment(createTask.getSupervisorComment());
+            if (createTask.getStatus() != null)
+                obj.setStatus(createTask.getStatus());
 
 
             obj.setLastUpdatedUser(userId);
+            obj.setLastUpdatedUser(userId);
             obj.setLastUpdatedDate(new Date());
 
+            taskListRepository.save(obj);
         }
 
         ResponseList responseList = new ResponseList();

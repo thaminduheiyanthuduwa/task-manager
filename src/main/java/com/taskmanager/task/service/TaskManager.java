@@ -12,6 +12,8 @@ public interface TaskManager {
 
     ResponseList getMyTask(int id);
 
+    ResponseList getMyTaskById(int id, int task);
+
     ResponseList deleteRequest(int taskId, int userId);
 
     ResponseList editTask(CreateTask createTask, int taskId, int userId);

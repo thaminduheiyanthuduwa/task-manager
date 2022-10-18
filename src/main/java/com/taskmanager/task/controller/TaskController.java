@@ -32,6 +32,13 @@ public class TaskController {
 
     }
 
+    @RequestMapping(value = "/get-my-task-by-id", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getTask(@RequestParam(value = "user_id") int id, @RequestParam(value = "task") int task) {
+
+        return taskManager.getMyTaskById(id, task);
+
+    }
+
     @RequestMapping(value = "/delete-task", method = RequestMethod.PUT, headers = "Accept=application/json")
     public ResponseList deleteTask(@RequestParam(value = "task_id") int task,
                                    @RequestParam(value = "user_id") int id) {
