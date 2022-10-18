@@ -18,4 +18,6 @@ public interface TaskManager {
 
     ResponseList editTask(CreateTask createTask, int taskId, int userId);
 
+    ResponseList login(String email, String id);
+
 }

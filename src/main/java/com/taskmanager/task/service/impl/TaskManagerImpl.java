@@ -1,7 +1,9 @@
 package com.taskmanager.task.service.impl;
 
+import com.taskmanager.task.entity.EmpDetailEntity;
 import com.taskmanager.task.entity.TaskListEntity;
 import com.taskmanager.task.model.CreateTask;
+import com.taskmanager.task.repository.EmpDetailRepository;
 import com.taskmanager.task.repository.TaskListRepository;
 import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.service.TaskManager;
@@ -18,6 +20,9 @@ public class TaskManagerImpl implements TaskManager {
 
     @Autowired
     private TaskListRepository taskListRepository;
+
+    @Autowired
+    private EmpDetailRepository empDetailRepository;
 
     @Override
     public ResponseList createTask(CreateTask createTask) {
@@ -140,6 +145,27 @@ public class TaskManagerImpl implements TaskManager {
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
         responseList.setMsg("Success");
+
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList login(String email, String id) {
+
+        List<EmpDetailEntity> emp = empDetailRepository.findByEmailAndNicNo(email, id);
+
+        ResponseList responseList = new ResponseList();
+
+        if (emp.isEmpty()){
+            responseList.setCode(400);
+            responseList.setMsg("Wrong Email or Password");
+        }
+        else {
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+            responseList.setData(emp);
+        }
 
         return responseList;
 

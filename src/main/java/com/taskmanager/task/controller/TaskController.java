@@ -55,5 +55,13 @@ public class TaskController {
 
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList login(@RequestParam(value = "email") String email,
+                                   @RequestParam(value = "id") String id) {
+
+        return taskManager.login(email, id);
+
+    }
+
 
 }
