@@ -104,7 +104,14 @@ public class TaskController {
     @RequestMapping(value = "/get-last-due-four", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList getLastDueFour(@RequestParam(value = "id") int id) throws ParseException {
 
-        return taskManager.getLastSevenDaysCompletedRate(id);
+        return taskManager.getLastFourDue(id);
+
+    }
+
+    @RequestMapping(value = "/total-story-points-per-day", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getTotalStoryPoints(@RequestParam(value = "id") int id) throws ParseException {
+
+        return taskManager.getTotalStoryPoints(id);
 
     }
 

@@ -27,7 +27,6 @@ public interface TaskListRepository extends JpaRepository<TaskListEntity, Intege
             value = "select count(id) from task_list where status = 3 and user_id = :id")
     Integer getReviewNeededCount(@Param("id") int id);
 
-
-
+    List<TaskListEntity> findByUserIdOrderByEndDate(@Param("userId") Integer userId);
 
 }

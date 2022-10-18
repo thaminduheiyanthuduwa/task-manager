@@ -31,4 +31,8 @@ public interface TaskManager {
 
     ResponseList getLastSevenDaysCompletedRate(int id) throws ParseException;
 
+    ResponseList getLastFourDue(int id) throws ParseException;
+
+    ResponseList getTotalStoryPoints(int id) throws ParseException;
+
 }

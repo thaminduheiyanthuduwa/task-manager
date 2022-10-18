@@ -363,4 +363,113 @@ public class TaskManagerImpl implements TaskManager {
 
         return responseList;
     }
+
+    @Override
+    public ResponseList getLastFourDue(int id) throws ParseException {
+
+        List<TaskListEntity> task = taskListRepository.findByUserIdOrderByEndDate(id);
+
+        LastFourDayDueObj lastFourDayDueObj = new LastFourDayDueObj();
+
+        for (int x = 0; x < 4; x++){
+
+            if (task.size() > x){
+
+                if (x == 0){
+                    lastFourDayDueObj.setDue1(task.get(x).getEndDate().toString());
+                    lastFourDayDueObj.setPriority1(task.get(x).getPriority());
+                    lastFourDayDueObj.setTask1(task.get(x).getTaskTitle());
+                }
+                else if (x == 1){
+                    lastFourDayDueObj.setDue2(task.get(x).getEndDate().toString());
+                    lastFourDayDueObj.setPriority2(task.get(x).getPriority());
+                    lastFourDayDueObj.setTask2(task.get(x).getTaskTitle());
+                }
+                else if (x == 2){
+                    lastFourDayDueObj.setDue3(task.get(x).getEndDate().toString());
+                    lastFourDayDueObj.setPriority3(task.get(x).getPriority());
+                    lastFourDayDueObj.setTask3(task.get(x).getTaskTitle());
+                }
+                else if (x == 3){
+                    lastFourDayDueObj.setDue4(task.get(x).getEndDate().toString());
+                    lastFourDayDueObj.setPriority4(task.get(x).getPriority());
+                    lastFourDayDueObj.setTask4(task.get(x).getTaskTitle());
+                }
+            }
+            else {
+                if (x == 0){
+                    lastFourDayDueObj.setDue1("No Task Found");
+                    lastFourDayDueObj.setPriority1("Low");
+                    lastFourDayDueObj.setTask1("");
+                }
+                else if (x == 1){
+                    lastFourDayDueObj.setDue2("No Task Found");
+                    lastFourDayDueObj.setPriority2("Low");
+                    lastFourDayDueObj.setTask2("");
+                }
+                else if (x == 2){
+                    lastFourDayDueObj.setDue3("No Task Found");
+                    lastFourDayDueObj.setPriority3("Low");
+                    lastFourDayDueObj.setTask3("");
+                }
+                else if (x == 3){
+                    lastFourDayDueObj.setDue4("No Task Found");
+                    lastFourDayDueObj.setPriority4("Low");
+                    lastFourDayDueObj.setTask4("");
+                }
+            }
+
+        }
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(lastFourDayDueObj);
+
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList getTotalStoryPoints(int id) throws ParseException {
+
+        List<TaskListEntity> list = taskListRepository.findByUserIdOrderByIdDesc(id);
+
+        int count = 0;
+        int percentage = 0;
+
+        for (TaskListEntity taskListEntity : list) {
+            count += taskListEntity.getEstimate();
+        }
+
+        percentage = (count*100)/9;
+
+        String status = "";
+
+        if (count < 5){
+            status = "Ver Low";
+        }
+        else if (count < 9){
+            status = "Low";
+        }
+        else {
+            status = "Perfect";
+        }
+
+        StoryPoints storyPoints = new StoryPoints();
+        storyPoints.setTickets(list.size());
+        storyPoints.setCounts(9);
+        storyPoints.setPercentage(percentage);
+        storyPoints.setTotalStory(count);
+        storyPoints.setStatus(status);
+
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(storyPoints);
+
+        return responseList;
+
+    }
 }
