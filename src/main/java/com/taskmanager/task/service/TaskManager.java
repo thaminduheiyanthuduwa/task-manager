@@ -3,6 +3,7 @@ import com.taskmanager.task.entity.TaskListEntity;
 import com.taskmanager.task.model.CreateTask;
 import com.taskmanager.task.response.ResponseList;
 
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -16,8 +17,18 @@ public interface TaskManager {
 
     ResponseList deleteRequest(int taskId, int userId);
 
+    ResponseList deleteBySupervisor(int taskId, int userId);
+
+    ResponseList revertBySupervisor(int taskId, int userId);
+
     ResponseList editTask(CreateTask createTask, int taskId, int userId);
 
     ResponseList login(String email, String id);
+
+    ResponseList getChildListForSupervisor(int id);
+
+    ResponseList getCompletedTaskCount(int id) throws ParseException;
+
+    ResponseList getLastSevenDaysCompletedRate(int id) throws ParseException;
 
 }

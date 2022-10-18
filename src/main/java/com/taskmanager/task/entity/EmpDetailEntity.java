@@ -30,6 +30,15 @@ public class EmpDetailEntity {
     @Column(name = "given_name")
     private String givenName;
 
+    @Column(name = "name_in_full")
+    private String nameInFull;
+
+    @Column(name = "contact_no")
+    private String contactNo;
+
+    @Column(name = "supervisor")
+    private Integer supervisor;
+
     public EmpDetailEntity() {}
 
 }

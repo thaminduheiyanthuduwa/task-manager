@@ -5,15 +5,17 @@ import com.taskmanager.task.entity.TaskListEntity;
 import com.taskmanager.task.model.CreateTask;
 import com.taskmanager.task.repository.EmpDetailRepository;
 import com.taskmanager.task.repository.TaskListRepository;
-import com.taskmanager.task.response.ResponseList;
+import com.taskmanager.task.response.*;
 import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskManagerImpl implements TaskManager {
@@ -29,12 +31,24 @@ public class TaskManagerImpl implements TaskManager {
 
         TaskListEntity taskListEntity = new TaskListEntity();
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH);
+
+        Date createdDate = new Date();
+        Date dueDate = new Date();
+
+        try {
+            createdDate = formatter.parse(createTask.getStartDate());
+            dueDate = formatter.parse(createTask.getEndDate());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         taskListEntity.setUserId(createTask.getUserId());
         taskListEntity.setCategoryId(createTask.getCategoryId());
         taskListEntity.setTaskTitle(createTask.getTaskTitle());
         taskListEntity.setTaskDescription(createTask.getTaskDescription());
-        taskListEntity.setStartDate((new Date()));
-        taskListEntity.setEndDate(new Date());
+        taskListEntity.setStartDate((createdDate));
+        taskListEntity.setEndDate(dueDate);
         taskListEntity.setReporterId(createTask.getReporterId());
         taskListEntity.setLabel(createTask.getLabel());
         taskListEntity.setEstimate(createTask.getEstimate());
@@ -100,6 +114,7 @@ public class TaskManagerImpl implements TaskManager {
         obj.setStatus(2);
         obj.setLastUpdatedUser(userId);
         obj.setLastUpdatedDate(new Date());
+        obj.setDeletedDate(new Date());
 
         taskListRepository.save(obj);
 
@@ -109,6 +124,48 @@ public class TaskManagerImpl implements TaskManager {
 
         return responseList;
 
+
+    }
+
+    @Override
+    public ResponseList deleteBySupervisor(int taskId, int userId) {
+
+        Optional<TaskListEntity> optObj = taskListRepository.findById(taskId);
+
+        TaskListEntity obj = optObj.get();
+
+        obj.setStatus(4);
+        obj.setLastUpdatedUser(userId);
+        obj.setLastUpdatedDate(new Date());
+
+        taskListRepository.save(obj);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList revertBySupervisor(int taskId, int userId) {
+
+        Optional<TaskListEntity> optObj = taskListRepository.findById(taskId);
+
+        TaskListEntity obj = optObj.get();
+
+        obj.setStatus(1);
+        obj.setLastUpdatedUser(userId);
+        obj.setLastUpdatedDate(new Date());
+
+        taskListRepository.save(obj);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+
+        return responseList;
 
     }
 
@@ -133,6 +190,10 @@ public class TaskManagerImpl implements TaskManager {
                 obj.setSupervisorComment(createTask.getSupervisorComment());
             if (createTask.getStatus() != null)
                 obj.setStatus(createTask.getStatus());
+
+            if (createTask.getStatus() == 3) {
+                obj.setCompletedDate(new Date());
+            }
 
 
             obj.setLastUpdatedUser(userId);
@@ -169,5 +230,137 @@ public class TaskManagerImpl implements TaskManager {
 
         return responseList;
 
+    }
+
+    @Override
+    public ResponseList getChildListForSupervisor(int id) {
+
+        List<EmpDetailEntity> list = empDetailRepository.findBySupervisor(id);
+
+        List<SupervisorList> supervisorLists = new ArrayList<>();
+
+        list.forEach(empDetailEntity -> {
+
+            SupervisorList supervisorList = new SupervisorList();
+            supervisorList.setId(empDetailEntity.getId());
+            supervisorList.setEmail(empDetailEntity.getEmail());
+            supervisorList.setNicNo(empDetailEntity.getNicNo());
+            supervisorList.setGivenName(empDetailEntity.getGivenName());
+            supervisorList.setNameInFull(empDetailEntity.getNameInFull());
+            supervisorList.setContactNo(empDetailEntity.getContactNo());
+            supervisorList.setContactNo(empDetailEntity.getContactNo());
+            supervisorList.setSupervisor(empDetailEntity.getSupervisor());
+
+            supervisorList.setDeleteRequested(taskListRepository.getDeleteRequestedCount(empDetailEntity.getId()));
+            supervisorList.setReviewNeeded(taskListRepository.getReviewNeededCount(empDetailEntity.getId()));
+            supervisorList.setPendingTask(taskListRepository.getPendingCount(empDetailEntity.getId()));
+
+            supervisorLists.add(supervisorList);
+
+        });
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(supervisorLists);
+
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList getCompletedTaskCount(int id) throws ParseException {
+
+        LocalDate dateObj = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = dateObj.format(formatter);
+
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH);
+
+        List<TaskListEntity> list = taskListRepository.findByUserIdOrderByIdDesc(id);
+
+        List<TaskListEntity> todayList = new ArrayList<>();
+        List<TaskListEntity> deletedList = new ArrayList<>();
+        List<TaskListEntity> pendingList = new ArrayList<>();
+        List<TaskListEntity> high = new ArrayList<>();
+        List<TaskListEntity> medium = new ArrayList<>();
+        List<TaskListEntity> low = new ArrayList<>();
+
+        for (TaskListEntity taskListEntity : list) {
+
+            if (taskListEntity.getCompletedDate() != null && taskListEntity.getCompletedDate().toString().contains(date)){
+                todayList.add(taskListEntity);
+            }
+
+            if (taskListEntity.getStatus() == 2 || taskListEntity.getStatus() == 4){
+                deletedList.add(taskListEntity);
+            }
+            if (taskListEntity.getStatus() == 1){
+                pendingList.add(taskListEntity);
+            }
+
+            if (taskListEntity.getPriority().equalsIgnoreCase("High")){
+                high.add(taskListEntity);
+            }
+            else if (taskListEntity.getPriority().equalsIgnoreCase("Medium")){
+                medium.add(taskListEntity);
+            }
+            else if (taskListEntity.getPriority().equalsIgnoreCase("Low")){
+                low.add(taskListEntity);
+            }
+
+
+        }
+
+        StatList statList = new StatList();
+        statList.setCompletedTaskForToday(todayList.size());
+        statList.setAllTask(list.size());
+        statList.setDeletedTask(deletedList.size());
+        statList.setPendingTask(pendingList.size());
+        statList.setHighPriorityTask(high.size());
+        statList.setMediumPriorityTask(medium.size());
+        statList.setLowPriorityTask(low.size());
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(statList);
+
+        return responseList;
+    }
+
+    @Override
+    public ResponseList getLastSevenDaysCompletedRate(int id) throws ParseException {
+
+        List<TaskListEntity> list = taskListRepository.findByUserIdOrderByIdDesc(id);
+
+        LastSevenDayChart lastSevenDayChart = new LastSevenDayChart();
+
+        List<LastSevenDaySeriesObj> lastSevenDaySeriesObjs =  new ArrayList<>();
+
+        LastSevenDaySeriesObj lastSevenDaySeriesObj = new LastSevenDaySeriesObj();
+
+        List<Integer> integers = new ArrayList<>();
+        integers.add(0);
+        integers.add(0);
+        integers.add(list.size());
+        integers.add(0);
+        integers.add(0);
+        integers.add(0);
+        integers.add(0);
+
+        lastSevenDaySeriesObj.setName("Sessions");
+        lastSevenDaySeriesObj.setDate(integers);
+
+        lastSevenDaySeriesObjs.add(lastSevenDaySeriesObj);
+
+        lastSevenDayChart.setSeries(lastSevenDaySeriesObjs);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(lastSevenDayChart);
+
+        return responseList;
     }
 }

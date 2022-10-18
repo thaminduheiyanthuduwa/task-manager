@@ -81,6 +81,12 @@ public class TaskListEntity {
     @Column(name = "last_updated_date")
     private Date lastUpdatedDate;
 
+    @Column(name = "completed_date")
+    private Date completedDate;
+
+    @Column(name = "deleted_date")
+    private Date deletedDate;
+
     public TaskListEntity() {}
 
 }

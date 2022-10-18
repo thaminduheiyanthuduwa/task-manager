@@ -14,9 +14,9 @@ public interface EmpDetailRepository extends JpaRepository<EmpDetailEntity, Inte
 
     List<EmpDetailEntity> findAll();
 
-
-
     List<EmpDetailEntity> findByEmailAndNicNo(@Param("email") String email,
                                                   @Param("nicNo") String nicNo);
+
+    List<EmpDetailEntity> findBySupervisor(@Param("supervisor") int supervisor);
 
 }

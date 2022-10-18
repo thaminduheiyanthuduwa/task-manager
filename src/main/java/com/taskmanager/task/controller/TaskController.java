@@ -7,6 +7,7 @@ import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -47,6 +48,22 @@ public class TaskController {
 
     }
 
+    @RequestMapping(value = "/delete-task-supervisor", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList deleteTaskBySupervisor(@RequestParam(value = "task_id") int task,
+                                   @RequestParam(value = "user_id") int id) {
+
+        return taskManager.deleteBySupervisor(task,id);
+
+    }
+
+    @RequestMapping(value = "/revert-task-supervisor", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList revertTaskBySupervisor(@RequestParam(value = "task_id") int task,
+                                               @RequestParam(value = "user_id") int id) {
+
+        return taskManager.revertBySupervisor(task,id);
+
+    }
+
     @RequestMapping(value = "/edit_task", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseList createTask(@RequestBody CreateTask createTask, @RequestParam(value = "task_id") int task,
                                    @RequestParam(value = "user_id") int id) {
@@ -62,6 +79,35 @@ public class TaskController {
         return taskManager.login(email, id);
 
     }
+
+    @RequestMapping(value = "/get-child-for-supervisor", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList login(@RequestParam(value = "supervisor") int id) {
+
+        return taskManager.getChildListForSupervisor(id);
+
+    }
+
+    @RequestMapping(value = "/get-completed-task-count", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getCompletedTaskCount(@RequestParam(value = "id") int id) throws ParseException {
+
+        return taskManager.getCompletedTaskCount(id);
+
+    }
+
+    @RequestMapping(value = "/get-last-seven-days-count", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getLastSevenDaysCount(@RequestParam(value = "id") int id) throws ParseException {
+
+        return taskManager.getLastSevenDaysCompletedRate(id);
+
+    }
+
+    @RequestMapping(value = "/get-last-due-four", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getLastDueFour(@RequestParam(value = "id") int id) throws ParseException {
+
+        return taskManager.getLastSevenDaysCompletedRate(id);
+
+    }
+
 
 
 }
