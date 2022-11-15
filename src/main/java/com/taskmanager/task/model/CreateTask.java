@@ -38,6 +38,9 @@ public class CreateTask {
     @JsonProperty("label")
     private String label;
 
+    @JsonProperty("recurring")
+    private String recurring;
+
     @JsonProperty("estimate")
     private Double estimate;
 

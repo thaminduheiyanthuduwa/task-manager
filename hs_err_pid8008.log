@@ -1,0 +1,33 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ff94f1687b3, pid=8008, tid=7656
+#
+# JRE version: Java(TM) SE Runtime Environment (18.0.2.1+1) (build 18.0.2.1+1-1)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (18.0.2.1+1-1, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# Problematic frame:
+# V  [jvm.dll+0x3a87b3]
+#
+# Core dump will be written. Default location: C:\Users\Administrator\Documents\task-manager\hs_err_pid8008.mdmp
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:63741,suspend=y,server=n -javaagent:C:\Users\Administrator\AppData\Local\JetBrains\IdeaIC2022.2\captureAgent\debugger-agent.jar=file:/C:/Users/Administrator/AppData/Local/Temp/2/capture.props -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 com.taskmanager.task.KiuTaskManagerApplication
+
+Host: Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz, 2 cores, 7G,  Windows Server 2016 , 64 bit Build 14393 (10.0.14393.5127)
+Time: Tue Oct 25 15:21:15 2022 India Standard Time elapsed time: 16440.013976 seconds (0d 4h 34m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000022e1919c890):  JavaThread "HikariPool-1 connection adder" daemon [_thread_in_vm, id=7656, stack(0x000000e0cb100000,0x000000e0cb200000)]
+
+Stack: [0x000000e0cb100000,0x000000e0cb200000],  sp=0x000000e0cb1f7660,  free space=989k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x3a87b3]
+V  [jvm.dll+0x6992d2]
+V  [jvm.dll+0x3a848e]
+V  [jvm.dll+0x40ed5c]

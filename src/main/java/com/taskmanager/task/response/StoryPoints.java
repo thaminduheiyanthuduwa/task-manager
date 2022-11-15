@@ -11,8 +11,8 @@ public class StoryPoints {
 
     private Integer tickets;
     private Integer counts;
-    private Integer percentage;
-    private Integer totalStory;
+    private Double percentage;
+    private Double totalStory;
     private String status;
 
     public StoryPoints() {}

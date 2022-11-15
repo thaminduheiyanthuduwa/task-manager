@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -44,6 +45,12 @@ public class TaskListEntity {
 
     @Column(name = "label")
     private String label;
+
+    @Column(name = "recurring")
+    private String recurring;
+
+    @Column(name = "sub_id")
+    private Integer subId;
 
     @Column(name = "estimate")
     private Double estimate;

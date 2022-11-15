@@ -11,7 +11,7 @@ public interface TaskManager {
 
     ResponseList createTask(CreateTask createTask);
 
-    ResponseList getMyTask(int id);
+    ResponseList getMyTask(int id, Integer type);
 
     ResponseList getMyTaskById(int id, int task);
 
@@ -34,5 +34,13 @@ public interface TaskManager {
     ResponseList getLastFourDue(int id) throws ParseException;
 
     ResponseList getTotalStoryPoints(int id) throws ParseException;
+
+    void sendMorningEmail();
+
+    ResponseList updateNotApplicable(int taskId, int userId, int supervisor);
+
+    ResponseList getIsSupervisorReviewNeeded(int supervisor);
+
+    ResponseList getTotalEstimateByTask(int task);
 
 }

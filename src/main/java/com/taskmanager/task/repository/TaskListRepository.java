@@ -24,6 +24,10 @@ public interface TaskListRepository extends JpaRepository<TaskListEntity, Intege
     Integer getPendingCount(@Param("id") int id);
 
     @Query(nativeQuery = true,
+            value = "select count(id) from task_list where completed_date <=  DATE_SUB(CURDATE(), INTERVAL 1 DAY) and status = 3 and user_id IN (SELECT id FROM `people` WHERE supervisor = :id)")
+    Integer getIsPendingSupervisorReview(@Param("id") int id);
+
+    @Query(nativeQuery = true,
             value = "select count(id) from task_list where status = 3 and user_id = :id")
     Integer getReviewNeededCount(@Param("id") int id);
 

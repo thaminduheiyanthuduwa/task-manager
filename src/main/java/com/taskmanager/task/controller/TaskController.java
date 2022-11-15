@@ -6,6 +6,7 @@ import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.util.annotation.Nullable;
 
 import java.text.ParseException;
 import java.util.List;
@@ -27,9 +28,10 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/get-my-task", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getTask(@RequestParam(value = "user_id") int id) {
+    public ResponseList getTask(@RequestParam(value = "user_id") int id,
+                                @RequestParam(value = "type") @Nullable Integer type) {
 
-        return taskManager.getMyTask(id);
+        return taskManager.getMyTask(id, type);
 
     }
 
@@ -114,6 +116,39 @@ public class TaskController {
         return taskManager.getTotalStoryPoints(id);
 
     }
+
+    @RequestMapping(value = "/send-morning-msg", method = RequestMethod.GET, headers = "Accept=application/json")
+    public void sendMorningMsg() throws ParseException {
+
+        taskManager.sendMorningEmail();
+
+    }
+
+
+    @RequestMapping(value = "/update-not-applicable", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public void updateNotApplicable(@RequestParam(value = "task_id") int task,
+                                    @RequestParam(value = "is_supervisor") int supervisor,
+                                    @RequestParam(value = "user_id") int id) throws ParseException {
+
+        taskManager.updateNotApplicable(task,id,supervisor);
+
+    }
+
+    @RequestMapping(value = "/review-needed", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList checkReviewNeeded(@RequestParam(value = "supervisor_id") int supervisor) throws ParseException {
+
+        return taskManager.getIsSupervisorReviewNeeded(supervisor);
+
+    }
+
+    @RequestMapping(value = "/total-estimate-by-task", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getTotalEstimateByTask(@RequestParam(value = "task") int task) throws ParseException {
+
+        return taskManager.getTotalEstimateByTask(task);
+
+    }
+
+
 
 
 
