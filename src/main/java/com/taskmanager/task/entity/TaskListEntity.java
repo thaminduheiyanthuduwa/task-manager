@@ -20,7 +20,7 @@ public class TaskListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
-    private int id;
+    private Integer id;
 
     @Column(name = "user_id")
     private Integer userId;
@@ -95,5 +95,25 @@ public class TaskListEntity {
     private Date deletedDate;
 
     public TaskListEntity() {}
+
+
+    @Override
+    public Object clone() {
+        try {
+            return (TaskListEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new TaskListEntity(this.id,
+                    this.userId,this.categoryId,
+                    this.taskTitle, this.taskDescription,this.startDate,
+                    this.endDate,this.reporterId,
+                    this.label, this.recurring,this.subId,
+                    this.estimate, this.originalEstimate,
+                    this.blockedTask, this.status, this.isActive,
+                    this.priority, this.rating, this.ratingComment,
+                    this.supervisorRating, this.supervisorComment,
+                    this.lastUpdatedUser, this.lastUpdatedDate,
+                    this.completedDate,this.deletedDate);
+        }
+    }
 
 }

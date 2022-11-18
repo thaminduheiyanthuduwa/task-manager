@@ -33,4 +33,6 @@ public interface TaskListRepository extends JpaRepository<TaskListEntity, Intege
 
     List<TaskListEntity> findByUserIdOrderByEndDate(@Param("userId") Integer userId);
 
+    List<TaskListEntity> findBySubId(@Param("subID") Integer subId);
+
 }

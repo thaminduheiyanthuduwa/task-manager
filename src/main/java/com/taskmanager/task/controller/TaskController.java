@@ -148,6 +148,13 @@ public class TaskController {
 
     }
 
+    @RequestMapping(value = "/start-recurring", method = RequestMethod.GET, headers = "Accept=application/json")
+    public void setRecurring() {
+
+        taskManager.setRecurring();
+
+    }
+
 
 
 

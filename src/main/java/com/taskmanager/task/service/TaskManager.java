@@ -43,4 +43,6 @@ public interface TaskManager {
 
     ResponseList getTotalEstimateByTask(int task);
 
+    void setRecurring();
+
 }

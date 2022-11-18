@@ -12,10 +12,13 @@ import com.taskmanager.task.response.*;
 import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SerializationUtils;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Properties;
 
 import java.text.DateFormat;
@@ -98,6 +101,7 @@ public class TaskManagerImpl implements TaskManager {
 
         return responseList;
     }
+
 
     @Override
     public ResponseList getMyTask(int id, Integer type) {
@@ -1384,5 +1388,91 @@ public class TaskManagerImpl implements TaskManager {
 
     }
 
+    public void setRecurring() {
+
+
+        List<TaskListEntity> listOjb = taskListRepository.findBySubId(0);
+
+        List<TaskListEntity> list = listOjb.stream().filter(taskListEntity ->
+                taskListEntity.getStatus() == 1 || taskListEntity.getStatus() == 2
+                        || taskListEntity.getStatus() == 3).collect(Collectors.toList());
+
+        List<TaskListEntity> newList = new ArrayList<>();
+
+        list.forEach(taskListEntity -> {
+
+            TaskListEntity tempEntity = (TaskListEntity) taskListEntity.clone();
+
+            LocalDate dateObj = LocalDate.now();
+
+            LocalDate newDate = taskListEntity.getStartDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            Integer days = Period.between(newDate,dateObj).getDays();
+
+            Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
+
+            if (taskListEntity.getRecurring()
+                    .equalsIgnoreCase("Daily") && days == 1){
+
+                TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
+
+                tempNew.setCompletedDate(null);
+                tempNew.setId(null);
+                tempNew.setStartDate(new Date());
+                tempNew.setLastUpdatedDate(new Date());
+                tempNew.setSupervisorComment(null);
+                tempNew.setSupervisorRating(null);
+                tempNew.setRating(null);
+                tempNew.setRatingComment(null);
+                tempNew.setEndDate(addDays(new Date(), newDiff));
+                tempNew.setStatus(1);
+
+                newList.add(tempNew);
+                tempEntity.setSubId(1);
+                newList.add(tempEntity);
+
+            }
+            else if (taskListEntity.getRecurring()
+                    .equalsIgnoreCase("Weekly") && days == 7){
+
+                TaskListEntity tempNew = tempEntity;
+
+                tempNew.setCompletedDate(null);
+                tempNew.setStartDate(new Date());
+                tempNew.setLastUpdatedDate(new Date());
+                tempNew.setSupervisorComment(null);
+                tempNew.setSupervisorRating(null);
+                tempNew.setRating(null);
+                tempNew.setRatingComment(null);
+                tempNew.setEndDate(addDays(new Date(), newDiff));
+                tempNew.setStatus(1);
+
+                newList.add(tempNew);
+                tempEntity.setSubId(1);
+                newList.add(tempEntity);
+
+            }
+
+
+        });
+
+        taskListRepository.saveAll(newList);
+
+
+    }
+
+    private Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+        return cal.getTime();
+    }
+
+    public int daysBetween(Date d1, Date d2){
+        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
 
 }
