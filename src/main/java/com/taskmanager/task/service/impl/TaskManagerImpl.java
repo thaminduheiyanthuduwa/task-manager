@@ -73,7 +73,7 @@ public class TaskManagerImpl implements TaskManager {
         taskListEntity.setStatus(1);
         taskListEntity.setRecurring(createTask.getRecurring());
 
-        if (createTask.getRecurring().equalsIgnoreCase("Ad-hoc")){
+        if (createTask.getRecurring() != null && createTask.getRecurring().equalsIgnoreCase("Ad-hoc")){
             taskListEntity.setSubId(1);
         }
         else {
