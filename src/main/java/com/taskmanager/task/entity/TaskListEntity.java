@@ -95,7 +95,7 @@ public class TaskListEntity {
     private Date deletedDate;
 
     @Column(name = "is_reverted")
-    private Integer isReverted;
+    private int isReverted;
 
     public TaskListEntity() {}
 
