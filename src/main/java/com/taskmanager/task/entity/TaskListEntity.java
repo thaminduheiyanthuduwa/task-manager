@@ -94,6 +94,9 @@ public class TaskListEntity {
     @Column(name = "deleted_date")
     private Date deletedDate;
 
+    @Column(name = "is_reverted")
+    private Integer isReverted;
+
     public TaskListEntity() {}
 
 
@@ -112,7 +115,7 @@ public class TaskListEntity {
                     this.priority, this.rating, this.ratingComment,
                     this.supervisorRating, this.supervisorComment,
                     this.lastUpdatedUser, this.lastUpdatedDate,
-                    this.completedDate,this.deletedDate);
+                    this.completedDate,this.deletedDate,this.isReverted);
         }
     }
 

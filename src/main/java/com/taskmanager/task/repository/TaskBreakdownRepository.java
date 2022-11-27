@@ -15,6 +15,8 @@ public interface TaskBreakdownRepository extends JpaRepository<TaskBreakdownEnti
 
     List<TaskBreakdownEntity> findByTaskId(@Param("taskId") Integer task);
 
+    long deleteByTaskId(@Param("taskId") Integer task);
+
     List<TaskBreakdownEntity> findByUserId(@Param("userId") Integer user);
 
 }

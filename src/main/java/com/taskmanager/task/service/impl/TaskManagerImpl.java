@@ -12,6 +12,7 @@ import com.taskmanager.task.response.*;
 import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.SerializationUtils;
 
 import javax.mail.*;
@@ -120,8 +121,8 @@ public class TaskManagerImpl implements TaskManager {
         if (type != null && type == 1) {
             list2 = list3.stream().filter(taskListEntity ->
 
-                    (dateFormat2.format(taskListEntity.getStartDate()).equals(strDate) ||
-                            (taskListEntity.getEndDate().after(date) && taskListEntity.getStartDate().before(date))) &&
+//                    (dateFormat2.format(taskListEntity.getStartDate()).equals(strDate) ||
+//                            (taskListEntity.getEndDate().after(date) && taskListEntity.getStartDate().before(date))) &&
                             taskListEntity.getStatus() == 1
             ).collect(Collectors.toList());
         } else if (type != null && type == 2) {
@@ -261,6 +262,7 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
+    @Transactional
     public ResponseList revertBySupervisor(int taskId, int userId) {
 
         Optional<TaskListEntity> optObj = taskListRepository.findById(taskId);
@@ -270,6 +272,10 @@ public class TaskManagerImpl implements TaskManager {
         obj.setStatus(1);
         obj.setLastUpdatedUser(userId);
         obj.setLastUpdatedDate(new Date());
+        obj.setEstimate(0D);
+        obj.setIsReverted(1);
+
+        taskBreakdownRepository.deleteByTaskId(obj.getId());
 
         taskListRepository.save(obj);
 
@@ -297,7 +303,10 @@ public class TaskManagerImpl implements TaskManager {
                 taskBreakdownEntity.setTaskId(obj.getId());
                 taskBreakdownEntity.setUserId(userId);
                 taskBreakdownEntity.setEstimate(createTask.getEstimate());
-                taskBreakdownEntity.setDate(new Date());
+                if (obj.getIsReverted() == 1)
+                    taskBreakdownEntity.setDate(obj.getCompletedDate());
+                else
+                    taskBreakdownEntity.setDate(new Date());
                 taskBreakdownRepository.save(taskBreakdownEntity);
                 Double tempEstimate = obj.getEstimate();
                 if (tempEstimate == null){
@@ -587,7 +596,7 @@ public class TaskManagerImpl implements TaskManager {
         }
 
 
-        percentage = (count * 100) / 9;
+        percentage = (count * 100) / 8;
 
         String status = "";
 
@@ -595,9 +604,9 @@ public class TaskManagerImpl implements TaskManager {
             status = "Very Low";
         } else if (count < 6) {
             status = "Low";
-        } else if (count < 9) {
+        } else if (count < 8) {
             status = "Medium";
-        } else if (count >= 9 && count < 15) {
+        } else if (count >= 8 && count < 15) {
             status = "Perfect";
         } else {
             status = "Awesome";
@@ -605,7 +614,7 @@ public class TaskManagerImpl implements TaskManager {
 
         StoryPoints storyPoints = new StoryPoints();
         storyPoints.setTickets(numberCount);
-        storyPoints.setCounts(9);
+        storyPoints.setCounts(8);
         storyPoints.setPercentage(Double.parseDouble(df.format(percentage)));
         storyPoints.setTotalStory(Double.parseDouble(df.format(count)));
         storyPoints.setStatus(status);
