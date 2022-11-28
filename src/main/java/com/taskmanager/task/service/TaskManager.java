@@ -45,4 +45,6 @@ public interface TaskManager {
 
     void setRecurring();
 
+    void changeCompleteStatus();
+
 }

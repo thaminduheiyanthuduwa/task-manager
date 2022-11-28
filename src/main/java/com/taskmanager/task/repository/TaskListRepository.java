@@ -35,4 +35,6 @@ public interface TaskListRepository extends JpaRepository<TaskListEntity, Intege
 
     List<TaskListEntity> findBySubId(@Param("subID") Integer subId);
 
+    List<TaskListEntity> findByAutoStatus(@Param("autoStatus") Integer autoStatus);
+
 }

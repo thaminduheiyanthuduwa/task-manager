@@ -61,6 +61,8 @@ public class TaskListEntityResponse {
 
     private String deletedDate;
 
+    private int autoStatus;
+
     public TaskListEntityResponse() {}
 
 }

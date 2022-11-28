@@ -156,7 +156,12 @@ public class TaskController {
     }
 
 
+    @RequestMapping(value = "/start-auto-complete", method = RequestMethod.GET, headers = "Accept=application/json")
+    public void setAutoComplete() {
 
+        taskManager.changeCompleteStatus();
+
+    }
 
 
 }

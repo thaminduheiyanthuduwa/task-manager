@@ -73,6 +73,7 @@ public class TaskManagerImpl implements TaskManager {
         taskListEntity.setBlockedTask(createTask.getBlockedTask());
         taskListEntity.setStatus(1);
         taskListEntity.setRecurring(createTask.getRecurring());
+        taskListEntity.setAutoStatus(3);
 
         if (createTask.getRecurring() != null && createTask.getRecurring().equalsIgnoreCase("Ad-hoc")){
             taskListEntity.setSubId(1);
@@ -170,7 +171,7 @@ public class TaskManagerImpl implements TaskManager {
             taskListEntityResponse.setLastUpdatedDate((taskListEntity.getLastUpdatedDate() != null) ? dateFormat.format(taskListEntity.getLastUpdatedDate()) : null);
             taskListEntityResponse.setCompletedDate((taskListEntity.getCompletedDate() != null) ? dateFormat.format(taskListEntity.getCompletedDate()) : null);
             taskListEntityResponse.setDeletedDate((taskListEntity.getDeletedDate() != null) ? dateFormat.format(taskListEntity.getDeletedDate()) : null);
-
+            taskListEntityResponse.setAutoStatus(taskListEntity.getAutoStatus());
             list.add(taskListEntityResponse);
 
         }
@@ -337,6 +338,7 @@ public class TaskManagerImpl implements TaskManager {
             obj.setLastUpdatedUser(userId);
             obj.setLastUpdatedUser(userId);
             obj.setLastUpdatedDate(new Date());
+            obj.setAutoStatus(0);
 
             taskListRepository.save(obj);
         }
@@ -1397,8 +1399,8 @@ public class TaskManagerImpl implements TaskManager {
 
     }
 
+    @Transactional
     public void setRecurring() {
-
 
         List<TaskListEntity> listOjb = taskListRepository.findBySubId(0);
 
@@ -1422,10 +1424,11 @@ public class TaskManagerImpl implements TaskManager {
 
             Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
 
-            if (taskListEntity.getRecurring()
+            if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
                     .equalsIgnoreCase("Daily") && days == 1){
 
                 TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
+                TaskListEntity oldTask = (TaskListEntity) tempEntity.clone();
 
                 tempNew.setCompletedDate(null);
                 tempNew.setId(null);
@@ -1436,14 +1439,15 @@ public class TaskManagerImpl implements TaskManager {
                 tempNew.setRating(null);
                 tempNew.setRatingComment(null);
                 tempNew.setEndDate(addDays(new Date(), newDiff));
+                tempNew.setAutoStatus(3);
                 tempNew.setStatus(1);
 
                 newList.add(tempNew);
-                tempEntity.setSubId(1);
-                newList.add(tempEntity);
+                oldTask.setSubId(1);
+                newList.add(oldTask);
 
             }
-            else if (taskListEntity.getRecurring()
+            else if ( taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
                     .equalsIgnoreCase("Weekly") && days == 7){
 
                 TaskListEntity tempNew = tempEntity;
@@ -1454,6 +1458,7 @@ public class TaskManagerImpl implements TaskManager {
                 tempNew.setSupervisorComment(null);
                 tempNew.setSupervisorRating(null);
                 tempNew.setRating(null);
+                tempNew.setId(null);
                 tempNew.setRatingComment(null);
                 tempNew.setEndDate(addDays(new Date(), newDiff));
                 tempNew.setStatus(1);
@@ -1483,5 +1488,45 @@ public class TaskManagerImpl implements TaskManager {
     public int daysBetween(Date d1, Date d2){
         return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
+
+    public void changeCompleteStatus() {
+
+        List<TaskListEntity> listOjb = taskListRepository.findByAutoStatus(3);
+
+        Date date = new Date();
+
+        DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = dateFormat2.format(date);
+
+
+
+        List<TaskListEntity> newList = new ArrayList<>();
+
+        listOjb.forEach(taskListEntity -> {
+
+            TaskListEntity tempEntity = (TaskListEntity) taskListEntity.clone();
+
+            try {
+                if (taskListEntity.getEndDate().before(dateFormat2.parse(strDate)) && taskListEntity.getStatus() == 1){
+
+                    tempEntity.setAutoStatus(1);
+                    tempEntity.setStatus(3);
+                    tempEntity.setRating(1);
+                    tempEntity.setRatingComment("Auto Completed By the System");
+                    if (tempEntity.getEstimate() == null || (tempEntity.getEstimate() != null && tempEntity.getEstimate() < 1))
+                        tempEntity.setEstimate(0D);
+
+                    newList.add(tempEntity);
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+
+        taskListRepository.saveAll(newList);
+
+    }
+
 
 }
