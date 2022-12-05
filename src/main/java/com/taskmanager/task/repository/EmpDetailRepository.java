@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmpDetailRepository extends JpaRepository<EmpDetailEntity, Integer > {
@@ -18,5 +19,7 @@ public interface EmpDetailRepository extends JpaRepository<EmpDetailEntity, Inte
                                                   @Param("nicNo") String nicNo);
 
     List<EmpDetailEntity> findBySupervisor(@Param("supervisor") int supervisor);
+
+//    List<EmpDetailEntity> findById(@Param("id") int id);
 
 }

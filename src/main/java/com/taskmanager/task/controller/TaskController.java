@@ -20,6 +20,11 @@ public class TaskController {
     TaskManager taskManager;
 
 
+    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getProfileDetails(@PathVariable int userId) {
+        return taskManager.getEmpDetailEntityById(userId);
+    }
+
     @RequestMapping(value = "/create_task", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseList createTask(@RequestBody CreateTask createTask) {
 
@@ -46,15 +51,15 @@ public class TaskController {
     public ResponseList deleteTask(@RequestParam(value = "task_id") int task,
                                    @RequestParam(value = "user_id") int id) {
 
-        return taskManager.deleteRequest(task,id);
+        return taskManager.deleteRequest(task, id);
 
     }
 
     @RequestMapping(value = "/delete-task-supervisor", method = RequestMethod.PUT, headers = "Accept=application/json")
     public ResponseList deleteTaskBySupervisor(@RequestParam(value = "task_id") int task,
-                                   @RequestParam(value = "user_id") int id) {
+                                               @RequestParam(value = "user_id") int id) {
 
-        return taskManager.deleteBySupervisor(task,id);
+        return taskManager.deleteBySupervisor(task, id);
 
     }
 
@@ -62,7 +67,7 @@ public class TaskController {
     public ResponseList revertTaskBySupervisor(@RequestParam(value = "task_id") int task,
                                                @RequestParam(value = "user_id") int id) {
 
-        return taskManager.revertBySupervisor(task,id);
+        return taskManager.revertBySupervisor(task, id);
 
     }
 
@@ -76,7 +81,7 @@ public class TaskController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList login(@RequestParam(value = "email") String email,
-                                   @RequestParam(value = "id") String id) {
+                              @RequestParam(value = "id") String id) {
 
         return taskManager.login(email, id);
 
@@ -130,7 +135,7 @@ public class TaskController {
                                     @RequestParam(value = "is_supervisor") int supervisor,
                                     @RequestParam(value = "user_id") int id) throws ParseException {
 
-        taskManager.updateNotApplicable(task,id,supervisor);
+        taskManager.updateNotApplicable(task, id, supervisor);
 
     }
 

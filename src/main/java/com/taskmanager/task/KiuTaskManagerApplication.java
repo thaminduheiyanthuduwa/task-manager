@@ -10,28 +10,28 @@ import java.util.TimerTask;
 @SpringBootApplication
 public class KiuTaskManagerApplication {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(KiuTaskManagerApplication.class, args);
+        SpringApplication.run(KiuTaskManagerApplication.class, args);
 
 
-		Timer timer = new Timer();
-		Calendar date = Calendar.getInstance();
-		date.set(Calendar.HOUR, 11);
-		date.set(Calendar.MINUTE, 43);
-		date.set(Calendar.SECOND, 0);
-		date.set(Calendar.MILLISECOND, 0);
-		timer.schedule(
-				new TimerTask() {
-					@Override
-					public void run() {
+        Timer timer = new Timer();
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.HOUR, 11);
+        date.set(Calendar.MINUTE, 43);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
 //						TaskController task = new TaskController();
 //						task.setRecurring();
-					}
-				},
-				date.getTime(),
-				1000 * 60 * 20
-		);
-	}
+                    }
+                },
+                date.getTime(),
+                1000 * 60 * 20
+        );
+    }
 
 }
