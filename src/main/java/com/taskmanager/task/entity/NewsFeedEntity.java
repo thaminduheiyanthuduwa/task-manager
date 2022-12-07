@@ -19,4 +19,7 @@ public class NewsFeedEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
     private int id;
+
+
+
 }
