@@ -20,10 +20,10 @@ public class TaskController {
     TaskManager taskManager;
 
 
-    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getProfileDetails(@PathVariable int userId) {
-        return taskManager.getEmpDetailEntityById(userId);
-    }
+//    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET, headers = "Accept=application/json")
+//    public ResponseList getProfileDetails(@PathVariable int userId) {
+//        return taskManager.getEmpDetailEntityById(userId);
+//    }
 
     @RequestMapping(value = "/create_task", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseList createTask(@RequestBody CreateTask createTask) {
