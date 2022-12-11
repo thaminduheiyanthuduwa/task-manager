@@ -63,14 +63,7 @@ public class TaskManagerImpl implements TaskManager {
         return responseList;
     }
 
-    @Override
-    public ResponseList getAllProfileDetails() {
-        ResponseList responseList = new ResponseList();
-        responseList.setCode(200);
-        responseList.setMsg("Profile All data");
-        responseList.setData(profileRepository.findAll());
-        return responseList;
-    }
+
 
     @Override
     public ResponseList getEmpDetailEntityById(int id) {

@@ -1,5 +1,6 @@
 package com.taskmanager.task;
 
+import com.taskmanager.task.service.impl.ProfileImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -32,6 +33,10 @@ public class KiuTaskManagerApplication {
                 date.getTime(),
                 1000 * 60 * 20
         );
+
+
+//        ProfileImpl profile= new ProfileImpl();
+//        profile.setHierarchy();
     }
 
 }

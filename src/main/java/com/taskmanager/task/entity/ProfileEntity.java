@@ -19,7 +19,11 @@ public class ProfileEntity {
     @Column(name = "id", unique = true)
     private int id;
 
-    @Column(name = "admin_id")
-    private int admin_id;
+    @Column(name = "profile_picture")
+    private String profile_picture;
+
+
+
+
 
 }

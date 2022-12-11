@@ -14,7 +14,7 @@ public interface TaskManager {
 
     ResponseList updateProfile(int id);
 
-    ResponseList getAllProfileDetails();
+
     ResponseList getEmpDetailEntityById(int id);
 
     ResponseList createTask(CreateTask createTask);

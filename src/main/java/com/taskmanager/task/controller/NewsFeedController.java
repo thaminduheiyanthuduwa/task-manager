@@ -17,4 +17,6 @@ public class NewsFeedController {
     public ResponseList getProfileDetails(@PathVariable int userId) {
         return taskManager.getEmpDetailEntityById(userId);
     }
+
+
 }
