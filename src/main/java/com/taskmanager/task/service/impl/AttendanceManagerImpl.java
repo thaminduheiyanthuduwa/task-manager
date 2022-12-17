@@ -20,4 +20,14 @@ public class AttendanceManagerImpl implements AttendanceManager {
         return responseList;
     }
 
+    @Override
+    public ResponseList getAllAttendanceDetails() {
+
+        ResponseList responseList = new ResponseList();
+
+        return responseList;
+    }
+
+
+
 }

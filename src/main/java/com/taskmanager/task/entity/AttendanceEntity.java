@@ -27,10 +27,10 @@ public class AttendanceEntity {
     private Date date;
 
     @Column(name="in_time")
-    private Time inTime;
+    private String inTime;
 
     @Column(name="out_time")
-    private Time outTime;
+    private String outTime;
 
     @Column(name="work_duration")
     private int workDuration;

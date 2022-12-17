@@ -14,8 +14,14 @@ public class AttendanceController {
     AttendanceManager attendanceManager;
 
     @RequestMapping(value = "/get-attendance-by-id", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getTask(@RequestParam(value = "user_id") int id) {
+    public ResponseList getAttendance(@RequestParam(value = "user_id") int id) {
         return attendanceManager.getAttendanceByID(id);
+
+    }
+
+    @RequestMapping(value = "/get-all-attendance", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getAllAttendance() {
+        return attendanceManager.getAllAttendanceDetails();
 
     }
 }

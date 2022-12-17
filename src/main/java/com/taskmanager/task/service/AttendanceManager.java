@@ -4,4 +4,6 @@ import com.taskmanager.task.response.ResponseList;
 
 public interface AttendanceManager {
     ResponseList getAttendanceByID(int id);
+
+    ResponseList getAllAttendanceDetails();
 }
