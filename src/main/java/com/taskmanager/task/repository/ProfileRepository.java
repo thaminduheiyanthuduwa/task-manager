@@ -18,9 +18,8 @@ public interface ProfileRepository extends JpaRepository<EmpDetailEntity, Intege
 
     List<EmpDetailEntity> findById(@Param("id") int id);
 
-
     @Query(nativeQuery = true,
-            value = "SELECT name_in_full,date_of_birth,perm_address,email FROM people WHERE id = :id")
+            value = "SELECT * FROM people WHERE id = :id")
     List<EmpDetailEntity> getUserAboutDetails(@Param("id") int id);
 
 }

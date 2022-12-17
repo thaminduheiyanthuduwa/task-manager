@@ -10,4 +10,6 @@ public interface Profile {
     ResponseList getAboutDetails(int id);
     ResponseList getEducationalDetails(int id);
     ResponseList getExperiencesDetails(int id);
+
+
 }

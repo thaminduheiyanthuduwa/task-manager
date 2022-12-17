@@ -34,9 +34,6 @@ public class KiuTaskManagerApplication {
                 1000 * 60 * 20
         );
 
-
-//        ProfileImpl profile= new ProfileImpl();
-//        profile.setHierarchy();
     }
 
 }
