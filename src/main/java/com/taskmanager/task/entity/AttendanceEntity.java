@@ -20,31 +20,31 @@ public class AttendanceEntity {
     @Column(name = "id", unique = true)
     private int id;
 
-    @Column(name = "emp_id")
+    @Column(name = "empId")
     private int empId;
 
     @Column(name="date")
     private Date date;
 
-    @Column(name="in_time")
+    @Column(name="inTime")
     private String inTime;
 
-    @Column(name="out_time")
+    @Column(name="outTime")
     private String outTime;
 
-    @Column(name="work_duration")
-    private int workDuration;
+    @Column(name="workDuration")
+    private long workDuration;
 
     @Column(name="type")
-    private String Type;
+    private String type;
 
     @Column(name="comment")
     private String comment;
 
-    @Column(name="approved_by")
+    @Column(name="approvedBy")
     private String approvedBy;
 
-    @Column(name="approved_date")
+    @Column(name="approvedDate")
     private Date approvedDate;
 
 
