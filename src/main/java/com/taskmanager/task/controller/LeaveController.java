@@ -34,4 +34,34 @@ public class LeaveController {
 
     }
 
+    @RequestMapping(value = "/get_available_leaves/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getAvailableLeaves(@PathVariable Integer id) {
+
+        return leaveManager.getAvailableLeaves(id);
+
+    }
+
+    @RequestMapping(value = "/create_leave/{id}", method = RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseList createLeave(@PathVariable Integer id,@RequestBody CreateLeave createLeave) {
+
+        return leaveManager.createLeave(id, createLeave);
+
+    }
+
+    @RequestMapping(value = "/get-child-for-supervisor", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList login(@RequestParam(value = "supervisor") int id) {
+
+        return leaveManager.getChildListForSupervisor(id);
+
+    }
+
+    @RequestMapping(value = "/update-status/{id}/{status}/{user}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList updateStatus(@PathVariable Integer id,
+                                     @PathVariable Integer status,
+                                     @PathVariable Integer user) {
+
+        return leaveManager.updateStatus(id, status, user);
+
+    }
+
 }

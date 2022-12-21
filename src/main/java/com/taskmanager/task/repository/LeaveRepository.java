@@ -14,4 +14,12 @@ public interface LeaveRepository extends JpaRepository<LeaveEntity, Integer> {
 
     List<LeaveEntity> findByEmpIdOrderByIdDesc(@Param("empId") Integer empId);
 
+    @Query(nativeQuery = true,
+            value = "select count(id) from leave_manager where status = 1 and emp_id = :id")
+    Integer getPendingRequestedCount(@Param("id") int id);
+
+    @Query(nativeQuery = true,
+            value = "select count(id) from leave_manager where status = 2 and emp_id = :id")
+    Integer getDeleteRequestedCount(@Param("id") int id);
+
 }

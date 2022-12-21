@@ -12,5 +12,12 @@ public interface LeaveManager {
 
     ResponseList getLeaveById(Integer createLeave);
 
+    ResponseList getAvailableLeaves(Integer id);
+
+    ResponseList createLeave(Integer id, CreateLeave createLeave);
+
+    ResponseList getChildListForSupervisor(int id);
+
+    ResponseList updateStatus(int id, int status, int user);
 
 }
