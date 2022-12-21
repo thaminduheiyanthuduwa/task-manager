@@ -1,11 +1,9 @@
 package com.taskmanager.task.service.impl;
 
-import com.taskmanager.task.entity.EmpDetailEntity;
-import com.taskmanager.task.entity.TaskBreakdownEntity;
-import com.taskmanager.task.entity.TaskListEntity;
-import com.taskmanager.task.entity.TaskListEntityResponse;
+import com.taskmanager.task.entity.*;
 import com.taskmanager.task.model.CreateTask;
 import com.taskmanager.task.repository.EmpDetailRepository;
+import com.taskmanager.task.repository.ProfileRepository;
 import com.taskmanager.task.repository.TaskBreakdownRepository;
 import com.taskmanager.task.repository.TaskListRepository;
 import com.taskmanager.task.response.*;
@@ -43,6 +41,45 @@ public class TaskManagerImpl implements TaskManager {
     @Autowired
     private TaskBreakdownRepository taskBreakdownRepository;
 
+    @Autowired
+    private ProfileRepository profileRepository;
+
+
+    @Override
+    public ResponseList addProfile() {
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Profile All data");
+        responseList.setData(profileRepository.findAll());
+        return responseList;
+    }
+
+    @Override
+    public ResponseList updateProfile(int id) {
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Profile All data");
+        responseList.setData(profileRepository.findById(id));
+        return responseList;
+    }
+
+
+
+    @Override
+    public ResponseList getEmpDetailEntityById(int id) {
+
+//        ProfileEntity profileEntity = new ProfileEntity();
+//        List<profileEntity>
+
+        ResponseList responseList = new ResponseList();
+
+        responseList.setCode(200);
+        responseList.setMsg("Profile data");
+        responseList.setData(empDetailRepository.findById(id));
+//
+        return responseList;
+    }
+
     @Override
     public ResponseList createTask(CreateTask createTask) {
 
@@ -75,18 +112,16 @@ public class TaskManagerImpl implements TaskManager {
         taskListEntity.setRecurring(createTask.getRecurring());
         taskListEntity.setAutoStatus(3);
 
-        if (createTask.getRecurring() != null && createTask.getRecurring().equalsIgnoreCase("Ad-hoc")){
+        if (createTask.getRecurring() != null && createTask.getRecurring().equalsIgnoreCase("Ad-hoc")) {
             taskListEntity.setSubId(1);
-        }
-        else {
+        } else {
             taskListEntity.setSubId(0);
         }
 
-        taskListEntity.setIsActive(1);
+//        taskListEntity.setIsActive(1);
         taskListEntity.setPriority(createTask.getPriority());
         taskListEntity.setLastUpdatedUser(createTask.getLastUpdatedUser());
         taskListEntity.setLastUpdatedDate(new Date());
-
 
 
         taskListRepository.save(taskListEntity);
@@ -310,7 +345,7 @@ public class TaskManagerImpl implements TaskManager {
                     taskBreakdownEntity.setDate(new Date());
                 taskBreakdownRepository.save(taskBreakdownEntity);
                 Double tempEstimate = obj.getEstimate();
-                if (tempEstimate == null){
+                if (tempEstimate == null) {
                     tempEstimate = 0d;
                 }
                 tempEstimate += createTask.getEstimate();
@@ -384,10 +419,10 @@ public class TaskManagerImpl implements TaskManager {
             supervisorList.setId(empDetailEntity.getId());
             supervisorList.setEmail(empDetailEntity.getEmail());
             supervisorList.setNicNo(empDetailEntity.getNicNo());
-            supervisorList.setGivenName(empDetailEntity.getGivenName());
-            supervisorList.setNameInFull(empDetailEntity.getNameInFull());
-            supervisorList.setContactNo(empDetailEntity.getContactNo());
-            supervisorList.setContactNo(empDetailEntity.getContactNo());
+            supervisorList.setGivenName(empDetailEntity.getGiven_name());
+            supervisorList.setNameInFull(empDetailEntity.getName_in_full());
+            supervisorList.setContactNo(empDetailEntity.getContact_no());
+            supervisorList.setContactNo(empDetailEntity.getContact_no());
             supervisorList.setSupervisor(empDetailEntity.getSupervisor());
 
             supervisorList.setDeleteRequested(taskListRepository.getDeleteRequestedCount(empDetailEntity.getId()));
@@ -1206,7 +1241,7 @@ public class TaskManagerImpl implements TaskManager {
                             "            \t\t\t<div class=\"text\" style=\"padding: 0 2.5em; text-align: center;\">\n" +
                             "            \t\t\t\t<h2>Hi, New Task Has Been Added</h2>\n" +
                             "            \t\t\t\t<h3>Task Title</h3>\n" +
-                            "\t\t\t\t\t\t\t<h3 style=\"color: red\">"+title+"</h3>\n" +
+                            "\t\t\t\t\t\t\t<h3 style=\"color: red\">" + title + "</h3>\n" +
                             "\t\t\t\t\t\t\t<h3>Please complete them on time !</h3>\n" +
                             "            \t\t\t\t<p><a href=\"http://13.232.138.190:8087/apps/myTask\" class=\"btn btn-primary\">Go To Portal</a></p>\n" +
                             "            \t\t\t</div>\n" +
@@ -1242,7 +1277,7 @@ public class TaskManagerImpl implements TaskManager {
                 message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
                 message2.setSubject("New Task Alert !");
                 message2.setContent(
-                        "<h1>New Task Has Been Added For " + obj.getGivenName() + "</h1>\n" +
+                        "<h1>New Task Has Been Added For " + obj.getGiven_name() + "</h1>\n" +
                                 "      <h2>Task Title :" + title + "</h2>\n" +
                                 "      <h3>Please Review It !</h3>",
                         "text/html");
@@ -1313,7 +1348,7 @@ public class TaskManagerImpl implements TaskManager {
             message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
             message2.setSubject("New Task Alert !");
             message2.setContent(
-                    "<h1>New Task Has Been Completed By " + obj.getGivenName() + "</h1>\n" +
+                    "<h1>New Task Has Been Completed By " + obj.getGiven_name() + "</h1>\n" +
                             "      <h2>Task Title :" + title + "</h2>\n" +
                             "      <h3>Please Review It !</h3>",
                     "text/html");
@@ -1383,7 +1418,7 @@ public class TaskManagerImpl implements TaskManager {
             message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
             message2.setSubject("New Task Alert !");
             message2.setContent(
-                    "<h1>Task Has Been Deleted By " + obj.getGivenName() + "</h1>\n" +
+                    "<h1>Task Has Been Deleted By " + obj.getGiven_name() + "</h1>\n" +
                             "      <h2>Task Title :" + title + "</h2>\n" +
                             "      <h3>Please Review It !</h3>",
                     "text/html");
@@ -1420,12 +1455,12 @@ public class TaskManagerImpl implements TaskManager {
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
 
-            Integer days = Period.between(newDate,dateObj).getDays();
+            Integer days = Period.between(newDate, dateObj).getDays();
 
             Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
 
             if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Daily") && days == 1){
+                    .equalsIgnoreCase("Daily") && days == 1) {
 
                 TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
                 TaskListEntity oldTask = (TaskListEntity) tempEntity.clone();
@@ -1446,9 +1481,8 @@ public class TaskManagerImpl implements TaskManager {
                 oldTask.setSubId(1);
                 newList.add(oldTask);
 
-            }
-            else if ( taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Weekly") && days == 7){
+            } else if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
+                    .equalsIgnoreCase("Weekly") && days == 7) {
 
                 TaskListEntity tempNew = tempEntity;
 
@@ -1477,16 +1511,15 @@ public class TaskManagerImpl implements TaskManager {
 
     }
 
-    private Date addDays(Date date, int days)
-    {
+    private Date addDays(Date date, int days) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
     }
 
-    public int daysBetween(Date d1, Date d2){
-        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    public int daysBetween(Date d1, Date d2) {
+        return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
 
     public void changeCompleteStatus() {
@@ -1499,7 +1532,6 @@ public class TaskManagerImpl implements TaskManager {
         String strDate = dateFormat2.format(date);
 
 
-
         List<TaskListEntity> newList = new ArrayList<>();
 
         listOjb.forEach(taskListEntity -> {
@@ -1507,7 +1539,7 @@ public class TaskManagerImpl implements TaskManager {
             TaskListEntity tempEntity = (TaskListEntity) taskListEntity.clone();
 
             try {
-                if (taskListEntity.getEndDate().before(dateFormat2.parse(strDate)) && taskListEntity.getStatus() == 1){
+                if (taskListEntity.getEndDate().before(dateFormat2.parse(strDate)) && taskListEntity.getStatus() == 1) {
 
                     tempEntity.setAutoStatus(1);
                     tempEntity.setStatus(3);

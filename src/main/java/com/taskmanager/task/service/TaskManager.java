@@ -9,6 +9,14 @@ import java.util.List;
 
 public interface TaskManager {
 
+
+    ResponseList addProfile();
+
+    ResponseList updateProfile(int id);
+
+
+    ResponseList getEmpDetailEntityById(int id);
+
     ResponseList createTask(CreateTask createTask);
 
     ResponseList getMyTask(int id, Integer type);
