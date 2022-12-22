@@ -419,10 +419,9 @@ public class TaskManagerImpl implements TaskManager {
             supervisorList.setId(empDetailEntity.getId());
             supervisorList.setEmail(empDetailEntity.getEmail());
             supervisorList.setNicNo(empDetailEntity.getNicNo());
-            supervisorList.setGivenName(empDetailEntity.getGiven_name());
-            supervisorList.setNameInFull(empDetailEntity.getName_in_full());
-            supervisorList.setContactNo(empDetailEntity.getContact_no());
-            supervisorList.setContactNo(empDetailEntity.getContact_no());
+            supervisorList.setGivenName(empDetailEntity.getGivenName());
+            supervisorList.setNameInFull(empDetailEntity.getNameInFull());
+            supervisorList.setContactNo(empDetailEntity.getContactNo());
             supervisorList.setSupervisor(empDetailEntity.getSupervisor());
 
             supervisorList.setDeleteRequested(taskListRepository.getDeleteRequestedCount(empDetailEntity.getId()));
@@ -1277,7 +1276,7 @@ public class TaskManagerImpl implements TaskManager {
                 message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
                 message2.setSubject("New Task Alert !");
                 message2.setContent(
-                        "<h1>New Task Has Been Added For " + obj.getGiven_name() + "</h1>\n" +
+                        "<h1>New Task Has Been Added For " + obj.getGivenName() + "</h1>\n" +
                                 "      <h2>Task Title :" + title + "</h2>\n" +
                                 "      <h3>Please Review It !</h3>",
                         "text/html");
@@ -1348,7 +1347,7 @@ public class TaskManagerImpl implements TaskManager {
             message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
             message2.setSubject("New Task Alert !");
             message2.setContent(
-                    "<h1>New Task Has Been Completed By " + obj.getGiven_name() + "</h1>\n" +
+                    "<h1>New Task Has Been Completed By " + obj.getGivenName() + "</h1>\n" +
                             "      <h2>Task Title :" + title + "</h2>\n" +
                             "      <h3>Please Review It !</h3>",
                     "text/html");
@@ -1418,7 +1417,7 @@ public class TaskManagerImpl implements TaskManager {
             message2.addRecipient(Message.RecipientType.TO, new InternetAddress(obj2.getEmail()));
             message2.setSubject("New Task Alert !");
             message2.setContent(
-                    "<h1>Task Has Been Deleted By " + obj.getGiven_name() + "</h1>\n" +
+                    "<h1>Task Has Been Deleted By " + obj.getGivenName() + "</h1>\n" +
                             "      <h2>Task Title :" + title + "</h2>\n" +
                             "      <h3>Please Review It !</h3>",
                     "text/html");
