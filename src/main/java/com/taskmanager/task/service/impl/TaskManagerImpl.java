@@ -1439,7 +1439,7 @@ public class TaskManagerImpl implements TaskManager {
         List<TaskListEntity> listOjb = taskListRepository.findBySubId(0);
 
         List<TaskListEntity> list = listOjb.stream().filter(taskListEntity ->
-                taskListEntity.getStatus() == 1 || taskListEntity.getStatus() == 2
+                taskListEntity.getStatus() == 1 || taskListEntity.getStatus() == 5
                         || taskListEntity.getStatus() == 3).collect(Collectors.toList());
 
         List<TaskListEntity> newList = new ArrayList<>();
@@ -1470,6 +1470,7 @@ public class TaskManagerImpl implements TaskManager {
                 tempNew.setLastUpdatedDate(new Date());
                 tempNew.setSupervisorComment(null);
                 tempNew.setSupervisorRating(null);
+                tempNew.setEstimate(0D);
                 tempNew.setRating(null);
                 tempNew.setRatingComment(null);
                 tempNew.setEndDate(addDays(new Date(), newDiff));
@@ -1492,6 +1493,7 @@ public class TaskManagerImpl implements TaskManager {
                 tempNew.setSupervisorRating(null);
                 tempNew.setRating(null);
                 tempNew.setId(null);
+                tempNew.setEstimate(0D);
                 tempNew.setRatingComment(null);
                 tempNew.setEndDate(addDays(new Date(), newDiff));
                 tempNew.setStatus(1);
