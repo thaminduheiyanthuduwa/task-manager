@@ -50,6 +50,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         Date createdDate = new Date();
         Date approvedDate = new Date();
+        
 //        Date createdDate;
 //        Date approvedDate;
 

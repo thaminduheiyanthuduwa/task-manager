@@ -192,7 +192,7 @@ public class TaskManagerImpl implements TaskManager {
 
         List<TaskListEntity> objSet = new ArrayList<>();
 
-        if (!list.isEmpty()) {
+        if (list.isEmpty()) {
 
             TaskListEntity tempObj = list.get();
 
@@ -727,7 +727,7 @@ public class TaskManagerImpl implements TaskManager {
 
         Optional<TaskListEntity> task = taskListRepository.findById(taskId);
 
-        if (!task.isEmpty()) {
+        if (!task.isPresent()) {
 
             TaskListEntity obj = task.get();
 
