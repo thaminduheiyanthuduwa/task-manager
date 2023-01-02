@@ -1,7 +1,10 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
+import com.taskmanager.task.model.ObjectValues;
 import com.taskmanager.task.model.leave.CreateLeave;
+import com.taskmanager.task.model.leave.GetAvailableLeaves;
+import com.taskmanager.task.repository.AvailableLeaveRepository;
 import com.taskmanager.task.repository.EmpDetailRepository;
 import com.taskmanager.task.repository.LeaveRepository;
 import com.taskmanager.task.response.*;
@@ -10,6 +13,7 @@ import com.taskmanager.task.response.leave.SupervisorLeaveList;
 import com.taskmanager.task.service.LeaveManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +27,9 @@ public class LeaveManagerImpl implements LeaveManager {
 
     @Autowired
     private EmpDetailRepository empDetailRepository;
+
+    @Autowired
+    private AvailableLeaveRepository availableLeaveRepository;
 
 
     @Override
@@ -79,22 +86,41 @@ public class LeaveManagerImpl implements LeaveManager {
     @Override
     public ResponseList getAvailableLeaves(Integer id) {
 
-        List<LeaveBalance> leaveBalanceList = new ArrayList<>();
+        List<AvailableLeaveEntity> availableLeaves = availableLeaveRepository.findByEmpId(id);
 
-        LeaveBalance leaveBalance1 = new LeaveBalance();
-        leaveBalance1.setLeaveType("Annual");
-        leaveBalance1.setLeaves(5);
-        leaveBalanceList.add(leaveBalance1);
+        List<GetAvailableLeaves> leaveBalanceList = new ArrayList<>();
 
-        LeaveBalance leaveBalance2 = new LeaveBalance();
-        leaveBalance2.setLeaveType("Casual");
-        leaveBalance2.setLeaves(3);
-        leaveBalanceList.add(leaveBalance2);
+        for (AvailableLeaveEntity obj : availableLeaves){
 
-        LeaveBalance leaveBalance3 = new LeaveBalance();
-        leaveBalance3.setLeaveType("Special");
-        leaveBalance3.setLeaves(2);
-        leaveBalanceList.add(leaveBalance3);
+            GetAvailableLeaves leaveBalance = new GetAvailableLeaves();
+            ObjectValues objectValues1 = new ObjectValues();
+            objectValues1.setObject2(obj.getType());
+            objectValues1.setObject3(getPercentageColour(obj.getType()));
+            leaveBalance.setLeaveType(objectValues1);
+            leaveBalance.setLeaves(obj.getAvailableLeaves());
+            leaveBalance.setOriginalLeave(obj.getOriginalLeaves());
+            Float remainingBalance = 0F;
+            try {
+                remainingBalance = (float) ((obj.getAvailableLeaves() * 100) / obj.getOriginalLeaves() );
+            }
+            catch (Exception e){}
+
+            ObjectValues objectValues2 = new ObjectValues();
+            objectValues2.setObject1(remainingBalance);
+            if (remainingBalance > 75)
+                objectValues2.setObject2("success");
+            else if (remainingBalance > 50)
+                objectValues2.setObject2("primary");
+            else if (remainingBalance > 25)
+                objectValues2.setObject2("warning");
+            else
+                objectValues2.setObject2("danger");
+
+            leaveBalance.setRemainingPercentage(objectValues2);
+            leaveBalanceList.add(leaveBalance);
+
+
+        }
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
@@ -106,9 +132,21 @@ public class LeaveManagerImpl implements LeaveManager {
     }
 
     @Override
+    @Transactional
     public ResponseList createLeave(Integer id, CreateLeave createLeave) {
 
-        List<LeaveEntity> leaveById = leaveRepository.findByEmpIdOrderByIdDesc(id);
+        List<AvailableLeaveEntity> availableLeaves = availableLeaveRepository.findByEmpId(id);
+
+        AvailableLeaveEntity updateObj = null;
+
+        for (AvailableLeaveEntity obj : availableLeaves){
+
+            if (createLeave.getLeaveType().equalsIgnoreCase(obj.getType())){
+                updateObj = obj;
+            }
+
+
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -123,12 +161,19 @@ public class LeaveManagerImpl implements LeaveManager {
         }
         ResponseList responseList = new ResponseList();
 
-
-        if ((dueDate.getTime() - createdDate.getTime()) < 0){
+        if (updateObj == null){
+            responseList.setCode(201);
+            responseList.setMsg("You are not allowed to use "+createLeave.getLeaveType()+" leaves");
+        }
+        else if (updateObj.getAvailableLeaves() < createLeave.getTotal()){
+            responseList.setCode(201);
+            responseList.setMsg("There are only "+updateObj.getAvailableLeaves()+" available "+createLeave.getLeaveType()+" leaves");
+        }
+        else if ((dueDate.getTime() - createdDate.getTime()) < 0){
             responseList.setCode(201);
             responseList.setMsg("To date must be greater then From Date");
         }
-        else if ((dueDate.getTime() - createdDate.getTime())/(60 * 60 * 24 * 1000) != createLeave.getTotal()){
+        else if ((dueDate.getTime() - createdDate.getTime())/(60 * 60 * 24 * 1000) != (createLeave.getTotal()-1)){
             responseList.setCode(201);
             responseList.setMsg("Total Leave must be equal to date different");
         }
@@ -143,6 +188,10 @@ public class LeaveManagerImpl implements LeaveManager {
             leaveEntity.setComment(createLeave.getDescription());
             leaveEntity.setCreatedDate(new Date());
             leaveRepository.save(leaveEntity);
+
+            Integer newLeaves = updateObj.getAvailableLeaves() - createLeave.getTotal();
+            updateObj.setAvailableLeaves(newLeaves);
+            availableLeaveRepository.save(updateObj);
             responseList.setCode(200);
             responseList.setMsg("Success");
         }
@@ -206,5 +255,23 @@ public class LeaveManagerImpl implements LeaveManager {
         responseList.setMsg("Success");
 
         return responseList;
+    }
+
+    private String getPercentageColour(String type){
+        if (type.equalsIgnoreCase("Annual") || type.equalsIgnoreCase("Probation Half Day")){
+            return "success";
+        }
+        else if (type.equalsIgnoreCase("Casual") || type.equalsIgnoreCase("Short Leave")){
+            return "primary";
+        }
+        else if (type.equalsIgnoreCase("Lieu Leave") || type.equalsIgnoreCase("Minor Staff Monthly")){
+            return "warning";
+        }
+        else if (type.equalsIgnoreCase("Special") || type.equalsIgnoreCase("Cleaning Staff")){
+            return "danger";
+        }
+        else {
+            return "success";
+        }
     }
 }
