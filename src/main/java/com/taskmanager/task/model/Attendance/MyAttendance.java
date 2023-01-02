@@ -1,15 +1,19 @@
 package com.taskmanager.task.model.Attendance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-@Builder
-@Data
-public class CreateAttendance {
+@Getter
+@Setter
+public class MyAttendance {
 
+    @JsonProperty("id")
+    private Integer id;
+
+    @JsonProperty("empName")
+    private String empName;
 
     @JsonProperty("date")
     private String date;
@@ -17,14 +21,8 @@ public class CreateAttendance {
     @JsonProperty("inTime")
     private String inTime;
 
-    @JsonProperty("inTimeNew")
-    private String inTimeNew;
-
     @JsonProperty("outTime")
     private String outTime;
-
-    @JsonProperty("outTimeNew")
-    private String outTimeNew;
 
     @JsonProperty("type")
     private String type;
@@ -32,9 +30,15 @@ public class CreateAttendance {
     @JsonProperty("comment")
     private String comment;
 
+    @JsonProperty("status")
+    private Integer status;
+
     @JsonProperty("approvedBy")
     private String approvedBy;
 
     @JsonProperty("approvedDate")
     private String approvedDate;
+
+    public MyAttendance() {
+    }
 }

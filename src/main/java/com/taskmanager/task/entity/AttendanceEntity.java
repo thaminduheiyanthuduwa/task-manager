@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.util.Date;
 
 @Entity
@@ -19,6 +18,9 @@ public class AttendanceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
     private int id;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "empId")
     private int empId;
@@ -46,6 +48,12 @@ public class AttendanceEntity {
 
     @Column(name="approvedDate")
     private Date approvedDate;
+
+    @Column(name="status")
+    private Integer status;
+
+    @Column(name="approved_by_id")
+    private Integer approved_by_id;
 
 
 }
