@@ -236,16 +236,38 @@ public class LeaveManagerImpl implements LeaveManager {
     }
 
     @Override
+    @Transactional
     public ResponseList updateStatus(int id, int status, int user) {
 
         Optional<LeaveEntity> leaveById = leaveRepository.findById(id);
 
         LeaveEntity obj = leaveById.get();
 
+
+
         obj.setStatus(status);
         if (status == 5){
             obj.setApprovedBy(user);
             obj.setApprovedDate(new Date());
+        }
+
+        if (status == 4){
+
+            List<AvailableLeaveEntity> leaveList = availableLeaveRepository.findByEmpId(user);
+
+            AvailableLeaveEntity availableLeaveEntity = null;
+
+            for (AvailableLeaveEntity availableObj : leaveList){
+                if (availableObj.getType().equalsIgnoreCase(obj.getLeaveType()))
+                    availableLeaveEntity = availableObj;
+            }
+
+            Integer num = availableLeaveEntity.getAvailableLeaves() + obj.getTotalLeave();
+
+            availableLeaveEntity.setAvailableLeaves(num);
+
+            availableLeaveRepository.save(availableLeaveEntity);
+
         }
 
         leaveRepository.save(obj);
