@@ -72,5 +72,11 @@ public class RosterController {
 
     }
 
+    @RequestMapping(value = "/get-my-latest-roster/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getMyLatestRoster(@PathVariable Integer user) throws ParseException {
+        return rosterManager.getMyLatestRoster(user);
+
+    }
+
 
 }

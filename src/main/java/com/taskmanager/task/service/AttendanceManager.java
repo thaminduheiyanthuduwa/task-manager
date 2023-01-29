@@ -16,4 +16,16 @@ public interface AttendanceManager {
     ResponseList createAttendance(Integer id,CreateAttendance createAttendance);
 
     ResponseList updateWithYesterdayAttendance();
+
+    ResponseList getChildListForSupervisor(int id);
+
+    ResponseList changeStatusForAttendance(int attendance,int user,int status, String comment);
+
+    ResponseList getTodayInTime(int id) throws ParseException;
+
+    ResponseList getAttendanceStat(int id) throws ParseException;
+
+    ResponseList getTotalLeavesAndTakenLeaves(int id) throws ParseException;
+
+    ResponseList getTotalPenalty(int id) throws ParseException;
 }

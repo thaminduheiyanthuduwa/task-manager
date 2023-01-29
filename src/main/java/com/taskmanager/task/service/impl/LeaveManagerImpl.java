@@ -296,4 +296,11 @@ public class LeaveManagerImpl implements LeaveManager {
             return "success";
         }
     }
+
+    @Override
+    public ResponseList getLEaveForChart(int id) {
+
+
+        return null;
+    }
 }

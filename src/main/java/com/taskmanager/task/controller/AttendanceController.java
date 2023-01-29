@@ -50,4 +50,45 @@ public class AttendanceController {
         return attendanceManager.updateWithYesterdayAttendance();
 
     }
+
+    @RequestMapping(value = "/get-child-for-supervisor", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList login(@RequestParam(value = "supervisor") int id) {
+
+        return attendanceManager.getChildListForSupervisor(id);
+
+    }
+
+    @RequestMapping(value = "/change-status-attendance/{attendance}/{user}/{status}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList approveAttendance(@PathVariable(value = "attendance") Integer attendance,
+                                          @PathVariable(value = "user") Integer user,
+                                          @PathVariable(value = "status") Integer status,
+                                          @RequestParam(value = "comment") String comment) {
+
+        return attendanceManager.changeStatusForAttendance(attendance, user, status, comment);
+
+    }
+
+    @RequestMapping(value = "/get-today-in-time/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getTodayInTime(@PathVariable(value = "user") int id) throws ParseException {
+        return attendanceManager.getTodayInTime(id);
+
+    }
+
+    @RequestMapping(value = "/get-attendance-stat/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getAttendanceStat(@PathVariable(value = "user") int id) throws ParseException {
+        return attendanceManager.getAttendanceStat(id);
+
+    }
+
+    @RequestMapping(value = "/get-total-taken-leaves/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getTotalLeavesAndTakenLeaves(@PathVariable(value = "user") int id) throws ParseException {
+        return attendanceManager.getTotalLeavesAndTakenLeaves(id);
+
+    }
+
+    @RequestMapping(value = "/get-penalty/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getPenalty(@PathVariable(value = "user") int id) throws ParseException {
+        return attendanceManager.getTotalPenalty(id);
+
+    }
 }

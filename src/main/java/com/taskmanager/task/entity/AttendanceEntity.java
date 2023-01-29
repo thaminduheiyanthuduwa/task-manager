@@ -55,5 +55,8 @@ public class AttendanceEntity {
     @Column(name="approved_by_id")
     private Integer approved_by_id;
 
+    @Column(name="supervisor_comment")
+    private String supervisorComment;
+
 
 }

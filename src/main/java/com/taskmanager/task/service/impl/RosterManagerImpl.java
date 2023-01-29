@@ -63,7 +63,7 @@ public class RosterManagerImpl implements RosterManager {
     @Override
     public ResponseList getMyRoster(Integer user) throws ParseException {
 
-        List<RosterEntity> roster = rosterRepository.findByUser(user);
+        List<RosterEntity> roster = rosterRepository.findByUserOrderByIdDesc(user);
 
         List<GetRoster> getMyRoster = new ArrayList<>();
 
@@ -96,7 +96,7 @@ public class RosterManagerImpl implements RosterManager {
 
     @Override
     public ResponseList getMyRosterForTable(Integer user, Integer status) throws ParseException {
-        List<RosterEntity> roster = rosterRepository.findByUser(user);
+        List<RosterEntity> roster = rosterRepository.findByUserOrderByIdDesc(user);
 
 
         List<GetRosterForTable> getMyRoster = new ArrayList<>();
@@ -289,5 +289,20 @@ public class RosterManagerImpl implements RosterManager {
 
         return responseList;
 
+    }
+
+    @Override
+    public ResponseList getMyLatestRoster(Integer user) throws ParseException {
+
+        List<RosterEntity> roster = rosterRepository.findByUserOrderByIdDesc(user);
+
+        RosterEntity obj = roster.get(0);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(obj);
+
+        return responseList;
     }
 }

@@ -26,5 +26,7 @@ public interface RosterManager {
 
     ResponseList getChildListForSupervisor(int id);
 
+    ResponseList getMyLatestRoster(Integer user) throws ParseException;
+
 
 }

@@ -64,4 +64,11 @@ public class LeaveController {
 
     }
 
+    @RequestMapping(value = "/get-leave-chart/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getLeaveForChart(@PathVariable(value = "id") int id) {
+
+        return leaveManager.getLEaveForChart(id);
+
+    }
+
 }

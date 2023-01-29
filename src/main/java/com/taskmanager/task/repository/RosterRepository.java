@@ -13,7 +13,7 @@ public interface RosterRepository extends JpaRepository<RosterEntity, Integer > 
 
     List<RosterEntity> findAll();
 
-    List<RosterEntity> findByUser(@Param("user") Integer id);
+    List<RosterEntity> findByUserOrderByIdDesc(@Param("user") Integer id);
 
     @Query(nativeQuery = true,
             value = "select count(id) from my_roster where status = 1 and user = :id")
@@ -26,4 +26,8 @@ public interface RosterRepository extends JpaRepository<RosterEntity, Integer > 
     @Query(nativeQuery = true,
             value = "select count(id) from my_roster where status in (3,2,4,8) and user = :id")
     Integer getReviewNeededCount(@Param("id") int id);
+
+    @Query(nativeQuery = true,
+            value = "SELECT count(*) FROM `my_roster` WHERE status not in (2,4,5,7) and user = 464;")
+    Integer getAvailableRosterCount(@Param("user") int id);
 }

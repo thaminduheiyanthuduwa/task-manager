@@ -1,6 +1,7 @@
 package com.taskmanager.task.repository;
 
 import com.taskmanager.task.entity.AttendanceEntity;
+import com.taskmanager.task.entity.PenaltyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,13 +10,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AttendanceRepository extends JpaRepository<AttendanceEntity, Integer > {
-    List<AttendanceEntity> findAll();
+public interface PenaltyRepository extends JpaRepository<PenaltyEntity, Integer > {
 
-    List<AttendanceEntity> findByEmpId(@Param("empId") Integer id);
+
+    List<PenaltyEntity> findByEmpId(@Param("empId") Integer id);
 
     @Query(nativeQuery = true,
-            value = "select count(id) from attendance where status = 2 and emp_id = :id")
-    Integer getPendingRequestedCount(@Param("id") int id);
+            value = "SELECT sum(penalty_amount) FROM `penalty` group by emp_id having emp_id = :id")
+    Integer getAllPenaltyValue(@Param("id") int id);
+
 
 }

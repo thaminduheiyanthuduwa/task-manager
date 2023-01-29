@@ -20,4 +20,6 @@ public interface LeaveManager {
 
     ResponseList updateStatus(int id, int status, int user);
 
+    ResponseList getLEaveForChart(int id);
+
 }
