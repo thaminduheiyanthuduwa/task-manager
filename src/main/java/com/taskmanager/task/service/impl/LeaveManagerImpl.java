@@ -161,7 +161,11 @@ public class LeaveManagerImpl implements LeaveManager {
         }
         ResponseList responseList = new ResponseList();
 
-        if (updateObj == null){
+        if ((createLeave.getTotal() <= 0 || (createLeave.getTotal() % 0.5 != 0))){
+            responseList.setCode(201);
+            responseList.setMsg("Applicable leaves can only be 1 or 0.5");
+        }
+        else if (updateObj == null){
             responseList.setCode(201);
             responseList.setMsg("You are not allowed to use "+createLeave.getLeaveType()+" leaves");
         }
@@ -173,7 +177,7 @@ public class LeaveManagerImpl implements LeaveManager {
             responseList.setCode(201);
             responseList.setMsg("To date must be greater then From Date");
         }
-        else if ((dueDate.getTime() - createdDate.getTime())/(60 * 60 * 24 * 1000) != (createLeave.getTotal()-1)){
+        else if ((dueDate.getTime() - createdDate.getTime())/(60 * 60 * 24 * 1000) != (Math.ceil(createLeave.getTotal())-1)){
             responseList.setCode(201);
             responseList.setMsg("Total Leave must be equal to date different");
         }
@@ -189,7 +193,7 @@ public class LeaveManagerImpl implements LeaveManager {
             leaveEntity.setCreatedDate(new Date());
             leaveRepository.save(leaveEntity);
 
-            Integer newLeaves = updateObj.getAvailableLeaves() - createLeave.getTotal();
+            Float newLeaves = updateObj.getAvailableLeaves() - createLeave.getTotal();
             updateObj.setAvailableLeaves(newLeaves);
             availableLeaveRepository.save(updateObj);
             responseList.setCode(200);
@@ -262,7 +266,7 @@ public class LeaveManagerImpl implements LeaveManager {
                     availableLeaveEntity = availableObj;
             }
 
-            Integer num = availableLeaveEntity.getAvailableLeaves() + obj.getTotalLeave();
+            Float num = availableLeaveEntity.getAvailableLeaves() + obj.getTotalLeave();
 
             availableLeaveEntity.setAvailableLeaves(num);
 

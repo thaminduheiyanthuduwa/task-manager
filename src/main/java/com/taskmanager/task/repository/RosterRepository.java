@@ -28,6 +28,6 @@ public interface RosterRepository extends JpaRepository<RosterEntity, Integer > 
     Integer getReviewNeededCount(@Param("id") int id);
 
     @Query(nativeQuery = true,
-            value = "SELECT count(*) FROM `my_roster` WHERE status not in (2,4,5,7) and user = 464;")
-    Integer getAvailableRosterCount(@Param("user") int id);
+            value = "SELECT count(*) FROM `my_roster` WHERE status not in (2,4,5,7, 8) and user = :id")
+    Integer getAvailableRosterCount(@Param("id") int id);
 }

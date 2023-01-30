@@ -25,7 +25,7 @@ public class AvailableLeaveEntity {
     private String type;
 
     @Column(name="available_leaves")
-    private Integer availableLeaves;
+    private Float availableLeaves;
 
     @Column(name="original_leaves")
     private Integer originalLeaves;

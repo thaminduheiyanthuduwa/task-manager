@@ -26,6 +26,6 @@ public class CreateLeave {
     private String endDate;
 
     @JsonProperty("total_leaves")
-    private Integer total;
+    private Float total;
 
 }

@@ -13,7 +13,7 @@ public class GetAvailableLeaves {
 
     private ObjectValues leaveType;
 
-    private Integer leaves;
+    private Float leaves;
 
     private Integer originalLeave;
 

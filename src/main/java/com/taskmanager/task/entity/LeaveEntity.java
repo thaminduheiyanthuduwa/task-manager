@@ -34,7 +34,7 @@ public class LeaveEntity {
     private Date toDate;
 
     @Column(name = "total_leave")
-    private Integer totalLeave;
+    private Float totalLeave;
 
     @Column(name = "status")
     private Integer status;
