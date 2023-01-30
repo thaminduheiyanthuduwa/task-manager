@@ -339,8 +339,12 @@ public class TaskManagerImpl implements TaskManager {
                 taskBreakdownEntity.setTaskId(obj.getId());
                 taskBreakdownEntity.setUserId(userId);
                 taskBreakdownEntity.setEstimate(createTask.getEstimate());
-                if (obj.getIsReverted() == 1)
-                    taskBreakdownEntity.setDate(obj.getCompletedDate());
+                if (obj.getIsReverted() == 1) {
+                    if (obj.getCompletedDate() != null)
+                        taskBreakdownEntity.setDate(obj.getCompletedDate());
+                    else
+                        taskBreakdownEntity.setDate(new Date());
+                }
                 else
                     taskBreakdownEntity.setDate(new Date());
                 taskBreakdownRepository.save(taskBreakdownEntity);
@@ -623,7 +627,7 @@ public class TaskManagerImpl implements TaskManager {
 
         for (TaskBreakdownEntity taskBreakdownEntity : taskBreakDown) {
 
-            if (dateFormat2.format(taskBreakdownEntity.getDate()).equals(dateFormat2.format(date))) {
+            if (taskBreakdownEntity.getDate() != null && dateFormat2.format(taskBreakdownEntity.getDate()).equals(dateFormat2.format(date))) {
 
                 count += taskBreakdownEntity.getEstimate();
                 numberCount += 1;

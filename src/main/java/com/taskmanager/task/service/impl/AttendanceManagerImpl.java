@@ -96,8 +96,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
             ErpAttendance erpAttendance = new ErpAttendance();
             LinkedHashMap<String, String> temp = (LinkedHashMap) tempObj;
-            erpAttendance.setDate(convertDateToDateOnly.parse(convertDateToDateOnly.format(convertStringToDate.parse(temp.get("createdAt").toString()))));
-            erpAttendance.setCreatedTime(convertStringToDate.parse(temp.get("createdAt").toString()));
+            erpAttendance.setDate(convertDateToDateOnly.parse(convertDateToDateOnly.format(convertStringToDateTypeTwo.parse(temp.get("dateTimeFullText").toString()))));
+            erpAttendance.setCreatedTime(convertStringToDateTypeTwo.parse(temp.get("dateTimeFullText").toString()));
             erpAttendances.add(erpAttendance);
 
         }
@@ -200,7 +200,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat convertDateToDateOnlyWithTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat convertDateToDateOnlyWithTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
 
@@ -219,7 +219,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
             LinkedHashMap<String, String> temp = (LinkedHashMap) tempObj;
             yesterdayAttendance.setId(Integer.valueOf(String.valueOf(temp.get("id"))));
             yesterdayAttendance.setEmpId(Integer.valueOf(String.valueOf(temp.get("employeeId"))));
-            yesterdayAttendance.setDate(String.valueOf(temp.get("createdAt")));
+            yesterdayAttendance.setDate(String.valueOf(temp.get("dateTimeFullText")));
             erpAttendances.add(yesterdayAttendance);
 
         }
