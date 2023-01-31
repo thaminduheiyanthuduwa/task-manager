@@ -15,7 +15,7 @@ public class GetAvailableLeaves {
 
     private Float leaves;
 
-    private Integer originalLeave;
+    private Float originalLeave;
 
     private ObjectValues remainingPercentage;
 

@@ -28,6 +28,6 @@ public class AvailableLeaveEntity {
     private Float availableLeaves;
 
     @Column(name="original_leaves")
-    private Integer originalLeaves;
+    private Float originalLeaves;
 
 }
