@@ -141,7 +141,7 @@ public class LeaveManagerImpl implements LeaveManager {
 
         for (AvailableLeaveEntity obj : availableLeaves){
 
-            if (createLeave.getLeaveType().equalsIgnoreCase(obj.getType())){
+            if (createLeave.getLeaveType().contains(obj.getType())){
                 updateObj = obj;
             }
 
