@@ -1,6 +1,7 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.AttendanceEntity;
+import com.taskmanager.task.entity.AttendanceEntityGetIdObj;
 import com.taskmanager.task.entity.EmpDetailEntity;
 import com.taskmanager.task.model.Attendance.*;
 import com.taskmanager.task.repository.*;
@@ -162,10 +163,30 @@ public class AttendanceManagerImpl implements AttendanceManager {
     public ResponseList getAttendanceByAttendanceID(Integer id) {
         Optional<AttendanceEntity> attendanceIssue = attendanceRepository.findById(id);
 
+        AttendanceEntity newObj = attendanceIssue.get();
+
+        SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+
+        AttendanceEntityGetIdObj attendanceEntityGetIdObj = new AttendanceEntityGetIdObj();
+        attendanceEntityGetIdObj.setId(newObj.getId());
+        attendanceEntityGetIdObj.setName(newObj.getName());
+        attendanceEntityGetIdObj.setEmpId(newObj.getEmpId());
+        attendanceEntityGetIdObj.setDate(convertDateToDateOnly.format(newObj.getDate()));
+        attendanceEntityGetIdObj.setInTime(newObj.getInTime());
+        attendanceEntityGetIdObj.setOutTime(newObj.getOutTime());
+        attendanceEntityGetIdObj.setWorkDuration(newObj.getWorkDuration());
+        attendanceEntityGetIdObj.setType(newObj.getType());
+        attendanceEntityGetIdObj.setComment(newObj.getComment());
+        attendanceEntityGetIdObj.setApprovedBy(newObj.getApprovedBy());
+        attendanceEntityGetIdObj.setApprovedDate(convertDateToDateOnly.format(newObj.getApprovedDate()));
+        attendanceEntityGetIdObj.setStatus(newObj.getStatus());
+        attendanceEntityGetIdObj.setApproved_by_id(newObj.getApproved_by_id());
+        attendanceEntityGetIdObj.setSupervisorComment(newObj.getSupervisorComment());
+
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
         responseList.setMsg("Attendance data find by id");
-        responseList.setData(attendanceIssue.get());
+        responseList.setData(attendanceEntityGetIdObj);
         return responseList;
 
     }

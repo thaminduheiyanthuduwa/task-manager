@@ -1,5 +1,6 @@
 package com.taskmanager.task.entity;
 
+import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

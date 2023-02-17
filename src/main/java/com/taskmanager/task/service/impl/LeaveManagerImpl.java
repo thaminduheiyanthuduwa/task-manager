@@ -73,12 +73,36 @@ public class LeaveManagerImpl implements LeaveManager {
     @Override
     public ResponseList getLeaveById(Integer id) {
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
         List<LeaveEntity> leaveById = leaveRepository.findByEmpIdOrderByIdDesc(id);
+
+        List<LeaveEntityGetByIdObj> newObj = new ArrayList<>();
+
+        leaveById.forEach(leaveEntity -> {
+
+            Integer idNw = leaveEntity.getId();
+            Integer empId = leaveEntity.getEmpId();
+            String leaveType = leaveEntity.getLeaveType();
+            String fromDate = leaveEntity.getFromDate() != null ? formatter.format(leaveEntity.getFromDate()) : "";
+            String toDate = leaveEntity.getToDate() != null ? formatter.format(leaveEntity.getToDate()) : "";
+            Float totalLeave = leaveEntity.getTotalLeave();
+            Integer status = leaveEntity.getStatus();
+            String comment = leaveEntity.getComment();
+            String createdDate = leaveEntity.getCreatedDate() != null ? formatter.format(leaveEntity.getCreatedDate()) : "";
+            Integer approvedBy = leaveEntity.getApprovedBy();
+            String approvedDate = leaveEntity.getApprovedDate() != null ? formatter.format(leaveEntity.getApprovedDate()) : "";
+
+            LeaveEntityGetByIdObj leaveObjWithConstructor = new LeaveEntityGetByIdObj(idNw, empId, leaveType, fromDate, toDate, totalLeave, status, comment, createdDate, approvedBy, approvedDate);
+
+            newObj.add(leaveObjWithConstructor);
+
+        });
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
         responseList.setMsg("Success");
-        responseList.setData(leaveById);
+        responseList.setData(newObj);
 
         return responseList;
     }
