@@ -18,4 +18,13 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
             value = "select count(id) from attendance where status = 2 and emp_id = :id")
     Integer getPendingRequestedCount(@Param("id") int id);
 
+    @Query(nativeQuery = true,
+            value = "select * from attendance WHERE date >= '2023-02-01'  and date < '2023-03-01';;")
+    List<AttendanceEntity> getPastMonthAttendance();
+
+    @Query(nativeQuery = true,
+            value = "select * from attendance WHERE date = :date_val  and emp_id = :emp")
+    List<AttendanceEntity> getAttendanceByDateAndEmpID(@Param("date_val") String date_val,
+                                                       @Param("emp") int emp);
+
 }

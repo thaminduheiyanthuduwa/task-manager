@@ -59,5 +59,43 @@ public class AttendanceEntity {
     @Column(name="supervisor_comment")
     private String supervisorComment;
 
+    @Column(name="total_working_hours")
+    private String totalWorkingHours;
+
+    @Column(name="late_time")
+    private String lateTime;
+
+    @Column(name="ot_time")
+    private String otTime;
+
+    @Column(name="apply_ot")
+    private Integer applyOt;
+
+    @Column(name="apply_late")
+    private Integer applyLate;
+
+    @Column(name="leave_id")
+    private Integer leaveId;
+
+    @Column(name="leave_time")
+    private Integer leaveTime;
+
+    @Column(name="is_working_day")
+    private Float isWorkingDay;
+
+    @Column(name="is_extra_working")
+    private Integer isExtraWorking;
+
+    @Column(name="ot_amount")
+    private Float otAmount;
+
+    @Column(name="no_pay_amount")
+    private Float noPayAmount;
+
+    @Column(name="pay_roll_status")
+    private Integer payRollStatus;
+
+    @Column(name="late_amount")
+    private Integer lateAmount;
 
 }

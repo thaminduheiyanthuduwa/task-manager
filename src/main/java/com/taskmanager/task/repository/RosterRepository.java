@@ -30,4 +30,8 @@ public interface RosterRepository extends JpaRepository<RosterEntity, Integer > 
     @Query(nativeQuery = true,
             value = "SELECT count(*) FROM `my_roster` WHERE status not in (2,4,5,7, 8) and user = :id")
     Integer getAvailableRosterCount(@Param("id") int id);
+
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM `my_roster` WHERE :date_val BETWEEN start_date AND end_date AND status in (1,6,8) AND user = :id")
+    List<RosterEntity> getRosterBetweenDateAndForUserId(@Param("date_val") String date_val, @Param("id") int id);
 }

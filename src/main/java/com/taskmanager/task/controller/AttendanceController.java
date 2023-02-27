@@ -23,6 +23,12 @@ public class AttendanceController {
 
     }
 
+    @RequestMapping(value = "/get-attendance-by-id-for-approval", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getAttendanceForApproval(@RequestParam(value = "user_id") int id) throws ParseException {
+        return attendanceManager.getAttendanceByIDForApproval(id);
+
+    }
+
     @RequestMapping(value = "/get-attendance-by-attendance-id", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList getAttendanceByAttendanceId(@RequestParam(value = "id") int id) throws ParseException {
         return attendanceManager.getAttendanceByAttendanceID(id);
@@ -52,7 +58,7 @@ public class AttendanceController {
     }
 
     @RequestMapping(value = "/get-child-for-supervisor", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList login(@RequestParam(value = "supervisor") int id) {
+    public ResponseList getAttendanceSummery(@RequestParam(value = "supervisor") int id) {
 
         return attendanceManager.getChildListForSupervisor(id);
 
@@ -89,6 +95,44 @@ public class AttendanceController {
     @RequestMapping(value = "/get-penalty/{user}", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList getPenalty(@PathVariable(value = "user") int id) throws ParseException {
         return attendanceManager.getTotalPenalty(id);
+
+    }
+
+    @RequestMapping(value = "/update-last-month-attendance-with-ot-and-late", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList updateLastMonthData() throws ParseException {
+        return attendanceManager.updatePastMonthAttendance();
+
+    }
+
+    @RequestMapping(value = "/update-status/{id}/{status}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList changeStatus(@PathVariable(value = "id") int id,
+                                     @PathVariable(value = "status") int status) throws ParseException {
+        return attendanceManager.changeStatus(id, status);
+
+    }
+
+    @RequestMapping(value = "/update-leave-with-attendance", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList updateLeaveWithAttendance() throws ParseException {
+        return attendanceManager.updateLeaveWithAttendance();
+
+    }
+
+    @RequestMapping(value = "/update-roster-dates-with-attendance", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList updatesRosterDatesWithAttendance() throws ParseException {
+        return attendanceManager.updateRosterDatesWithAttendance();
+
+    }
+
+    @RequestMapping(value = "/process-ot/{id}/{status}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList processOT(@PathVariable(value = "id") int id,
+                                  @PathVariable(value = "status") int status) throws ParseException {
+        return attendanceManager.processOt(id, status);
+
+    }
+
+    @RequestMapping(value = "/set-pay-roll-status", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList setPayRollStatus() throws ParseException {
+        return attendanceManager.setPayRollStatus();
 
     }
 }

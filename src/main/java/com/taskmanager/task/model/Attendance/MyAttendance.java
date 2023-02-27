@@ -39,6 +39,18 @@ public class MyAttendance {
     @JsonProperty("approvedDate")
     private String approvedDate;
 
+    @JsonProperty("totalWorkingTime")
+    private String totalWorkingTime;
+
+    @JsonProperty("lateTime")
+    private String lateTime;
+
+    @JsonProperty("otTime")
+    private String otTime;
+
+    @JsonProperty("applyOt")
+    private Integer applyOt;
+
     public MyAttendance() {
     }
 }
