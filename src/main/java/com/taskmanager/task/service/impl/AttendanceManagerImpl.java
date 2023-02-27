@@ -94,6 +94,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
             if (attendance.getOtTime() != null)
                 erpAttendance.setOtTime(Integer.parseInt(attendance.getOtTime())/(60*60)+" Hour "+(Integer.parseInt(attendance.getOtTime())%(3600))/60+" Min");
 
+            erpAttendance.setAttendanceStatus(attendance.getPayRollStatus());
+
             outObj.add(erpAttendance);
         }
 //        outObj.sort(Comparator.comparing(MyAttendance::getId).reversed());
@@ -829,10 +831,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                         attendanceEntity.setPayRollStatus(11); //week day working day
                     }
                 }
-                if (attendanceEntity.getPayRollStatus() == 2323){
-                    attendanceEntity.setPayRollStatus(13);
-                    System.out.println("");
-                }
+
 
                 newList.add(attendanceEntity);
 
