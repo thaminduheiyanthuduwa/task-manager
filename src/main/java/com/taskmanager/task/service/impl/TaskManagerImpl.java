@@ -372,12 +372,14 @@ public class TaskManagerImpl implements TaskManager {
                     }
                 }.start();
             }
+            else
+                obj.setAutoStatus(0);
 
 
             obj.setLastUpdatedUser(userId);
             obj.setLastUpdatedUser(userId);
             obj.setLastUpdatedDate(new Date());
-            obj.setAutoStatus(0);
+
 
             taskListRepository.save(obj);
         }
