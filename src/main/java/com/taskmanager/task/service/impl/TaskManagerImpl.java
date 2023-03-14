@@ -324,7 +324,7 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
-    public ResponseList editTask(CreateTask createTask, int taskId, int userId) {
+    public ResponseList editTask(CreateTask createTask, int taskId, int userId) throws ParseException {
 
         Optional<TaskListEntity> task = taskListRepository.findById(taskId);
 
@@ -366,14 +366,25 @@ public class TaskManagerImpl implements TaskManager {
 
             if (createTask.getStatus() == 3) {
                 obj.setCompletedDate(new Date());
+                obj.setAutoStatus(0);
                 new Thread() {
                     public void run() {
                         sendCompletedTaskEmail(obj.getUserId(), obj.getTaskTitle());//Call your function
                     }
                 }.start();
             }
-            else
-                obj.setAutoStatus(0);
+            else {
+                Date date = new Date();
+
+                DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+                String strDate = dateFormat2.format(date);
+
+                if (obj.getEndDate().before(dateFormat2.parse(strDate))) {
+
+                }
+
+
+            }
 
 
             obj.setLastUpdatedUser(userId);

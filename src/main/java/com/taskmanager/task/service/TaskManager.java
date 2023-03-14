@@ -29,7 +29,7 @@ public interface TaskManager {
 
     ResponseList revertBySupervisor(int taskId, int userId);
 
-    ResponseList editTask(CreateTask createTask, int taskId, int userId);
+    ResponseList editTask(CreateTask createTask, int taskId, int userId) throws ParseException;
 
     ResponseList login(String email, String id);
 

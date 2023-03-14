@@ -135,4 +135,11 @@ public class AttendanceController {
         return attendanceManager.setPayRollStatus();
 
     }
+
+    @RequestMapping(value = "/get-minor-staff-list", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getMinorStaffList(@RequestParam(value = "supervisor") int id) {
+
+        return attendanceManager.getMinorStaffList(id);
+
+    }
 }

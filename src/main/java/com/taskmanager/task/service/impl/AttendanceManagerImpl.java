@@ -217,6 +217,9 @@ public class AttendanceManagerImpl implements AttendanceManager {
            else {
                erpAttendance.setApplyOt(0);
            }
+
+           erpAttendance.setAttendanceStatus(attendance.getPayRollStatus());
+
             outObj.add(erpAttendance);
         }
 
@@ -468,6 +471,75 @@ public class AttendanceManagerImpl implements AttendanceManager {
         }
 
     }
+
+    @Override
+    public ResponseList getMinorStaffList(int id) {
+
+        if (id == -1){
+            List<EmpDetailEntity> list = empDetailRepository.findAll();
+
+            List<SupervisorLeaveList> supervisorLists = new ArrayList<>();
+
+            list.forEach(empDetailEntity -> {
+
+                if (empDetailEntity.getPersonType().equalsIgnoreCase("minor staff")) {
+
+                    SupervisorLeaveList supervisorList = new SupervisorLeaveList();
+                    supervisorList.setId(empDetailEntity.getId());
+                    supervisorList.setEmail(empDetailEntity.getEmail());
+                    supervisorList.setNicNo(empDetailEntity.getNicNo());
+                    supervisorList.setGivenName(empDetailEntity.getGivenName());
+                    supervisorList.setNameInFull(empDetailEntity.getNameInFull());
+                    supervisorList.setContactNo(empDetailEntity.getContactNo());
+                    supervisorList.setContactNo(empDetailEntity.getContactNo());
+                    supervisorList.setSupervisor(empDetailEntity.getSupervisor());
+
+                    supervisorLists.add(supervisorList);
+                }
+
+            });
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+            responseList.setData(supervisorLists);
+
+            return responseList;
+        }
+        else {
+
+            List<EmpDetailEntity> list = empDetailRepository.findBySupervisor(id);
+
+            List<SupervisorLeaveList> supervisorLists = new ArrayList<>();
+
+            list.forEach(empDetailEntity -> {
+
+                SupervisorLeaveList supervisorList = new SupervisorLeaveList();
+                supervisorList.setId(empDetailEntity.getId());
+                supervisorList.setEmail(empDetailEntity.getEmail());
+                supervisorList.setNicNo(empDetailEntity.getNicNo());
+                supervisorList.setGivenName(empDetailEntity.getGivenName());
+                supervisorList.setNameInFull(empDetailEntity.getNameInFull());
+                supervisorList.setContactNo(empDetailEntity.getContactNo());
+                supervisorList.setContactNo(empDetailEntity.getContactNo());
+                supervisorList.setSupervisor(empDetailEntity.getSupervisor());
+
+                supervisorList.setPendingLeave(attendanceRepository.getPendingRequestedCount(empDetailEntity.getId()));
+
+                supervisorLists.add(supervisorList);
+
+            });
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+            responseList.setData(supervisorLists);
+
+            return responseList;
+        }
+
+    }
+
 
     @Override
     public ResponseList changeStatusForAttendance(int attendance, int user, int status, String comment) {

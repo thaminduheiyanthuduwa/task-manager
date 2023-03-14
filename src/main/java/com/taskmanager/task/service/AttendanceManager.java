@@ -21,6 +21,8 @@ public interface AttendanceManager {
 
     ResponseList getChildListForSupervisor(int id);
 
+    ResponseList getMinorStaffList(int id);
+
     ResponseList changeStatusForAttendance(int attendance,int user,int status, String comment);
 
     ResponseList getTodayInTime(int id) throws ParseException;

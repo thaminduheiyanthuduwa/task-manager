@@ -73,7 +73,7 @@ public class TaskController {
 
     @RequestMapping(value = "/edit_task", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseList createTask(@RequestBody CreateTask createTask, @RequestParam(value = "task_id") int task,
-                                   @RequestParam(value = "user_id") int id) {
+                                   @RequestParam(value = "user_id") int id) throws ParseException {
 
         return taskManager.editTask(createTask, task, id);
 
