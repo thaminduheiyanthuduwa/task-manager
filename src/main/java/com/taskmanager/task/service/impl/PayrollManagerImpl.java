@@ -36,7 +36,7 @@ public class PayrollManagerImpl implements PayrollManager {
     @Override
     public ResponseList updateWithAllSalaryInfoForMonth() throws ParseException {
 
-        String url = "http://localhost:8080/main-erp/payroll/update-all-salary-info";
+        String url = "http://localhost:8085/main-erp/payroll/update-all-salary-info";
 
         RestTemplate restTemplate = new RestTemplate();
 

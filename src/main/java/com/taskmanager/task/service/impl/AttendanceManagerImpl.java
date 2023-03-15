@@ -3,6 +3,7 @@ package com.taskmanager.task.service.impl;
 import com.taskmanager.task.entity.*;
 import com.taskmanager.task.model.Attendance.*;
 import com.taskmanager.task.repository.*;
+import com.taskmanager.task.response.AttendanceDateRangeObj;
 import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.response.leave.SupervisorLeaveList;
 import com.taskmanager.task.service.AttendanceManager;
@@ -93,6 +94,15 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 erpAttendance.setLateTime(Integer.parseInt(attendance.getLateTime())/(60*60)+" Hour "+(Integer.parseInt(attendance.getLateTime())%(3600))/60+" Min");
             if (attendance.getOtTime() != null)
                 erpAttendance.setOtTime(Integer.parseInt(attendance.getOtTime())/(60*60)+" Hour "+(Integer.parseInt(attendance.getOtTime())%(3600))/60+" Min");
+            if (attendance.getApplyLate() != null)
+                erpAttendance.setApplyLate(attendance.getApplyLate());
+            else
+                erpAttendance.setApplyLate(0);
+
+            if (attendance.getApplyOt() != null)
+                erpAttendance.setApplyOt(attendance.getApplyOt());
+            else
+                erpAttendance.setApplyOt(0);
 
             erpAttendance.setAttendanceStatus(attendance.getPayRollStatus());
 
@@ -100,7 +110,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         }
 //        outObj.sort(Comparator.comparing(MyAttendance::getId).reversed());
 
-        String url = "http://localhost:8080/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
+        String url = "http://localhost:8085/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -165,9 +175,13 @@ public class AttendanceManagerImpl implements AttendanceManager {
     }
 
     @Override
-    public ResponseList getAttendanceByIDForApproval(int id) throws ParseException {
+    public ResponseList getAttendanceByIDForApproval(int id, String date) throws ParseException {
 
         SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        LocalDate endDateObj = LocalDate.parse((date+"-01"), DateTimeFormatter.ISO_DATE);
+        LocalDate firstDateOfNextMonth = endDateObj.plusMonths(1).withDayOfMonth(1);
+        String result = firstDateOfNextMonth.format(DateTimeFormatter.ISO_DATE);
 
         SimpleDateFormat convertStringToDateTypeTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -177,7 +191,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         Optional<EmpDetailEntity> emp = empDetailRepository.findById(id);
 
-        List<AttendanceEntity> attendanceIssue = attendanceRepository.findByEmpId(id);
+        List<AttendanceEntity> attendanceIssue = attendanceRepository.findByEmpIdAndDateRange(id, (date+"-01"), result);
 
         Comparator<AttendanceEntity> comparator = (c1, c2) -> {
             return Long.valueOf(c1.getDate().getTime()).compareTo(c2.getDate().getTime());
@@ -217,6 +231,13 @@ public class AttendanceManagerImpl implements AttendanceManager {
            else {
                erpAttendance.setApplyOt(0);
            }
+
+            if (attendance.getApplyLate() != null){
+                erpAttendance.setApplyLate(attendance.getApplyLate());
+            }
+            else {
+                erpAttendance.setApplyLate(0);
+            }
 
            erpAttendance.setAttendanceStatus(attendance.getPayRollStatus());
 
@@ -307,7 +328,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
 
-        String url = "http://localhost:8080/main-erp/get-my-yesterday-attendance";
+        String url = "http://localhost:8085/main-erp/get-my-yesterday-attendance";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -714,10 +735,10 @@ public class AttendanceManagerImpl implements AttendanceManager {
     }
 
     @Override
-    public ResponseList changeStatus(Integer id, Integer status) throws ParseException {
+    public ResponseList changeStatus(Integer id, Integer status, String date) throws ParseException {
 
         if (status == 2 || status == 3){
-            ResponseList objList = getAttendanceByIDForApproval(id);
+            ResponseList objList = getAttendanceByIDForApproval(id, date);
 
             List<AttendanceEntity> list = new ArrayList<>();
 
@@ -740,7 +761,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
             return responseList;
 
         }
-        else {
+        else if (status == 1){
             Optional<AttendanceEntity> detail = attendanceRepository.findById(id);
 
             AttendanceEntity obj = detail.get();
@@ -748,6 +769,74 @@ public class AttendanceManagerImpl implements AttendanceManager {
             if (status == 1) {
                 Integer val = obj.getApplyOt() != null ? obj.getApplyOt() : 0;
                 obj.setApplyOt(val == 1 ? 0 : 1);
+            }
+
+            attendanceRepository.save(obj);
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+
+            return responseList;
+        }
+        else if (status == 5 || status == 6){
+            ResponseList objList = getAttendanceByIDForApproval(id, date);
+
+            List<AttendanceEntity> list = new ArrayList<>();
+
+            for (MyAttendance datum : (List<MyAttendance>) objList.getData()) {
+                Optional<AttendanceEntity> detail = attendanceRepository.findById(datum.getId());
+
+                AttendanceEntity obj = detail.get();
+                if (status == 6)
+                    obj.setApplyLate(1);
+                if (status == 5)
+                    obj.setApplyLate(0);
+                list.add(obj);
+            }
+            attendanceRepository.saveAll(list);
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+
+            return responseList;
+
+        }
+        else if (status == 4){
+            Optional<AttendanceEntity> detail = attendanceRepository.findById(id);
+
+            AttendanceEntity obj = detail.get();
+
+            if (status == 4) {
+                Integer val = obj.getApplyLate() != null ? obj.getApplyLate() : 0;
+                obj.setApplyLate(val == 1 ? 0 : 1);
+            }
+
+            attendanceRepository.save(obj);
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+
+            return responseList;
+        }
+        else {
+            Optional<AttendanceEntity> detail = attendanceRepository.findById(id);
+
+            AttendanceEntity obj = detail.get();
+
+            if (status == 7) {
+                obj.setApplyOt(3);
+            }
+            else if (status == 8) {
+                obj.setApplyOt(0);
+            }
+            else if (status == 9) {
+                obj.setApplyLate(3);
+            }
+            else if (status == 10) {
+                obj.setApplyLate(0);
             }
 
             attendanceRepository.save(obj);
@@ -890,7 +979,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                         attendanceEntity.setIsWorkingDay(-999F);
                         attendanceEntity.setPayRollStatus(8);//weekday no pay
                     }
-                    if (attendanceEntity.getLeaveTime()!= null && attendanceEntity.getLeaveTime() == 16200){
+                    else if (attendanceEntity.getLeaveTime()!= null && attendanceEntity.getLeaveTime() == 16200){
                         attendanceEntity.setIsWorkingDay(-0.5F);
                         attendanceEntity.setPayRollStatus(9);//week day half day
                     }
@@ -1022,6 +1111,33 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         return responseList;
 
+    }
+
+    @Override
+    public ResponseList getOTProcessDates() {
+
+        List<String> listObj = attendanceRepository.getAttendanceDateRange();
+
+        List<AttendanceDateRangeObj> objList = new ArrayList<>();
+
+        listObj.forEach(s -> {
+
+
+            AttendanceDateRangeObj obj = new AttendanceDateRangeObj();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            YearMonth yearMonth = YearMonth.parse(s, formatter);
+            obj.setDate(s);
+            obj.setMonth(yearMonth.getMonth().toString());
+            objList.add(obj);
+
+        });
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(objList);
+        responseList.setMsg("Success");
+
+        return responseList;
     }
 
 

@@ -764,7 +764,7 @@ public class TaskManagerImpl implements TaskManager {
                 }
 
                 Transport.send(message);
-                System.out.println("Sent message successfully....");
+                System.out.println("Sent message successfully.");
             } catch (MessagingException mex) {
                 mex.printStackTrace();
             }
@@ -1302,7 +1302,7 @@ public class TaskManagerImpl implements TaskManager {
                 Transport.send(message2);
             }
 
-            System.out.println("Sent message successfully....");
+            System.out.println("Sent message successfully.");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
@@ -1372,7 +1372,7 @@ public class TaskManagerImpl implements TaskManager {
 
             Transport.send(message2);
 
-            System.out.println("Sent message successfully....");
+            System.out.println("Sent message successfully.");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
@@ -1442,7 +1442,7 @@ public class TaskManagerImpl implements TaskManager {
 
             Transport.send(message2);
 
-            System.out.println("Sent message successfully....");
+            System.out.println("Sent message successfully.");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }

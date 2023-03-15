@@ -51,6 +51,9 @@ public class MyAttendance {
     @JsonProperty("applyOt")
     private Integer applyOt;
 
+    @JsonProperty("applyLate")
+    private Integer applyLate;
+
     @JsonProperty("attendanceStatus")
     private Integer attendanceStatus;
 

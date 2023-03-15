@@ -24,8 +24,9 @@ public class AttendanceController {
     }
 
     @RequestMapping(value = "/get-attendance-by-id-for-approval", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getAttendanceForApproval(@RequestParam(value = "user_id") int id) throws ParseException {
-        return attendanceManager.getAttendanceByIDForApproval(id);
+    public ResponseList getAttendanceForApproval(@RequestParam(value = "user_id") int id,
+                                                 @RequestParam(value = "date") String date) throws ParseException {
+        return attendanceManager.getAttendanceByIDForApproval(id, date);
 
     }
 
@@ -104,10 +105,11 @@ public class AttendanceController {
 
     }
 
-    @RequestMapping(value = "/update-status/{id}/{status}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @RequestMapping(value = "/update-status/{id}/{status}/{date}", method = RequestMethod.PUT, headers = "Accept=application/json")
     public ResponseList changeStatus(@PathVariable(value = "id") int id,
-                                     @PathVariable(value = "status") int status) throws ParseException {
-        return attendanceManager.changeStatus(id, status);
+                                     @PathVariable(value = "status") int status,
+                                     @PathVariable(value = "date") String date) throws ParseException {
+        return attendanceManager.changeStatus(id, status, date);
 
     }
 
@@ -140,6 +142,13 @@ public class AttendanceController {
     public ResponseList getMinorStaffList(@RequestParam(value = "supervisor") int id) {
 
         return attendanceManager.getMinorStaffList(id);
+
+    }
+
+    @RequestMapping(value = "/get-ot-process-dates", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList otProcessDates() {
+
+        return attendanceManager.getOTProcessDates();
 
     }
 }

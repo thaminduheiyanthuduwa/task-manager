@@ -9,7 +9,7 @@ import java.text.ParseException;
 public interface AttendanceManager {
     ResponseList getAttendanceByID(int id) throws ParseException;
 
-    ResponseList getAttendanceByIDForApproval(int id) throws ParseException;
+    ResponseList getAttendanceByIDForApproval(int id, String date) throws ParseException;
 
     ResponseList getAllAttendanceDetails();
 
@@ -35,7 +35,7 @@ public interface AttendanceManager {
 
     ResponseList updatePastMonthAttendance() throws ParseException;
 
-    ResponseList changeStatus(Integer id, Integer status) throws ParseException;
+    ResponseList changeStatus(Integer id, Integer status, String date) throws ParseException;
 
     ResponseList updateLeaveWithAttendance() throws ParseException;
 
@@ -44,5 +44,7 @@ public interface AttendanceManager {
     ResponseList processOt(Integer id, Integer status) throws ParseException;
 
     ResponseList setPayRollStatus() throws ParseException;
+
+    ResponseList getOTProcessDates();
 
 }
