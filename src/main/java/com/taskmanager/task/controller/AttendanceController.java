@@ -52,9 +52,9 @@ public class AttendanceController {
 
     }
 
-    @RequestMapping(value = "/update-with-yesterday-attendance", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList updateWithYesterdayAttendanceData() {
-        return attendanceManager.updateWithYesterdayAttendance();
+    @RequestMapping(value = "/update-with-yesterday-attendance/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList updateWithYesterdayAttendanceData(@PathVariable(value = "id") int id) {
+        return attendanceManager.updateWithYesterdayAttendance(id);
 
     }
 
