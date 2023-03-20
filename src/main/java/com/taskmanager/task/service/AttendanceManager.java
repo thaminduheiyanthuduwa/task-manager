@@ -19,7 +19,7 @@ public interface AttendanceManager {
 
     ResponseList createAttendance(Integer id,CreateAttendance createAttendance);
 
-    ResponseList updateWithYesterdayAttendance();
+    ResponseList updateWithYesterdayAttendance(int id);
 
     ResponseList getChildListForSupervisor(int id);
 

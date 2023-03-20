@@ -113,7 +113,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         }
 //        outObj.sort(Comparator.comparing(MyAttendance::getId).reversed());
 
-        String url = "http://localhost:8085/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
+        String url = "http://localhost:8081/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -335,14 +335,14 @@ public class AttendanceManagerImpl implements AttendanceManager {
         attendanceEntityGetIdObj.setId(newObj.getId());
         attendanceEntityGetIdObj.setName(newObj.getName());
         attendanceEntityGetIdObj.setEmpId(newObj.getEmpId());
-        attendanceEntityGetIdObj.setDate(convertDateToDateOnly.format(newObj.getDate()));
+        attendanceEntityGetIdObj.setDate(newObj.getDate() != null ? convertDateToDateOnly.format(newObj.getDate()) : "");
         attendanceEntityGetIdObj.setInTime(newObj.getInTime());
         attendanceEntityGetIdObj.setOutTime(newObj.getOutTime());
         attendanceEntityGetIdObj.setWorkDuration(newObj.getWorkDuration());
         attendanceEntityGetIdObj.setType(newObj.getType());
         attendanceEntityGetIdObj.setComment(newObj.getComment());
         attendanceEntityGetIdObj.setApprovedBy(newObj.getApprovedBy());
-        attendanceEntityGetIdObj.setApprovedDate(convertDateToDateOnly.format(newObj.getApprovedDate()));
+        attendanceEntityGetIdObj.setApprovedDate(newObj.getApprovedDate() != null ? convertDateToDateOnly.format(newObj.getApprovedDate()) : "");
         attendanceEntityGetIdObj.setStatus(newObj.getStatus());
         attendanceEntityGetIdObj.setApproved_by_id(newObj.getApproved_by_id());
         attendanceEntityGetIdObj.setSupervisorComment(newObj.getSupervisorComment());
@@ -380,16 +380,16 @@ public class AttendanceManagerImpl implements AttendanceManager {
     }
 
     @Override
-    public ResponseList updateWithYesterdayAttendance() {
+    public ResponseList updateWithYesterdayAttendance(int id) {
 
-        Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000 * 6);
+        Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000 * id);
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat convertDateToDateOnlyWithTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
 
-        String url = "http://localhost:8085/main-erp/get-my-yesterday-attendance";
+        String url = "http://localhost:8081/main-erp/get-my-yesterday-attendance/"+id;
 
         RestTemplate restTemplate = new RestTemplate();
 
