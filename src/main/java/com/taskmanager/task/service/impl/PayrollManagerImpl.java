@@ -1,6 +1,9 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
+import com.taskmanager.task.model.Payroll.PayrollPdfInfoDeductionObject;
+import com.taskmanager.task.model.Payroll.PayrollPdfInfoEarningObject;
+import com.taskmanager.task.model.Payroll.PayrollPdfInfoObject;
 import com.taskmanager.task.repository.*;
 import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.service.PayrollManager;
@@ -10,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -34,7 +38,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
 
     @Override
-    public ResponseList updateWithAllSalaryInfoForMonth() throws ParseException {
+    public ResponseList updateWithAllSalaryInfoForMonth() {
 
         String url = "http://localhost:8085/main-erp/payroll/update-all-salary-info";
 
@@ -63,7 +67,7 @@ public class PayrollManagerImpl implements PayrollManager {
             allSalaryInfoEntity.setCategory(temp.get("category"));
             allSalaryInfoEntity.setType(temp.get("type"));
             allSalaryInfoEntity.setAmount(Float.valueOf(temp.get("amount")));
-            allSalaryInfoEntity.setMonth("Feb-23");
+            allSalaryInfoEntity.setMonth("Mar");
             allSalaryInfoEntities.add(allSalaryInfoEntity);
 
         }
@@ -97,9 +101,39 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<PayrollEntityDetails> summery = payrollDetailsRepository.findAll();
 
+
+        List<PayrollEntityDetails> objList = new ArrayList<>();
+
+        summery.forEach(payrollEntityDetails -> {
+
+//            Integer value = attendanceRepository.getAttendanceOTAndLateById(payrollEntityDetails.getEmpId());
+//
+//            if (value == 3) {
+//                payrollEntityDetails.setIsOt(1);
+//                payrollEntityDetails.setIsLate(1);
+//            }
+//            else if (value == 2){
+//                payrollEntityDetails.setIsOt(1);
+//                payrollEntityDetails.setIsLate(0);
+//            }
+//            else if (value == 1){
+//                payrollEntityDetails.setIsOt(0);
+//                payrollEntityDetails.setIsLate(1);
+//            }
+//            else {
+//                payrollEntityDetails.setIsOt(0);
+//                payrollEntityDetails.setIsLate(0);
+//            }
+            payrollEntityDetails.setIsOt(8);
+            payrollEntityDetails.setIsLate(8);
+
+            objList.add(payrollEntityDetails);
+
+        });
+
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
-        responseList.setData(summery);
+        responseList.setData(objList);
         responseList.setMsg("Success");
 
         return responseList;
@@ -107,7 +141,7 @@ public class PayrollManagerImpl implements PayrollManager {
     }
 
     @Override
-    public ResponseList startMonthPeopleConfig(Integer id) throws ParseException {
+    public ResponseList startMonthPeopleConfig(Integer id) {
 
         List<EmpDetailEntity> peopleList = empDetailRepository.findAll();
 
@@ -210,6 +244,175 @@ public class PayrollManagerImpl implements PayrollManager {
         responseList.setMsg("Success");
 
         return responseList;
+    }
+
+    @Override
+    public ResponseList getPayrollPdfInfo(Integer id) {
+
+        EmpDetailEntity emp = empDetailRepository.findById(id).get();
+
+        PayrollEntityDetails payroll = payrollDetailsRepository.findByEmpId(id).get(0);
+
+        List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository.getAllSalaryInfoByName(emp.getNameInFull());
+
+        PayrollPdfInfoObject payrollPdfInfoObject = new PayrollPdfInfoObject();
+
+        payrollPdfInfoObject.setId(String.valueOf(id));
+        payrollPdfInfoObject.setName(emp.getNameInFull());
+        payrollPdfInfoObject.setEpfNo(emp.getEpfNumber());
+        payrollPdfInfoObject.setDesignation(emp.getDesignation());
+        payrollPdfInfoObject.setDesignation(emp.getDesignation());
+        payrollPdfInfoObject.setDate("2023-Mar");
+
+        List<PayrollPdfInfoEarningObject> list1 = new ArrayList<>();
+        List<PayrollPdfInfoDeductionObject> list2 = new ArrayList<>();
+
+        salaryInfo.forEach(allSalaryInfoEntity -> {
+
+            if ((allSalaryInfoEntity.getCategory()
+                    .equalsIgnoreCase("Basic Salary") || allSalaryInfoEntity.getCategory()
+                    .equalsIgnoreCase("Allowances")) && allSalaryInfoEntity.getAmount() != 0) {
+
+                PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
+                payrollPdfInfoEarningObject.setTitle("Payroll");
+                payrollPdfInfoEarningObject.setEarnings(allSalaryInfoEntity.getType());
+                payrollPdfInfoEarningObject.setRate("");
+                payrollPdfInfoEarningObject.setHours("");
+                payrollPdfInfoEarningObject.setTotal(String.valueOf(allSalaryInfoEntity.getAmount()));
+                list1.add(payrollPdfInfoEarningObject);
+            }
+            else if ((allSalaryInfoEntity.getCategory()
+                    .equalsIgnoreCase("Deductions")) && allSalaryInfoEntity.getAmount() != 0) {
+
+                PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+                payrollPdfInfoDeductionObject.setTitle("Payroll");
+                payrollPdfInfoDeductionObject.setDeduction(allSalaryInfoEntity.getType());
+                payrollPdfInfoDeductionObject.setRate("");
+                payrollPdfInfoDeductionObject.setHours("");
+                payrollPdfInfoDeductionObject.setTotal(String.valueOf(allSalaryInfoEntity.getAmount()));
+                list2.add(payrollPdfInfoDeductionObject);
+            }
+
+        });
+
+        if (payroll.getTotalNoPay() > 0){
+            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+            payrollPdfInfoDeductionObject.setTitle("Payroll");
+            payrollPdfInfoDeductionObject.setDeduction("No Pay");
+            payrollPdfInfoDeductionObject.setRate("");
+            payrollPdfInfoDeductionObject.setHours("");
+            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getTotalNoPay()));
+            list2.add(payrollPdfInfoDeductionObject);
+            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalNoPay());
+        }
+        if (payroll.getTotalMorningLate() > 0){
+            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+            payrollPdfInfoDeductionObject.setTitle("Payroll");
+            payrollPdfInfoDeductionObject.setDeduction("Morning Late");
+            payrollPdfInfoDeductionObject.setRate("");
+            payrollPdfInfoDeductionObject.setHours("");
+            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getTotalMorningLate()));
+            list2.add(payrollPdfInfoDeductionObject);
+            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalMorningLate());
+        }
+        if (payroll.getTotalLateAmount() > 0){
+            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+            payrollPdfInfoDeductionObject.setTitle("Payroll");
+            payrollPdfInfoDeductionObject.setDeduction("Late Amount");
+            payrollPdfInfoDeductionObject.setRate("");
+            payrollPdfInfoDeductionObject.setHours("");
+            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getTotalLateAmount()));
+            list2.add(payrollPdfInfoDeductionObject);
+            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalLateAmount());
+        }
+        if (payroll.getTotalOt() > 0){
+            payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
+            PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
+            payrollPdfInfoEarningObject.setTitle("Payroll");
+            payrollPdfInfoEarningObject.setEarnings("OT Amount");
+            payrollPdfInfoEarningObject.setRate("");
+            payrollPdfInfoEarningObject.setHours("");
+            list1.add(payrollPdfInfoEarningObject);
+            payrollPdfInfoEarningObject.setTotal(String.valueOf(payroll.getTotalOt()));
+        }
+
+        payrollPdfInfoObject.setTotalAmount(String.valueOf(payroll.getGrossSalary() - payroll.getTotalDeductions()));
+
+        payrollPdfInfoObject.setPayrollPdfInfoEarningObjectList(list1);
+        payrollPdfInfoObject.setPayrollPdfInfoDeductionObjects(list2);
+        payrollPdfInfoObject.setPayrollEntityDetails(payroll);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(payrollPdfInfoObject);
+        responseList.setMsg("Success");
+
+        return responseList;
+    }
+
+    @Override
+    public ResponseList createPayRoll() {
+
+        List<PayrollSummery> payRoll = payrollSummeryRepository.findAll();
+
+        List<PayrollSummery> newList = payRoll.stream().filter(payrollSummery -> payrollSummery
+                .getStatus() == 1 || payrollSummery.getStatus() == 3).toList();
+
+        if (!newList.isEmpty()){
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(400);
+            responseList.setMsg("Already Created a payroll for this month");
+            return responseList;
+        }
+        else {
+            PayrollSummery payrollSummery = new PayrollSummery();
+            payrollSummery.setProcessDate(new Date());
+            payrollSummery.setStatus(1);
+            payrollSummeryRepository.save(payrollSummery);
+
+            updateWithAllSalaryInfoForMonth();
+            startMonthPeopleConfig(1);
+
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            return responseList;
+
+        }
+
+    }
+
+    @Override
+    public ResponseList changePayRollSummaryStatus(int status) {
+
+        List<PayrollSummery> payRoll = payrollSummeryRepository.findAll();
+
+        List<PayrollSummery> newList = payRoll.stream().filter(payrollSummery -> payrollSummery
+                .getStatus() == 1 || payrollSummery.getStatus() == 3).toList();
+
+        if (!newList.isEmpty()){
+
+            if (status == 2){
+                allSalaryInfoRepository.deleteAll();
+                payrollDetailsRepository.deleteAll();
+            }
+
+            PayrollSummery obj = newList.get(0);
+            obj.setStatus(status);
+            payrollSummeryRepository.save(obj);
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(200);
+            return responseList;
+        }
+        else {
+            ResponseList responseList = new ResponseList();
+            responseList.setCode(400);
+            return responseList;
+        }
+
+
+
+
+
     }
 
 

@@ -9,6 +9,8 @@ import java.text.ParseException;
 public interface AttendanceManager {
     ResponseList getAttendanceByID(int id) throws ParseException;
 
+    ResponseList getAttendanceByIDForMonth(int id);
+
     ResponseList getAttendanceByIDForApproval(int id, String date) throws ParseException;
 
     ResponseList getAllAttendanceDetails();

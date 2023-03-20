@@ -23,6 +23,12 @@ public class AttendanceController {
 
     }
 
+    @RequestMapping(value = "/get-attendance-by-id-for-pdf/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getAttendanceByIDForMonth(@PathVariable(value = "id") int id) throws ParseException {
+        return attendanceManager.getAttendanceByIDForMonth(id);
+
+    }
+
     @RequestMapping(value = "/get-attendance-by-id-for-approval", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList getAttendanceForApproval(@RequestParam(value = "user_id") int id,
                                                  @RequestParam(value = "date") String date) throws ParseException {

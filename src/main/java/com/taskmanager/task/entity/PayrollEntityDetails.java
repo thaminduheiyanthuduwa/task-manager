@@ -38,6 +38,9 @@ public class PayrollEntityDetails {
     @Column(name = "is_ot")
     private Integer isOt;
 
+    @Column(name = "is_late")
+    private Integer isLate;
+
     @Column(name = "advance")
     private Float advance;
 
@@ -67,6 +70,30 @@ public class PayrollEntityDetails {
 
     @Column(name = "gross_salary")
     private Float grossSalary;
+
+    @Column(name = "total_late_amount")
+    private Float totalLateAmount;
+
+    @Column(name = "total_morning_late")
+    private Float totalMorningLate;
+
+    @Column(name = "epf_deduction")
+    private Float epfDeduction;
+
+    @Column(name = "epf_addition")
+    private Float epfAddition;
+
+    @Column(name = "etf")
+    private Float etf;
+
+    @Column(name = "total_deductions")
+    private Float totalDeductions;
+
+    @Column(name = "total_additions")
+    private Float totalAdditions;
+
+    @Column(name = "published")
+    private Integer published;
 
     public PayrollEntityDetails() {}
 

@@ -96,6 +96,12 @@ public class AttendanceEntity {
     private Integer payRollStatus;
 
     @Column(name="late_amount")
-    private Integer lateAmount;
+    private Float lateAmount;
+
+    @Column(name="morning_late")
+    private String morningLate;
+
+    @Column(name=" morning_late_amount")
+    private Float morningLateAmount;
 
 }

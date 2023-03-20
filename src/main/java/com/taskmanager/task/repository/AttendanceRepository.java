@@ -21,6 +21,11 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
                                                    @Param("endDate") String endDate);
 
     @Query(nativeQuery = true,
+            value = "select * from attendance WHERE date >= :startDate and date < :endDate")
+    List<AttendanceEntity> findByDateRange(@Param("startDate") String startDate,
+                                           @Param("endDate") String endDate);
+
+    @Query(nativeQuery = true,
             value = "select count(id) from attendance where status = 2 and emp_id = :id")
     Integer getPendingRequestedCount(@Param("id") int id);
 
@@ -36,5 +41,14 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
     @Query(nativeQuery = true,
             value = "SELECT distinct DATE_FORMAT(date, '%Y-%m') as dates FROM attendance;")
     List<String> getAttendanceDateRange();
+
+
+    @Query(nativeQuery = true,
+            value = "select (CASE WHEN ot > 0 and late > 0 THEN 3 \n" +
+                    "        WHEN ot > 0 and late < 1 THEN 2\n" +
+                    "        WHEN ot < 1 and late > 0 THEN 1 ELSE 0 END) as status_sum from (SELECT id, sum(apply_ot) as ot, sum(apply_late) as late  FROM attendance WHERE emp_id = :emp_id) obj")
+    Integer getAttendanceOTAndLateById(@Param("emp_id") Integer emp_id);
+
+
 
 }

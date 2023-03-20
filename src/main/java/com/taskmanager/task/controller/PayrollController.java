@@ -19,7 +19,7 @@ public class PayrollController {
     PayrollManager payrollManager;
 
     @RequestMapping(value = "/get-attendance-by-id", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getAttendance() throws ParseException {
+    public ResponseList getAttendance() {
         return payrollManager.updateWithAllSalaryInfoForMonth();
 
     }
@@ -37,7 +37,7 @@ public class PayrollController {
     }
 
     @RequestMapping(value = "/start-month-people-config", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList startMonthPeopleConfig() throws ParseException {
+    public ResponseList startMonthPeopleConfig() {
         return payrollManager.startMonthPeopleConfig(1);
 
     }
@@ -59,6 +59,24 @@ public class PayrollController {
     @RequestMapping(value = "/process_ot", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList processOt() throws ParseException {
         return payrollManager.processOt();
+
+    }
+
+    @RequestMapping(value = "/get-payroll-pdf-info/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getPayrollPdfInfo(@PathVariable(value = "id") Integer id) {
+        return payrollManager.getPayrollPdfInfo(id);
+
+    }
+
+    @RequestMapping(value = "/create-payroll-summary", method = RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseList createPayrollSummary() {
+        return payrollManager.createPayRoll();
+
+    }
+
+    @RequestMapping(value = "/change-payroll-summary-status/{status}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList changePayrollSummeryStatus(@PathVariable(value = "status") int status) {
+        return payrollManager.changePayRollSummaryStatus(status);
 
     }
 

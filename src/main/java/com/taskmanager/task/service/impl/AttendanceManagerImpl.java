@@ -11,15 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -46,6 +43,9 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
     @Autowired
     private PayrollDetailsRepository payrollDetailsRepository;
+
+    @Autowired
+    private AllSalaryInfoRepository allSalaryInfoRepository;
 
 
     @Override
@@ -96,8 +96,11 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 erpAttendance.setOtTime(Integer.parseInt(attendance.getOtTime())/(60*60)+" Hour "+(Integer.parseInt(attendance.getOtTime())%(3600))/60+" Min");
             if (attendance.getApplyLate() != null)
                 erpAttendance.setApplyLate(attendance.getApplyLate());
+
+            if (!(attendance.getMorningLate() == null || attendance.getMorningLate().equalsIgnoreCase("")))
+                erpAttendance.setMorningLateTime((-1*Integer.parseInt(attendance.getMorningLate()))/(60*60)+ " Hour "+ ((-1)*Integer.parseInt(attendance.getMorningLate())%(3600))/60+" Min");
             else
-                erpAttendance.setApplyLate(0);
+                erpAttendance.setMorningLateTime("");
 
             if (attendance.getApplyOt() != null)
                 erpAttendance.setApplyOt(attendance.getApplyOt());
@@ -171,6 +174,64 @@ public class AttendanceManagerImpl implements AttendanceManager {
         responseList.setCode(200);
         responseList.setMsg("Attendance data find by id");
         responseList.setData(outObj);
+        return responseList;
+    }
+
+    @Override
+    public ResponseList getAttendanceByIDForMonth(int id) {
+
+        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-03-01", "2023-04-01");
+
+        List<AttendanceDetailsForPdf> list = new ArrayList<>();
+
+        attendanceList.forEach(attendanceEntity -> {
+
+            AttendanceDetailsForPdf obj = new AttendanceDetailsForPdf();
+            if (attendanceEntity.getPayRollStatus() == -1)
+                obj.setStatus("No Pay Weekend");
+            else if (attendanceEntity.getPayRollStatus() == 0)
+                obj.setStatus("Saturday Half Day");
+            else if (attendanceEntity.getPayRollStatus() == 1)
+                obj.setStatus("Sunday Leave");
+            else if (attendanceEntity.getPayRollStatus() == 2)
+                obj.setStatus("Saturday Normal Work");
+            else if (attendanceEntity.getPayRollStatus() == 3)
+                obj.setStatus("Saturday Full And Day Off Cover");
+            else if (attendanceEntity.getPayRollStatus() == 4)
+                obj.setStatus("Sunday Full Day Work For Day Off");
+            else if (attendanceEntity.getPayRollStatus() == 5)
+                obj.setStatus("Sunday Half Day Work For Day Off");
+            else if (attendanceEntity.getPayRollStatus() == 6)
+                obj.setStatus("Sunday Extra Day Full Work");
+            else if (attendanceEntity.getPayRollStatus() == 7)
+                obj.setStatus("Saturday Normal Day And Extra Work");
+            else if (attendanceEntity.getPayRollStatus() == 8)
+                obj.setStatus("No Pay Weekday");
+            else if (attendanceEntity.getPayRollStatus() == 9)
+                obj.setStatus("Week Day Half Day");
+            else if (attendanceEntity.getPayRollStatus() == 10)
+                obj.setStatus("Week Day Full Day Leave");
+            else if (attendanceEntity.getPayRollStatus() == 11)
+                obj.setStatus("Week Day Working Day");
+            else if (attendanceEntity.getPayRollStatus() == 12)
+                obj.setStatus("Sunday Extra Half Work");
+            else
+                obj.setStatus("No Status Found");
+
+            SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+
+            obj.setDate(convertDateToDateOnly.format(attendanceEntity.getDate()));
+            obj.setOtAmount(attendanceEntity.getOtAmount() != null ? String.valueOf(attendanceEntity.getOtAmount()) : "0");
+            obj.setLateAmount(attendanceEntity.getLateAmount() != null ? String.valueOf(attendanceEntity.getLateAmount()) : "0");
+            obj.setNoPay(attendanceEntity.getNoPayAmount() != null ? String.valueOf(attendanceEntity.getNoPayAmount()) : "0");
+            obj.setMorningLate(attendanceEntity.getMorningLateAmount() != null ? String.valueOf(attendanceEntity.getMorningLateAmount()): "0");
+            list.add(obj);
+        });
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Attendance data find by id");
+        responseList.setData(list);
         return responseList;
     }
 
@@ -704,7 +765,16 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 LocalTime outTime = LocalTime.parse(attendanceEntity.getOutTime());
                 LocalTime inTime = LocalTime.parse(attendanceEntity.getInTime());
                 Duration duration = Duration.between(inTime, outTime);
+                Duration duration2 = Duration.between(inTime, LocalTime.of(8, 0));
                 long seconds = duration.getSeconds();
+                long seconds2 = duration2.getSeconds();
+
+                if (seconds2 < 0){
+                    attendanceEntity.setMorningLate(String.valueOf(seconds2));
+                }
+                else {
+                    attendanceEntity.setMorningLate("0");
+                }
 
                 attendanceEntity.setTotalWorkingHours(String.valueOf(seconds));
 
@@ -916,7 +986,39 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         groupOt.forEach((integer, attendanceEntities) -> {
 
+            if (integer == 296){
+                System.out.println("");
+            }
+
             attendanceEntities.forEach(attendanceEntity -> {
+
+                long seconds = 0L;
+                long seconds2 = 0L;
+
+                boolean isException = false;
+
+                try {
+
+                    LocalTime outTime = LocalTime.parse(attendanceEntity.getOutTime());
+                    LocalTime inTime = LocalTime.parse(attendanceEntity.getInTime());
+                    Duration duration = Duration.between(inTime, outTime);
+                    Duration duration2 = Duration.between(inTime, LocalTime.of(8, 0));
+                    seconds = duration.getSeconds();
+                    seconds2 = duration2.getSeconds();
+
+                    if (seconds2 < 0) {
+                        attendanceEntity.setMorningLate(String.valueOf(seconds2));
+                    } else {
+                        attendanceEntity.setMorningLate("0");
+                    }
+
+                    attendanceEntity.setTotalWorkingHours(String.valueOf(seconds));
+
+                } catch (Exception e) {
+                    isException = true;
+                }
+
+                long diff = 0L;
 
                 LocalDate date = LocalDate
                         .parse(convertDateToDateOnly.format(attendanceEntity.getDate()), formatter);
@@ -926,48 +1028,59 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     if (dayName.equalsIgnoreCase("saturday") && ((attendanceEntity.getLeaveTime() == null || (attendanceEntity.getLeaveTime() != null && attendanceEntity.getLeaveTime() < 16200)) && attendanceEntity.getTotalWorkingHours() == null)){
                         attendanceEntity.setIsWorkingDay(-999F);
                         attendanceEntity.setPayRollStatus(-1);//no pay
+                        attendanceEntity.setMorningLate("0");
                     }
                     else if (dayName.equalsIgnoreCase("saturday") && attendanceEntity.getLeaveTime()!= null && attendanceEntity.getLeaveTime() > 0){
                         attendanceEntity.setIsWorkingDay(-0.5F);
                         attendanceEntity.setPayRollStatus(0);//saturday half day
+                        attendanceEntity.setMorningLate("0");
                     }
                     else if (dayName.equalsIgnoreCase("sunday") && (attendanceEntity.getTotalWorkingHours() == null || (attendanceEntity.getTotalWorkingHours() != null && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) == 0) )){
                         attendanceEntity.setIsWorkingDay(-1F);
                         attendanceEntity.setPayRollStatus(1);//sunday leave
+                        attendanceEntity.setMorningLate("0");
                     }
                     else {
                         String tempDate = convertDateToDateOnly.format(attendanceEntity.getDate());
                         List<RosterEntity> roster = rosterRepository.getRosterBetweenDateAndForUserId(tempDate, attendanceEntity.getEmpId());
 
-
                         if (roster.isEmpty()  && dayName.equalsIgnoreCase("saturday") && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) < 16200){
                             attendanceEntity.setIsWorkingDay(0.5F);
+                            String otTime = attendanceEntity.getOtTime();
                             attendanceEntity.setPayRollStatus(2);//saturday normal work
+                            diff = 14400 - seconds;
                         }
                         else if (!roster.isEmpty() && dayName.equalsIgnoreCase("saturday") && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 0){
                             attendanceEntity.setIsWorkingDay(1F);//saturday full and day off cover
                             attendanceEntity.setPayRollStatus(3);
+                            diff = 32400 - seconds;
                         }
                         else if (dayName.equalsIgnoreCase("sunday") && !roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 16200 ){
                             attendanceEntity.setIsWorkingDay(1F);//sunday full day
                             attendanceEntity.setPayRollStatus(4);
+                            diff = 32400 - seconds;
                         }
                         else if (dayName.equalsIgnoreCase("sunday") && !roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 0 ){
                             attendanceEntity.setIsWorkingDay(-0.5F);//sunday half day
                             attendanceEntity.setPayRollStatus(5);
+                            diff = 14400 - seconds;
+                            attendanceEntity.setMorningLate("0");
                         }
                         else if (dayName.equalsIgnoreCase("sunday") && roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 16200) {
                             attendanceEntity.setIsExtraWorking(1); //
                             attendanceEntity.setPayRollStatus(6); //sunday extra full work
+                            attendanceEntity.setMorningLate("0");
                         }
                         else if (dayName.equalsIgnoreCase("sunday") && roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 0) {
                             attendanceEntity.setIsExtraWorking(1); //
                             attendanceEntity.setPayRollStatus(12); //sunday extra half work
+                            attendanceEntity.setMorningLate("0");
                         }
                         else if (dayName.equalsIgnoreCase("saturday") && roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 16200) {
                             attendanceEntity.setIsExtraWorking(1);
                             attendanceEntity.setIsWorkingDay(0.5F);//saturday normal day and extra work
                             attendanceEntity.setPayRollStatus(7);
+                            diff = 14400 - seconds;
                         }
                         else{
                             System.out.println("");
@@ -978,18 +1091,36 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     if ((attendanceEntity.getLeaveTime() == null || (attendanceEntity.getLeaveTime() != null && attendanceEntity.getLeaveTime() < 16200)) && attendanceEntity.getTotalWorkingHours() == null){
                         attendanceEntity.setIsWorkingDay(-999F);
                         attendanceEntity.setPayRollStatus(8);//weekday no pay
+                        attendanceEntity.setMorningLate("0");
                     }
                     else if (attendanceEntity.getLeaveTime()!= null && attendanceEntity.getLeaveTime() == 16200){
                         attendanceEntity.setIsWorkingDay(-0.5F);
                         attendanceEntity.setPayRollStatus(9);//week day half day
+                        attendanceEntity.setMorningLate("0");
+                        diff = 14400 - seconds;
                     }
                     else if (attendanceEntity.getLeaveTime()!= null && attendanceEntity.getLeaveTime() == 32400){
                         attendanceEntity.setIsWorkingDay(-1F);
                         attendanceEntity.setPayRollStatus(10); //week day full day leave
+                        attendanceEntity.setMorningLate("0");
                     }
                     else {
                         attendanceEntity.setIsWorkingDay(1F); //
                         attendanceEntity.setPayRollStatus(11); //week day working day
+                        diff = 32400 - seconds;
+                    }
+                }
+
+                if (!isException) {
+                    if (diff > 0) {
+                        attendanceEntity.setLateTime(String.valueOf(diff));
+                        attendanceEntity.setOtTime("0");
+                    } else if (diff < 0) {
+                        attendanceEntity.setLateTime("0");
+                        attendanceEntity.setOtTime(String.valueOf(diff * (-1)));
+                    } else {
+                        attendanceEntity.setOtTime("0");
+                        attendanceEntity.setLateTime("0");
                     }
                 }
 
@@ -1010,41 +1141,154 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
     @Override
     public ResponseList processOt(Integer id, Integer status) throws ParseException {
-        //Don't Run
-        List<AttendanceEntity> listObj = attendanceRepository.findAll();
 
-        List<AttendanceEntity> newList = new ArrayList<>();
+        List<PayrollEntityDetails> obj = new ArrayList<>();
+        List<AttendanceEntity> obj2 = new ArrayList<>();
+
+        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-03-01", "2023-04-01");
 
         Map<Integer, List<AttendanceEntity>> groupOt = listObj.stream().collect(groupingBy(AttendanceEntity::getEmpId));
 
         groupOt.forEach((integer, attendanceEntities) -> {
 
-            attendanceEntities.forEach(attendanceEntity -> {
+            if (integer == 464){
+                System.out.println("");
+            }
 
-                Optional<PayrollEntityDetails> detailConfig = payrollDetailsRepository
-                        .findById(attendanceEntity.getEmpId());
+            List<PayrollEntityDetails> detailConfigTmp = payrollDetailsRepository
+                    .findByEmpId(integer);
 
-                if (!detailConfig.isEmpty() && detailConfig.get().getIsOt() == 1){
-                    if (detailConfig.get().getIsOtBasic() != null && detailConfig.get().getIsOtBasic() == 1
-                            && attendanceEntity.getOtTime()!=null &&
-                            (Integer.parseInt(attendanceEntity.getOtTime())/60) >60
-                            && attendanceEntity.getLeaveTime() != null &&  attendanceEntity.getLeaveTime() > 0){
-                        attendanceEntity.setOtAmount((float) ((detailConfig.get().getBasicSalary()/240)/1.5));
 
+
+
+
+            AtomicReference<Double> otAmount = new AtomicReference<>(0D);
+            AtomicReference<Double> lateAmount = new AtomicReference<>(0D);
+            AtomicReference<Double> lateAmountMorning = new AtomicReference<>(0D);
+            AtomicReference<Double> totalNoPay = new AtomicReference<>(0D);
+
+            if (!detailConfigTmp.isEmpty()) {
+                PayrollEntityDetails detailConfig = detailConfigTmp.get(0);
+
+                attendanceEntities.forEach(attendanceEntity -> {
+
+                    try {
+
+
+                        if (attendanceEntity.getApplyOt() == 1 &&
+                                attendanceEntity.getOtTime() != null &&
+                                Integer.parseInt(attendanceEntity.getOtTime()) > 0) {
+                            int val = Integer.parseInt(attendanceEntity.getOtTime()) / 60;
+
+                            if (detailConfig.getIsOtBasic() == 1) {
+                                Float setOTAmount = val * ((detailConfig.getBasicSalary() / (30 * 24 * 60) ));
+                                otAmount.updateAndGet(v -> v + setOTAmount);
+                                attendanceEntity.setOtAmount(setOTAmount);
+                                obj2.add(attendanceEntity);
+                            } else {
+                                Float setOTAmount = val * ((detailConfig.getGrossSalary() / (30 * 24 * 60) ));
+                                otAmount.updateAndGet(v -> v + setOTAmount);
+                                attendanceEntity.setOtAmount(setOTAmount);
+                                obj2.add(attendanceEntity);
+                            }
+                        }
+                    } catch (Exception e) {
                     }
-                    else if (detailConfig.get().getIsOtBasic() != null && detailConfig.get().getIsOtBasic() == 0
-                            && attendanceEntity.getOtTime()!=null &&
-                            (Integer.parseInt(attendanceEntity.getOtTime())/60) >60
-                            && attendanceEntity.getLeaveTime() != null &&  attendanceEntity.getLeaveTime() > 0){
-                        attendanceEntity.setOtAmount((float) ((detailConfig.get().getGrossSalary()/240)/1.5));
+
+                    try {
+
+                        if (attendanceEntity.getApplyLate() == 0 && attendanceEntity.getMorningLate() != null &&
+                                Integer.parseInt(attendanceEntity.getMorningLate()) > 0) {
+                            int val = Integer.parseInt(attendanceEntity.getMorningLate()) / 60;
+
+                            Float amount = val * (detailConfig.getBasicSalary() / (30 * 24 * 60));
+                            lateAmountMorning.updateAndGet(v -> v + amount);
+                            attendanceEntity.setMorningLateAmount(amount);
+                            obj2.add(attendanceEntity);
+
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+
+                        if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
+                            int val = Integer.parseInt(attendanceEntity.getLateTime()) / 60;
+
+                            Float amount = val * ((detailConfig.getBasicSalary() / (30 * 24 * 60)));
+                            lateAmount.updateAndGet(v -> v + amount);
+                            attendanceEntity.setLateAmount(amount);
+                            obj2.add(attendanceEntity);
+
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+
+                        if (attendanceEntity.getPayRollStatus() == 8) {
+
+                            if (detailConfig.getIsNoPayBasic() == 1) {
+                                Float amount = ((detailConfig.getBasicSalary() / 30));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            } else {
+                                Float amount = ((detailConfig.getGrossSalary() / 30));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            }
+
+                        }
+                    } catch (Exception e) {
+                    }
+                });
+
+
+                PayrollEntityDetails tempObj = detailConfig;
+
+                List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository
+                        .getAllSalaryInfoByName(tempObj.getName());
+
+                Float epfDeduction = 0F;
+                Float epfAddition = 0F;
+                Float etf = 0F;
+                Float totalDeductions = 0F;
+                Float totalAdditions = 0F;
+
+                for (AllSalaryInfoEntity salary : salaryInfo){
+
+                    if (salary.getType().equalsIgnoreCase("EPF 8%"))
+                        etf = salary.getAmount();
+                    if (salary.getCategory().equalsIgnoreCase("Deductions")){
+                        totalDeductions += salary.getAmount();
+                    }
+                    if (salary.getCategory().equalsIgnoreCase("Allowances")
+                            && !salary.getType().equalsIgnoreCase("Budgetary Allowance")){
+                        totalAdditions += salary.getAmount();
                     }
                 }
 
 
 
-            });
+                tempObj.setTotalLateAmount(lateAmount.get().floatValue());
+                tempObj.setTotalOt(otAmount.get().floatValue());
+                tempObj.setTotalNoPay(totalNoPay.get().floatValue());
+                tempObj.setTotalMorningLate(lateAmountMorning.get().floatValue());
+                tempObj.setTotalDeductions(totalDeductions);
+                tempObj.setTotalAdditions(totalAdditions);
+                tempObj.setEtf(etf);
+                tempObj.setEpfAddition((float) (tempObj.getBasicSalary() * 0.12));
+                tempObj.setEpfDeduction((float) (tempObj.getBasicSalary() * 0.08));
+                obj.add(tempObj);
+
+            }
 
         });
+
+        attendanceRepository.saveAll(obj2);
+        payrollDetailsRepository.saveAll(obj);
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
