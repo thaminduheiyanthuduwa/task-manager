@@ -55,4 +55,6 @@ public interface TaskManager {
 
     void changeCompleteStatus();
 
+    ResponseList getDailyTaskCount(Integer id);
+
 }

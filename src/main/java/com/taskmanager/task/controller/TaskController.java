@@ -168,5 +168,12 @@ public class TaskController {
 
     }
 
+    @RequestMapping(value = "/get-daily-task-count/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getDailyTaskCount(@PathVariable(value = "id") Integer id) {
+
+        return taskManager.getDailyTaskCount(id);
+
+    }
+
 
 }

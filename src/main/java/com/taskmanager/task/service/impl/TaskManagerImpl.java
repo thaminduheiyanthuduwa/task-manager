@@ -2,6 +2,7 @@ package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
 import com.taskmanager.task.model.CreateTask;
+import com.taskmanager.task.model.EstimateDailyTaskBreakDown;
 import com.taskmanager.task.repository.EmpDetailRepository;
 import com.taskmanager.task.repository.ProfileRepository;
 import com.taskmanager.task.repository.TaskBreakdownRepository;
@@ -28,6 +29,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class TaskManagerImpl implements TaskManager {
@@ -1575,6 +1579,55 @@ public class TaskManagerImpl implements TaskManager {
         });
 
         taskListRepository.saveAll(newList);
+
+    }
+
+    @Override
+    public ResponseList getDailyTaskCount(Integer id) {
+
+        List<EstimateDailyTaskBreakDown> list = new ArrayList<>();
+
+        List<TaskBreakdownEntity> taskList = taskBreakdownRepository.findByUserId(id);
+
+
+
+        Map<Date, List<TaskBreakdownEntity>> taskListGrouping = taskList
+                .stream().collect(groupingBy(TaskBreakdownEntity::getFormattedDate));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+        taskListGrouping.forEach((date, taskBreakdownEntities) -> {
+
+            EstimateDailyTaskBreakDown newObj = new EstimateDailyTaskBreakDown();
+            newObj.setDate(formatter.format(date));
+            newObj.setDateSort(date);
+            newObj.setId(1);
+            newObj.setUserId(id);
+            newObj.setTaskCount(taskBreakdownEntities.size());
+
+            Double totalValue = taskBreakdownEntities
+                    .stream().mapToDouble(value -> value.getEstimate()).sum();
+
+            newObj.setTotalEstimation(totalValue);
+
+            if (totalValue > 8)
+                newObj.setStatus(0);
+            else
+                newObj.setStatus(1);
+
+            list.add(newObj);
+        });
+
+        List<EstimateDailyTaskBreakDown> newList = list.stream()
+                .sorted(Comparator.comparing(EstimateDailyTaskBreakDown::getDateSort).reversed())
+                .collect(Collectors.toList());
+
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(newList);
+        return responseList;
 
     }
 

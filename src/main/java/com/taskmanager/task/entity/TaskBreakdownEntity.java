@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -32,6 +34,16 @@ public class TaskBreakdownEntity {
 
     @Column(name = "date")
     private Date date;
+
+    public Date getFormattedDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String temp = sdf.format(date);
+        try {
+            return sdf.parse(temp);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public TaskBreakdownEntity() {}
 
