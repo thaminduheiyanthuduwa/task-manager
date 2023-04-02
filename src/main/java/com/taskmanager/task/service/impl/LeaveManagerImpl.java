@@ -281,7 +281,7 @@ public class LeaveManagerImpl implements LeaveManager {
 
         if (status == 4){
 
-            List<AvailableLeaveEntity> leaveList = availableLeaveRepository.findByEmpId(user);
+            List<AvailableLeaveEntity> leaveList = availableLeaveRepository.findByEmpId(obj.getEmpId());
 
             AvailableLeaveEntity availableLeaveEntity = null;
 
