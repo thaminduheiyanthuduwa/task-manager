@@ -10,13 +10,19 @@ import com.taskmanager.task.repository.TaskListRepository;
 import com.taskmanager.task.response.*;
 import com.taskmanager.task.service.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.SerializationUtils;
 
+import org.springframework.core.io.Resource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Properties;
@@ -1629,6 +1635,26 @@ public class TaskManagerImpl implements TaskManager {
         responseList.setData(newList);
         return responseList;
 
+    }
+    private Path foundFile;
+
+    @Override
+    public Resource getFileAsResource(String fileCode) throws IOException {
+
+        Path dirPath = Paths.get("/KIU");
+
+        Files.list(dirPath).forEach(file -> {
+            if (file.getFileName().toString().startsWith(fileCode)) {
+                foundFile = file;
+                return;
+            }
+        });
+
+        if (foundFile != null) {
+            return new UrlResource(foundFile.toUri());
+        }
+
+        return null;
     }
 
 

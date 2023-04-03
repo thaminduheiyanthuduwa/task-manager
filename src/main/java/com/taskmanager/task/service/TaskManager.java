@@ -3,8 +3,9 @@ import com.taskmanager.task.entity.TaskListEntity;
 import com.taskmanager.task.model.CreateTask;
 import com.taskmanager.task.response.ResponseList;
 
+import org.springframework.core.io.Resource;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
 
 
 public interface TaskManager {
@@ -56,5 +57,7 @@ public interface TaskManager {
     void changeCompleteStatus();
 
     ResponseList getDailyTaskCount(Integer id);
+
+    Resource getFileAsResource(String fileCode) throws IOException;
 
 }
