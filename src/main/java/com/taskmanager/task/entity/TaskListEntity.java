@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -119,6 +121,16 @@ public class TaskListEntity {
                     this.supervisorRating, this.supervisorComment,
                     this.lastUpdatedUser, this.lastUpdatedDate,
                     this.completedDate,this.deletedDate,this.isReverted, this.autoStatus);
+        }
+    }
+
+    public Date getFormattedDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String temp = sdf.format(endDate);
+        try {
+            return sdf.parse(temp);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 

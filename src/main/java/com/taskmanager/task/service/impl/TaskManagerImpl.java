@@ -1593,12 +1593,12 @@ public class TaskManagerImpl implements TaskManager {
 
         List<EstimateDailyTaskBreakDown> list = new ArrayList<>();
 
-        List<TaskBreakdownEntity> taskList = taskBreakdownRepository.findByUserId(id);
+        List<TaskListEntity> taskList = taskListRepository.findByUserIdOrderByIdDesc(id);
 
 
 
-        Map<Date, List<TaskBreakdownEntity>> taskListGrouping = taskList
-                .stream().collect(groupingBy(TaskBreakdownEntity::getFormattedDate));
+        Map<Date, List<TaskListEntity>> taskListGrouping = taskList
+                .stream().collect(groupingBy(TaskListEntity::getFormattedDate));
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -1616,7 +1616,7 @@ public class TaskManagerImpl implements TaskManager {
 
             newObj.setTotalEstimation(totalValue);
 
-            if (totalValue > 8)
+            if (totalValue > 7)
                 newObj.setStatus(0);
             else
                 newObj.setStatus(1);
