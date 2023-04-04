@@ -1599,7 +1599,7 @@ public class TaskManagerImpl implements TaskManager {
 
 
         Map<Date, List<TaskListEntity>> taskListGrouping = taskList
-                .stream().collect(groupingBy(TaskListEntity::getFormattedDate));
+                .stream().filter(taskListEntity -> (taskListEntity.getStatus() != 2 || taskListEntity.getStatus() != 4)).collect(groupingBy(TaskListEntity::getFormattedDate));
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
