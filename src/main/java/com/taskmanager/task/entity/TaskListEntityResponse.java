@@ -63,6 +63,8 @@ public class TaskListEntityResponse {
 
     private int autoStatus;
 
+    private String createDate;
+
     public TaskListEntityResponse() {}
 
 }

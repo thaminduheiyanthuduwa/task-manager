@@ -102,6 +102,9 @@ public class TaskListEntity {
     @Column(name = "auto_status")
     private int autoStatus;
 
+    @Column(name = "create_date")
+    private Date createDate;
+
     public TaskListEntity() {}
 
 
@@ -120,7 +123,8 @@ public class TaskListEntity {
                     this.priority, this.rating, this.ratingComment,
                     this.supervisorRating, this.supervisorComment,
                     this.lastUpdatedUser, this.lastUpdatedDate,
-                    this.completedDate,this.deletedDate,this.isReverted, this.autoStatus);
+                    this.completedDate,this.deletedDate,this.isReverted, this.autoStatus,
+                    this.createDate);
         }
     }
 
