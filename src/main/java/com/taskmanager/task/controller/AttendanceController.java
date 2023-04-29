@@ -64,6 +64,14 @@ public class AttendanceController {
 
     }
 
+    @RequestMapping(value = "/update-with-yesterday-attendance-for-user/{id}/{start}/{end}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList updateWithYesterdayAttendanceDataForUserId(@PathVariable(value = "id") int id,
+                                                                   @PathVariable(value = "start") String start,
+                                                                   @PathVariable(value = "end") String end) {
+        return attendanceManager.updateWithYesterdayAttendanceForUserId(id,start,end);
+
+    }
+
     @RequestMapping(value = "/get-child-for-supervisor", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList getAttendanceSummery(@RequestParam(value = "supervisor") int id) {
 

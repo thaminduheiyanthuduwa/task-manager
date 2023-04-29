@@ -21,6 +21,8 @@ public interface AttendanceManager {
 
     ResponseList updateWithYesterdayAttendance(int id);
 
+    ResponseList updateWithYesterdayAttendanceForUserId(int id, String start, String end);
+
     ResponseList getChildListForSupervisor(int id);
 
     ResponseList getMinorStaffList(int id);
