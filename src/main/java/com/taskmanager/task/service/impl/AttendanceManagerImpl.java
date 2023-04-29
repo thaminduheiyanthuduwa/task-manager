@@ -113,7 +113,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         }
 //        outObj.sort(Comparator.comparing(MyAttendance::getId).reversed());
 
-        String url = "http://localhost:8081/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
+        String url = "http://localhost:8080/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -389,7 +389,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
 
-        String url = "http://localhost:8081/main-erp/get-my-yesterday-attendance/"+id;
+        String url = "http://localhost:8080/main-erp/get-my-yesterday-attendance/"+id;
 
         RestTemplate restTemplate = new RestTemplate();
 

@@ -217,7 +217,12 @@ public class TaskManagerImpl implements TaskManager {
             taskListEntityResponse.setCompletedDate((taskListEntity.getCompletedDate() != null) ? dateFormat.format(taskListEntity.getCompletedDate()) : null);
             taskListEntityResponse.setDeletedDate((taskListEntity.getDeletedDate() != null) ? dateFormat.format(taskListEntity.getDeletedDate()) : null);
             taskListEntityResponse.setAutoStatus(taskListEntity.getAutoStatus());
-            taskListEntityResponse.setCreateDate(dateFormat.format(taskListEntity.getCreateDate()));
+            try {
+                taskListEntityResponse.setCreateDate(dateFormat.format(taskListEntity.getCreateDate()));
+            }
+            catch(Exception e){
+                taskListEntityResponse.setCreateDate("");
+            }
             list.add(taskListEntityResponse);
 
         }
@@ -1487,7 +1492,7 @@ public class TaskManagerImpl implements TaskManager {
             Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
 
             if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Daily") && days == 1) {
+                    .equalsIgnoreCase("Daily") && days == 2) {
 
                 TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
                 TaskListEntity oldTask = (TaskListEntity) tempEntity.clone();
@@ -1510,7 +1515,7 @@ public class TaskManagerImpl implements TaskManager {
                 newList.add(oldTask);
 
             } else if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Weekly") && days == 7) {
+                    .equalsIgnoreCase("Weekly") && days == 8) {
 
                 TaskListEntity tempNew = tempEntity;
 
