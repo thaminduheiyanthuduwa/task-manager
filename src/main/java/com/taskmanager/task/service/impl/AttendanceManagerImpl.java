@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -483,6 +484,131 @@ public class AttendanceManagerImpl implements AttendanceManager {
         responseList.setMsg("Success");
         return responseList;
 
+    }
+
+    @Override
+    public ResponseList updateWithYesterdayAttendanceForUserId(int idUser, String start, String end) {
+
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        LocalDate todayDate = LocalDate.now();
+
+        List<AttendanceEntity> attendanceObj = new ArrayList<>();
+
+        List<Integer> dateDifferences = new ArrayList<>();
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            long difference = ChronoUnit.DAYS.between(currentDate, todayDate);
+            Integer id = (int) difference;
+            dateDifferences.add((int) difference);
+
+            LocalDate today = LocalDate.now();
+            LocalDate fiftyDaysAgo = today.minus(id, ChronoUnit.DAYS);
+            Date date = Date.from(fiftyDaysAgo.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+//            Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000 * id);
+
+            SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat convertDateToDateOnlyWithTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
+
+            Optional<EmpDetailEntity> people = empDetailRepository.findById(idUser);
+
+            String url = "http://localhost:8080/main-erp/get-my-yesterday-attendance-for-emp/"+id+"/"+people.get().getSerialNumber();
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            ArrayList newList = ((ArrayList) restTemplate.getForObject(url, Map.class).get("data"));
+
+            List<YesterdayAttendance> erpAttendances = new ArrayList<>();
+
+
+            for (Object tempObj : newList) {
+
+                YesterdayAttendance yesterdayAttendance = new YesterdayAttendance();
+                LinkedHashMap<String, String> temp = (LinkedHashMap) tempObj;
+                yesterdayAttendance.setId(Integer.valueOf(String.valueOf(temp.get("id"))));
+                yesterdayAttendance.setEmpId(Integer.valueOf(String.valueOf(temp.get("employeeId"))));
+                yesterdayAttendance.setDate(String.valueOf(temp.get("dateTimeFullText")));
+                erpAttendances.add(yesterdayAttendance);
+
+            }
+
+
+            Map<Integer, List<YesterdayAttendance>> groupedList = erpAttendances.stream().collect(groupingBy(YesterdayAttendance::getEmpId));
+
+            EmpDetailEntity empDetailEntity = people.get();
+
+            try {
+
+
+                if (groupedList.containsKey(Integer.valueOf(empDetailEntity.getSerialNumber()))) {
+
+                    AttendanceEntity attendance = new AttendanceEntity();
+                    attendance.setName(empDetailEntity.getGivenName());
+                    attendance.setEmpId(empDetailEntity.getId());
+                    try {
+                        attendance.setDate(convertDateToDateOnly.parse(convertDateToDateOnly.format(date)));
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    List<YesterdayAttendance> timeList = groupedList.get(Integer.valueOf(empDetailEntity.getSerialNumber()));
+
+                    Comparator<YesterdayAttendance> comparator = (c1, c2) -> {
+                        return Integer.valueOf(c1.getId()).compareTo(c2.getId());
+                    };
+                    Collections.sort(timeList, comparator);
+                    if (timeList.size() == 1) {
+                        attendance.setInTime(convertDateToTime.format(convertDateToDateOnlyWithTime.parse(timeList.get(0).getDate())));
+                        attendance.setOutTime("");
+                        attendance.setStatus(1);
+                    } else {
+                        attendance.setStatus(3);
+                        attendance.setInTime(convertDateToTime.format(convertDateToDateOnlyWithTime.parse(timeList.get(0).getDate())));
+                        attendance.setOutTime(convertDateToTime.format(convertDateToDateOnlyWithTime.parse(timeList.get(timeList.size() - 1).getDate())));
+                    }
+
+                    attendance.setWorkDuration(0l);
+                    attendance.setType("Added By System");
+
+                    attendanceObj.add(attendance);
+                } else {
+                    AttendanceEntity attendance = new AttendanceEntity();
+                    attendance.setName(empDetailEntity.getGivenName());
+                    attendance.setEmpId(empDetailEntity.getId());
+                    try {
+                        attendance.setDate(convertDateToDateOnly.parse(convertDateToDateOnly.format(date)));
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    attendance.setInTime("");
+                    attendance.setOutTime("");
+
+                    attendance.setWorkDuration(0l);
+                    attendance.setType("Added By System");
+                    attendance.setStatus(1);
+                    attendanceObj.add(attendance);
+                }
+            } catch (Exception e) {
+
+            }
+
+
+
+
+            currentDate = currentDate.plusDays(1);
+        }
+
+
+
+
+        attendanceRepository.saveAll(attendanceObj);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        return responseList;
     }
 
     @Override
