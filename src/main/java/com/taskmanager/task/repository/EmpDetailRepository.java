@@ -20,6 +20,7 @@ public interface EmpDetailRepository extends JpaRepository<EmpDetailEntity, Inte
 
     List<EmpDetailEntity> findBySupervisor(@Param("supervisor") int supervisor);
 
-//    List<EmpDetailEntity> findById(@Param("id") int id);
+    List<EmpDetailEntity> findByNameInFull(@Param("nameInFull") String nameInFull);
+
 
 }
