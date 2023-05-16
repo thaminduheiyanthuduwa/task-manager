@@ -30,7 +30,7 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
     Integer getPendingRequestedCount(@Param("id") int id);
 
     @Query(nativeQuery = true,
-            value = "select * from attendance WHERE date >= '2023-03-01'  and date < '2023-04-01';")
+            value = "select * from attendance WHERE date >= '2023-04-01'  and date < '2023-05-01';")
     List<AttendanceEntity> getPastMonthAttendance();
 
     @Query(nativeQuery = true,
