@@ -1401,8 +1401,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                 int deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
 
-                if (deduction < 0) {
-                    totalTaskDeduction = (detailConfig.getBasicSalary() / 30 * 24) * deduction;
+                if (deduction > 0) {
+                    totalTaskDeduction = (detailConfig.getBasicSalary() / (30 * 24)) * deduction;
                 }
 
                 tempObj.setTotalLateAmount(lateAmount.get().floatValue());
