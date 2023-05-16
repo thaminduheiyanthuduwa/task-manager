@@ -779,7 +779,7 @@ public class TaskManagerImpl implements TaskManager {
                             "text/html");
                 }
 
-                Transport.send(message);
+                //Transport.send(message);
                 System.out.println("Sent message successfully.");
             } catch (MessagingException mex) {
                 mex.printStackTrace();
@@ -1300,7 +1300,7 @@ public class TaskManagerImpl implements TaskManager {
                     "text/html");
 
 
-            Transport.send(message);
+            //Transport.send(message);
 
 
             if (obj2 != null) {
@@ -1315,7 +1315,7 @@ public class TaskManagerImpl implements TaskManager {
                         "text/html");
 
 
-                Transport.send(message2);
+                //Transport.send(message2);
             }
 
             System.out.println("Sent message successfully.");
@@ -1372,7 +1372,7 @@ public class TaskManagerImpl implements TaskManager {
                     "text/html");
 
 
-            Transport.send(message);
+            //Transport.send(message);
 
 
             MimeMessage message2 = new MimeMessage(session);
@@ -1386,7 +1386,7 @@ public class TaskManagerImpl implements TaskManager {
                     "text/html");
 
 
-            Transport.send(message2);
+            //Transport.send(message2);
 
             System.out.println("Sent message successfully.");
         } catch (MessagingException mex) {
@@ -1442,7 +1442,7 @@ public class TaskManagerImpl implements TaskManager {
                     "text/html");
 
 
-            Transport.send(message);
+            //Transport.send(message);
 
 
             MimeMessage message2 = new MimeMessage(session);
@@ -1456,7 +1456,7 @@ public class TaskManagerImpl implements TaskManager {
                     "text/html");
 
 
-            Transport.send(message2);
+            //Transport.send(message2);
 
             System.out.println("Sent message successfully.");
         } catch (MessagingException mex) {
@@ -1492,7 +1492,7 @@ public class TaskManagerImpl implements TaskManager {
             Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
 
             if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Daily") && days == 2) {
+                    .equalsIgnoreCase("Daily") && days == 1) {
 
                 TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
                 TaskListEntity oldTask = (TaskListEntity) tempEntity.clone();
@@ -1515,7 +1515,7 @@ public class TaskManagerImpl implements TaskManager {
                 newList.add(oldTask);
 
             } else if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Weekly") && days == 8) {
+                    .equalsIgnoreCase("Weekly") && days == 7) {
 
                 TaskListEntity tempNew = tempEntity;
 
@@ -1618,7 +1618,7 @@ public class TaskManagerImpl implements TaskManager {
             newObj.setTaskCount(taskBreakdownEntities.size());
 
             Double totalValue = taskBreakdownEntities
-                    .stream().mapToDouble(value -> value.getEstimate()).sum();
+                    .stream().filter(taskListEntity -> taskListEntity.getEstimate() != null).mapToDouble(TaskListEntity::getEstimate).sum();
 
             newObj.setTotalEstimation(totalValue);
 

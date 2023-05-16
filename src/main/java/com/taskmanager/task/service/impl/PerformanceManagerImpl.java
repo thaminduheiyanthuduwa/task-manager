@@ -90,8 +90,8 @@ public class PerformanceManagerImpl implements PerformanceManager {
         list.add(performanceDetailObj6);
 
 
-        Float total = (((performance.get(0).getScore1() + performance.get(0).getScore2())/2)
-                + performance.get(0).getScore7() + performance.get(0).getScore6())/3;
+        Float total = (float) (performance.get(0).getScore1()*0.6 + performance.get(0).getScore2() * 0.1
+                        + performance.get(0).getScore7() * 0.2 + performance.get(0).getScore6()* 0.1);
 
         performanceOutObj.setName(performance.get(0).getName());
         performanceOutObj.setPerformanceDetailObj(list);
