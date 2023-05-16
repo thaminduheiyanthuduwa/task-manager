@@ -1034,6 +1034,13 @@ public class AttendanceManagerImpl implements AttendanceManager {
             else if (status == 10) {
                 obj.setApplyLate(0);
             }
+            else if (status == 11) {
+                obj.setApplyLate(4);
+            }
+            else if (status == 12) {
+                obj.setApplyLate(5);
+            }
+
 
             attendanceRepository.save(obj);
 
@@ -1512,3 +1519,4 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
 
 }
+
