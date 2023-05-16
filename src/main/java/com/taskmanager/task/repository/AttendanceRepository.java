@@ -50,5 +50,14 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
     Integer getAttendanceOTAndLateById(@Param("emp_id") Integer emp_id);
 
 
+    @Query(nativeQuery = true,
+            value = "SELECT (obj1.total_count + obj2.total_available_leaves) as count FROM (SELECT lm.emp_id, sum(lm.total_leave) as total_count FROM leave_manager lm WHERE lm.status = 5 AND lm.from_date >= '2023-04-01' AND lm.to_date < '2023-05-01' GROUP BY lm.emp_id) obj1 LEFT JOIN (SELECT al.emp_id, SUM(al.available_leaves) as total_available_leaves FROM available_leaves al WHERE al.type like '%apr%' GROUP BY al.emp_id) obj2 ON obj1.emp_id = obj2.emp_id where obj1.emp_id = :emp_id")
+    Integer getMonthLeaveDatesForPayRoll(@Param("emp_id") Integer emp_id);
+
+    @Query(nativeQuery = true,
+            value = "SELECT SUM(tl.estimate) as count FROM task_list tl WHERE tl.status = 5 AND tl.start_date >= '2023-04-01' AND tl.start_date < '2023-05-01' AND tl.user_id = :emp_id GROUP BY tl.user_id;")
+    Integer getMonthEstimation(@Param("emp_id") Integer emp_id);
+
+
 
 }

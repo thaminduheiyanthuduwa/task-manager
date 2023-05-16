@@ -1284,15 +1284,9 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         groupOt.forEach((integer, attendanceEntities) -> {
 
-            if (integer == 464){
-                System.out.println("");
-            }
 
             List<PayrollEntityDetails> detailConfigTmp = payrollDetailsRepository
                     .findByEmpId(integer);
-
-
-
 
 
             AtomicReference<Double> otAmount = new AtomicReference<>(0D);
@@ -1314,12 +1308,12 @@ public class AttendanceManagerImpl implements AttendanceManager {
                             int val = Integer.parseInt(attendanceEntity.getOtTime()) / 60;
 
                             if (detailConfig.getIsOtBasic() == 1) {
-                                Float setOTAmount = val * ((detailConfig.getBasicSalary() / (30 * 24 * 60) ));
+                                Float setOTAmount = (float) (val * ((detailConfig.getBasicSalary() / (240) ) * 1.5));
                                 otAmount.updateAndGet(v -> v + setOTAmount);
                                 attendanceEntity.setOtAmount(setOTAmount);
                                 obj2.add(attendanceEntity);
                             } else {
-                                Float setOTAmount = val * ((detailConfig.getGrossSalary() / (30 * 24 * 60) ));
+                                Float setOTAmount = (float) (val * ((detailConfig.getGrossSalary() / (240) ) * 1.5));
                                 otAmount.updateAndGet(v -> v + setOTAmount);
                                 attendanceEntity.setOtAmount(setOTAmount);
                                 obj2.add(attendanceEntity);
@@ -1330,7 +1324,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
-                        if (attendanceEntity.getApplyLate() == 0 && attendanceEntity.getMorningLate() != null &&
+                        if ((attendanceEntity.getApplyLate() == 1 || attendanceEntity.getApplyLate() == 4)  && attendanceEntity.getMorningLate() != null &&
                                 Integer.parseInt(attendanceEntity.getMorningLate()) > 0) {
                             int val = Integer.parseInt(attendanceEntity.getMorningLate()) / 60;
 
@@ -1384,8 +1378,6 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository
                         .getAllSalaryInfoByName(tempObj.getName());
 
-                Float epfDeduction = 0F;
-                Float epfAddition = 0F;
                 Float etf = 0F;
                 Float totalDeductions = 0F;
                 Float totalAdditions = 0F;
@@ -1403,7 +1395,15 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     }
                 }
 
+                Integer monthLeaveDatesForPayRoll = attendanceRepository.getMonthLeaveDatesForPayRoll(integer);
+                Integer monthEstimation = attendanceRepository.getMonthEstimation(integer);
+                float totalTaskDeduction = 0F;
 
+                int deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
+
+                if (deduction < 0) {
+                    totalTaskDeduction = (detailConfig.getBasicSalary() / 30 * 24) * deduction;
+                }
 
                 tempObj.setTotalLateAmount(lateAmount.get().floatValue());
                 tempObj.setTotalOt(otAmount.get().floatValue());
@@ -1414,6 +1414,9 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 tempObj.setEtf(etf);
                 tempObj.setEpfAddition((float) (tempObj.getBasicSalary() * 0.12));
                 tempObj.setEpfDeduction((float) (tempObj.getBasicSalary() * 0.08));
+                tempObj.setTotalWorkingHours(Float.valueOf(monthLeaveDatesForPayRoll));
+                tempObj.setTotalTaskHours(Float.valueOf(monthEstimation));
+                tempObj.setTotalDeductionForTasks(totalTaskDeduction);
                 obj.add(tempObj);
 
             }
