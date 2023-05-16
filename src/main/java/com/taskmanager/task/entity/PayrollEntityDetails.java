@@ -92,6 +92,15 @@ public class PayrollEntityDetails {
     @Column(name = "total_additions")
     private Float totalAdditions;
 
+    @Column(name = "total_working_hours")
+    private Float totalWorkingHours;
+
+    @Column(name = "total_task_hours")
+    private Float totalTaskHours;
+
+    @Column(name = "total_deduction_for_tasks")
+    private Float totalDeductionForTasks;
+
     @Column(name = "published")
     private Integer published;
 
