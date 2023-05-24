@@ -24,6 +24,8 @@ public class PayrollPdfInfoObject {
 
     private List<PayrollPdfInfoEarningObject> payrollPdfInfoEarningObjectList;
 
+    private List<PayrollPdfInfoBasicObject> payrollPdfInfoBasicObjects;
+
     private List<PayrollPdfInfoDeductionObject> payrollPdfInfoDeductionObjects;
 
     private PayrollEntityDetails payrollEntityDetails;

@@ -1,6 +1,7 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
+import com.taskmanager.task.model.Payroll.PayrollPdfInfoBasicObject;
 import com.taskmanager.task.model.Payroll.PayrollPdfInfoDeductionObject;
 import com.taskmanager.task.model.Payroll.PayrollPdfInfoEarningObject;
 import com.taskmanager.task.model.Payroll.PayrollPdfInfoObject;
@@ -265,6 +266,7 @@ public class PayrollManagerImpl implements PayrollManager {
         payrollPdfInfoObject.setDate("2023-Apr");
 
         List<PayrollPdfInfoEarningObject> list1 = new ArrayList<>();
+        List<PayrollPdfInfoBasicObject> list3 = new ArrayList<>();
         List<PayrollPdfInfoDeductionObject> list2 = new ArrayList<>();
 
         salaryInfo.forEach(allSalaryInfoEntity -> {
@@ -295,16 +297,39 @@ public class PayrollManagerImpl implements PayrollManager {
 
         });
 
+
+        PayrollPdfInfoBasicObject payrollPdfInfoBasicObject = new PayrollPdfInfoBasicObject();
+        payrollPdfInfoBasicObject.setTitle("Payroll");
+        payrollPdfInfoBasicObject.setBasic("Basic Salary");
+        payrollPdfInfoBasicObject.setRate("");
+        payrollPdfInfoBasicObject.setHours("");
+        payrollPdfInfoBasicObject.setTotal(String.valueOf(payroll.getBasicSalary()));
+        list3.add(payrollPdfInfoBasicObject);
+
+
+        Float tmpNoPay = 0F;
+
         if (payroll.getTotalNoPay() > 0){
-            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
-            payrollPdfInfoDeductionObject.setTitle("Payroll");
-            payrollPdfInfoDeductionObject.setDeduction("No Pay");
-            payrollPdfInfoDeductionObject.setRate("");
-            payrollPdfInfoDeductionObject.setHours("");
-            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getTotalNoPay()));
-            list2.add(payrollPdfInfoDeductionObject);
-            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalNoPay());
+
+            tmpNoPay = payroll.getTotalNoPay();
+            PayrollPdfInfoBasicObject payrollPdfInfoBasicObject2 = new PayrollPdfInfoBasicObject();
+            payrollPdfInfoBasicObject.setTitle("Payroll");
+            payrollPdfInfoBasicObject.setBasic("No Pay");
+            payrollPdfInfoBasicObject.setRate("");
+            payrollPdfInfoBasicObject.setHours("");
+            payrollPdfInfoBasicObject.setTotal(String.valueOf(payroll.getTotalNoPay()));
+            list3.add(payrollPdfInfoBasicObject2);
         }
+
+
+        PayrollPdfInfoBasicObject payrollPdfInfoBasicObject3 = new PayrollPdfInfoBasicObject();
+        payrollPdfInfoBasicObject.setTitle("Payroll");
+        payrollPdfInfoBasicObject.setBasic("Finalized Basic Salary");
+        payrollPdfInfoBasicObject.setRate("");
+        payrollPdfInfoBasicObject.setHours("");
+        payrollPdfInfoBasicObject.setTotal(String.valueOf(payroll.getBasicSalary()-payroll.getTotalNoPay()));
+        list3.add(payrollPdfInfoBasicObject3);
+
         if (payroll.getTotalMorningLate() > 0){
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
@@ -340,6 +365,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
         payrollPdfInfoObject.setPayrollPdfInfoEarningObjectList(list1);
         payrollPdfInfoObject.setPayrollPdfInfoDeductionObjects(list2);
+        payrollPdfInfoObject.setPayrollPdfInfoBasicObjects(list3);
         payrollPdfInfoObject.setPayrollEntityDetails(payroll);
 
         ResponseList responseList = new ResponseList();
