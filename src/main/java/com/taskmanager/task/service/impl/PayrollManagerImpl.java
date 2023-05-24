@@ -275,13 +275,15 @@ public class PayrollManagerImpl implements PayrollManager {
                     .equalsIgnoreCase("Basic Salary") || allSalaryInfoEntity.getCategory()
                     .equalsIgnoreCase("Allowances")) && allSalaryInfoEntity.getAmount() != 0) {
 
-                PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
-                payrollPdfInfoEarningObject.setTitle("Payroll");
-                payrollPdfInfoEarningObject.setEarnings(allSalaryInfoEntity.getType());
-                payrollPdfInfoEarningObject.setRate("");
-                payrollPdfInfoEarningObject.setHours("");
-                payrollPdfInfoEarningObject.setTotal(String.valueOf(allSalaryInfoEntity.getAmount()));
-                list1.add(payrollPdfInfoEarningObject);
+                if (!allSalaryInfoEntity.getType().equalsIgnoreCase("basic_salary")) {
+                    PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
+                    payrollPdfInfoEarningObject.setTitle("Payroll");
+                    payrollPdfInfoEarningObject.setEarnings(allSalaryInfoEntity.getType());
+                    payrollPdfInfoEarningObject.setRate("");
+                    payrollPdfInfoEarningObject.setHours("");
+                    payrollPdfInfoEarningObject.setTotal(String.valueOf(allSalaryInfoEntity.getAmount()));
+                    list1.add(payrollPdfInfoEarningObject);
+                }
             }
             else if ((allSalaryInfoEntity.getCategory()
                     .equalsIgnoreCase("Deductions")) && allSalaryInfoEntity.getAmount() != 0) {
