@@ -1470,7 +1470,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 tempObj.setTotalMorningLate(lateAmountMorning.get().floatValue());
                 tempObj.setTotalDeductions(totalDeductions);
                 tempObj.setTotalAdditions(totalAdditions);
-                tempObj.setEtf(etf);
+                tempObj.setEtf((float) (newBasic.get() * 0.03));
                 tempObj.setEpfAddition((float) (newBasic.get() * 0.12));
                 tempObj.setEpfDeduction((float) (newBasic.get() * 0.08));
                 tempObj.setTotalWorkingHours(Float.valueOf(monthLeaveDatesForPayRoll));

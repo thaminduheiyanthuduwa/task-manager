@@ -352,6 +352,16 @@ public class PayrollManagerImpl implements PayrollManager {
             list2.add(payrollPdfInfoDeductionObject);
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalLateAmount());
         }
+        if (payroll.getPayee() > 0){
+            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+            payrollPdfInfoDeductionObject.setTitle("Payroll");
+            payrollPdfInfoDeductionObject.setDeduction("Payee");
+            payrollPdfInfoDeductionObject.setRate("");
+            payrollPdfInfoDeductionObject.setHours("");
+            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getPayee()));
+            list2.add(payrollPdfInfoDeductionObject);
+            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getPayee());
+        }
         if (payroll.getTotalOt() > 0){
             payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
             PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
