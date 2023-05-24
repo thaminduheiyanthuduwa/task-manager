@@ -40,7 +40,7 @@ public class PayrollManagerImpl implements PayrollManager {
     @Override
     public ResponseList updateWithAllSalaryInfoForMonth() {
 
-        String url = "http://localhost:8081/main-erp/payroll/update-all-salary-info";
+        String url = "http://localhost:8080/main-erp/payroll/update-all-salary-info";
 
         RestTemplate restTemplate = new RestTemplate();
 

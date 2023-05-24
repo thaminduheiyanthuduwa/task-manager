@@ -90,17 +90,16 @@ public class PerformanceManagerImpl implements PerformanceManager {
         list.add(performanceDetailObj6);
 
 
-        Float total = (performance.get(0).getScore1() + performance.get(0).getScore2())
-                + (performance.get(0).getScore3() + performance.get(0).getScore4()
-                + performance.get(0).getScore5()) + performance.get(0).getScore3();
+        Float total = (float) (performance.get(0).getScore1()*0.6 + performance.get(0).getScore2() * 0.1
+                        + performance.get(0).getScore7() * 0.2 + performance.get(0).getScore6()* 0.1);
 
         performanceOutObj.setName(performance.get(0).getName());
         performanceOutObj.setPerformanceDetailObj(list);
         performanceOutObj.setStatus("N/A");
         performanceOutObj.setRank("N/A");
-        performanceOutObj.setTotalTaskManagerScore((performance.get(0).getScore1() + performance.get(0).getScore2()));
-        performanceOutObj.setTotalAttendanceScore((performance.get(0).getScore3() + performance.get(0).getScore4() + performance.get(0).getScore5()));
-        performanceOutObj.setTotalNoPayScore(performance.get(0).getScore3());
+        performanceOutObj.setTotalTaskManagerScore((performance.get(0).getScore1() + performance.get(0).getScore2())/2);
+        performanceOutObj.setTotalAttendanceScore((performance.get(0).getScore7()));
+        performanceOutObj.setTotalNoPayScore(performance.get(0).getScore6());
         performanceOutObj.setTotalScore(total);
         performanceOutObj.setStatus("Pending");
 
