@@ -1304,8 +1304,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                         if (attendanceEntity.getApplyOt() == 1 &&
                                 attendanceEntity.getOtTime() != null &&
-                                Integer.parseInt(attendanceEntity.getOtTime()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getOtTime()) / 60;
+                                Float.parseFloat(attendanceEntity.getOtTime()) > 0) {
+                            float val = Float.parseFloat(attendanceEntity.getOtTime()) / 60;
 
                             if (detailConfig.getIsOtBasic() == 1) {
                                 Float setOTAmount = (float) (val * ((detailConfig.getBasicSalary() / (240) ) * 1.5));
@@ -1325,8 +1325,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     try {
 
                         if ((attendanceEntity.getApplyLate() == 1 || attendanceEntity.getApplyLate() == 4)  && attendanceEntity.getMorningLate() != null &&
-                                Integer.parseInt(attendanceEntity.getMorningLate()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getMorningLate()) / 60;
+                                Float.parseFloat(attendanceEntity.getMorningLate()) > 0) {
+                            float val = Float.parseFloat(attendanceEntity.getMorningLate()) / 60;
 
                             Float amount = val * (detailConfig.getBasicSalary() / (30 * 24 * 60));
                             lateAmountMorning.updateAndGet(v -> v + amount);
@@ -1339,8 +1339,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
-                        if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getLateTime()) / 60;
+                        if (Float.parseFloat(attendanceEntity.getLateTime()) > 0) {
+                            float val = Float.parseFloat(attendanceEntity.getLateTime()) / 60;
 
                             Float amount = val * ((detailConfig.getBasicSalary() / (30 * 24 * 60)));
                             lateAmount.updateAndGet(v -> v + amount);
@@ -1413,7 +1413,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 tempObj.setTotalAdditions(totalAdditions);
                 tempObj.setEtf(etf);
                 tempObj.setEpfAddition((float) (tempObj.getBasicSalary() * 0.12));
-                tempObj.setEpfDeduction((float) (tempObj.getBasicSalary() * 0.08));
+                tempObj.setEpfDeduction((float) (tempObj.getBasicSalary() * 0.03));
                 tempObj.setTotalWorkingHours(Float.valueOf(monthLeaveDatesForPayRoll));
                 tempObj.setTotalTaskHours(Float.valueOf(monthEstimation));
                 tempObj.setTotalDeductionForTasks(totalTaskDeduction);
