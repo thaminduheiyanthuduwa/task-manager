@@ -1204,11 +1204,13 @@ public class AttendanceManagerImpl implements AttendanceManager {
                             attendanceEntity.setIsExtraWorking(1); //
                             attendanceEntity.setPayRollStatus(6); //sunday extra full work
                             attendanceEntity.setMorningLate("0");
+                            diff = seconds;
                         }
                         else if (dayName.equalsIgnoreCase("sunday") && roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 0) {
                             attendanceEntity.setIsExtraWorking(1); //
                             attendanceEntity.setPayRollStatus(12); //sunday extra half work
                             attendanceEntity.setMorningLate("0");
+                            diff = seconds;
                         }
                         else if (dayName.equalsIgnoreCase("saturday") && roster.isEmpty() && Integer.parseInt(attendanceEntity.getTotalWorkingHours()) > 16200) {
                             attendanceEntity.setIsExtraWorking(1);
