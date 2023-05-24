@@ -313,21 +313,21 @@ public class PayrollManagerImpl implements PayrollManager {
 
             tmpNoPay = payroll.getTotalNoPay();
             PayrollPdfInfoBasicObject payrollPdfInfoBasicObject2 = new PayrollPdfInfoBasicObject();
-            payrollPdfInfoBasicObject.setTitle("Payroll");
-            payrollPdfInfoBasicObject.setBasic("No Pay");
-            payrollPdfInfoBasicObject.setRate("");
-            payrollPdfInfoBasicObject.setHours("");
-            payrollPdfInfoBasicObject.setTotal(String.valueOf(payroll.getTotalNoPay()));
+            payrollPdfInfoBasicObject2.setTitle("Payroll");
+            payrollPdfInfoBasicObject2.setBasic("No Pay");
+            payrollPdfInfoBasicObject2.setRate("");
+            payrollPdfInfoBasicObject2.setHours("");
+            payrollPdfInfoBasicObject2.setTotal(String.valueOf(payroll.getTotalNoPay()));
             list3.add(payrollPdfInfoBasicObject2);
         }
 
 
         PayrollPdfInfoBasicObject payrollPdfInfoBasicObject3 = new PayrollPdfInfoBasicObject();
-        payrollPdfInfoBasicObject.setTitle("Payroll");
-        payrollPdfInfoBasicObject.setBasic("Finalized Basic Salary");
-        payrollPdfInfoBasicObject.setRate("");
-        payrollPdfInfoBasicObject.setHours("");
-        payrollPdfInfoBasicObject.setTotal(String.valueOf(payroll.getBasicSalary()-payroll.getTotalNoPay()));
+        payrollPdfInfoBasicObject3.setTitle("Payroll");
+        payrollPdfInfoBasicObject3.setBasic("Finalized Basic Salary");
+        payrollPdfInfoBasicObject3.setRate("");
+        payrollPdfInfoBasicObject3.setHours("");
+        payrollPdfInfoBasicObject3.setTotal(String.valueOf(payroll.getBasicSalary()-payroll.getTotalNoPay()));
         list3.add(payrollPdfInfoBasicObject3);
 
         if (payroll.getTotalMorningLate() > 0){
