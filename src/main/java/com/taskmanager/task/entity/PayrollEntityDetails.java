@@ -104,6 +104,9 @@ public class PayrollEntityDetails {
     @Column(name = "published")
     private Integer published;
 
+    @Column(name = "payee")
+    private Float payee;
+
     public PayrollEntityDetails() {}
 
 }
