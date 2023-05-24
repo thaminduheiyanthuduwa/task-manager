@@ -160,6 +160,9 @@ public class EmpDetailEntity {
     @Column(name = "supervisor")
     private Integer supervisor;
 
+    @Column(name = "minor_staff_type")
+    private String minorStaffType;
+
     public EmpDetailEntity() {}
 
 }

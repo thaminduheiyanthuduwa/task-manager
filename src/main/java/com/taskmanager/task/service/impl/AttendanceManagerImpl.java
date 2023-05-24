@@ -467,6 +467,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     attendance.setWorkDuration(0l);
                     attendance.setType("Added By System");
                     attendance.setStatus(1);
+                    attendance.setApplyLate(0);
                     attendanceObj.add(attendance);
                 }
             }
@@ -1301,11 +1302,46 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
+                        if (attendanceEntity.getPayRollStatus() == 8) {
 
-                        if (attendanceEntity.getApplyOt() == 1 &&
+                            if (detailConfig.getIsNoPayBasic() == 1) {
+                                Float amount = ((detailConfig.getBasicSalary() / 30));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            } else {
+                                Float amount = ((detailConfig.getGrossSalary() / 30));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            }
+
+                        }
+                        else if (attendanceEntity.getPayRollStatus() == -1) {
+
+                            if (detailConfig.getIsNoPayBasic() == 1) {
+                                Float amount = ((detailConfig.getBasicSalary() / 60));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            } else {
+                                Float amount = ((detailConfig.getGrossSalary() / 60));
+                                totalNoPay.updateAndGet(v -> v + amount);
+                                attendanceEntity.setNoPayAmount(amount);
+                                obj2.add(attendanceEntity);
+                            }
+
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+
+
+                        if ((attendanceEntity.getApplyOt() == 1 || attendanceEntity.getApplyOt() == 3) &&
                                 attendanceEntity.getOtTime() != null &&
                                 Integer.parseInt(attendanceEntity.getOtTime()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getOtTime()) / 60;
+                            float val = (float) Integer.parseInt(attendanceEntity.getOtTime()) / (60*60);
 
                             if (detailConfig.getIsOtBasic() == 1) {
                                 Float setOTAmount = (float) (val * ((detailConfig.getBasicSalary() / (240) ) * 1.5));
@@ -1324,11 +1360,14 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
-                        if ((attendanceEntity.getApplyLate() == 1 || attendanceEntity.getApplyLate() == 4)  && attendanceEntity.getMorningLate() != null &&
-                                Integer.parseInt(attendanceEntity.getMorningLate()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getMorningLate()) / 60;
+                        if ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5)  && attendanceEntity.getMorningLate() != null &&
+                                Integer.parseInt(attendanceEntity.getMorningLate()) < 0 &&
+                                (attendanceEntity.getPayRollStatus() == 2 || attendanceEntity.getPayRollStatus() == 3 ||
+                                        attendanceEntity.getPayRollStatus() == 4 || attendanceEntity.getPayRollStatus() == 5 ||
+                                        attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11)) {
+                            float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate())*(-1)) / (60);
 
-                            Float amount = val * (detailConfig.getBasicSalary() / (30 * 24 * 60));
+                            Float amount = val * (detailConfig.getBasicSalary() / (30 * 8 * 60));
                             lateAmountMorning.updateAndGet(v -> v + amount);
                             attendanceEntity.setMorningLateAmount(amount);
                             obj2.add(attendanceEntity);
@@ -1340,9 +1379,9 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     try {
 
                         if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
-                            int val = Integer.parseInt(attendanceEntity.getLateTime()) / 60;
+                            float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
 
-                            Float amount = val * ((detailConfig.getBasicSalary() / (30 * 24 * 60)));
+                            Float amount = val * ((detailConfig.getBasicSalary() / (30 * 8 * 60)));
                             lateAmount.updateAndGet(v -> v + amount);
                             attendanceEntity.setLateAmount(amount);
                             obj2.add(attendanceEntity);
@@ -1351,25 +1390,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     } catch (Exception e) {
                     }
 
-                    try {
 
-                        if (attendanceEntity.getPayRollStatus() == 8) {
-
-                            if (detailConfig.getIsNoPayBasic() == 1) {
-                                Float amount = ((detailConfig.getBasicSalary() / 30));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
-                            } else {
-                                Float amount = ((detailConfig.getGrossSalary() / 30));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
-                            }
-
-                        }
-                    } catch (Exception e) {
-                    }
                 });
 
 
@@ -1384,8 +1405,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                 for (AllSalaryInfoEntity salary : salaryInfo){
 
-                    if (salary.getType().equalsIgnoreCase("EPF 8%"))
-                        etf = salary.getAmount();
+//                    if (salary.getType().equalsIgnoreCase("EPF 8%"))
+//                        etf = salary.getAmount();
                     if (salary.getCategory().equalsIgnoreCase("Deductions")){
                         totalDeductions += salary.getAmount();
                     }
@@ -1395,14 +1416,18 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     }
                 }
 
-                Integer monthLeaveDatesForPayRoll = attendanceRepository.getMonthLeaveDatesForPayRoll(integer);
+                float monthLeaveDatesForPayRoll = attendanceRepository.getMonthLeaveDatesForPayRoll(integer);
                 Integer monthEstimation = attendanceRepository.getMonthEstimation(integer);
                 float totalTaskDeduction = 0F;
 
-                int deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
+                if (monthEstimation == null){
+                    monthEstimation = 0;
+                }
+
+                float deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
 
                 if (deduction > 0) {
-                    totalTaskDeduction = (detailConfig.getBasicSalary() / (30 * 24)) * deduction;
+                    totalTaskDeduction = (detailConfig.getBasicSalary() / (30 * 8 *60)) * deduction;
                 }
 
                 tempObj.setTotalLateAmount(lateAmount.get().floatValue());

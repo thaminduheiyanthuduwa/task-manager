@@ -91,6 +91,7 @@ public class PeopleManagerImpl implements PeopleManager {
                     empDetailEntity.setStatus(String.valueOf(temp.get("status")) != "null" ? String.valueOf(temp.get("status")) : "0");
                     empDetailEntity.setHrEmployeeStatus(String.valueOf(temp.get("hrEmployeeStatus")) != "null" ? String.valueOf(temp.get("hrEmployeeStatus")) : "0");
                     empDetailEntity.setApprovalStatus(String.valueOf(temp.get("approvalStatus")) != "null" ? String.valueOf(temp.get("approvalStatus")) : "0");
+                    empDetailEntity.setMinorStaffType(String.valueOf(temp.get("minorStaffType")) != "null" ? String.valueOf(temp.get("minorStaffType")) : "0");
 
 //                    empDetailEntity.setCreatedBy(String.valueOf(temp.get("createdBy")));
 //                    empDetailEntity.setUpdatedBy(String.valueOf(temp.get("updatedBy")));
