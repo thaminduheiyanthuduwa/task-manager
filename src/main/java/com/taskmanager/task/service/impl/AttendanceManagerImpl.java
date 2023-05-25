@@ -1437,7 +1437,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 }
 
 
-                double tmpTotalGross = detailConfig.getGrossSalary() - newBasic.get();
+                double tmpTotalGross = detailConfig.getGrossSalary();
 
                 double tmpPayee = 0F;
 
