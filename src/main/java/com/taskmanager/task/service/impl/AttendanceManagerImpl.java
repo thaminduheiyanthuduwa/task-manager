@@ -1445,22 +1445,22 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     tmpPayee = 0;
                 }
                 else if (tmpTotalGross > 100000 && tmpTotalGross < 141668){
-                    tmpPayee = tmpTotalGross * 0.06;
+                    tmpPayee = (tmpTotalGross -100000) * 0.06;
                 }
                 else if (tmpTotalGross < 183334){
-                    tmpPayee = 6000 + (tmpTotalGross-141667) * 0.12;
+                    tmpPayee = 2501.22 + (tmpTotalGross-141667) * 0.12;
                 }
                 else if (tmpTotalGross < 225001){
-                    tmpPayee = 14500 + (tmpTotalGross-183333) * 0.18;
+                    tmpPayee = 7501.14 + (tmpTotalGross-183333) * 0.18;
                 }
                 else if (tmpTotalGross < 266668){
-                    tmpPayee = 25500 + (tmpTotalGross-225000) * 0.24;
+                    tmpPayee = 15001.2 + (tmpTotalGross-225000) * 0.24;
                 }
                 else if (tmpTotalGross < 308334){
-                    tmpPayee = 39000 + (tmpTotalGross-266667) * 0.3;
+                    tmpPayee = 25001.28 + (tmpTotalGross-266667) * 0.3;
                 }
                 else {
-                    tmpPayee = 55000 + (tmpTotalGross-308333) * 0.36;
+                    tmpPayee = 37501.38 + (tmpTotalGross-308333) * 0.36;
                 }
 
 
