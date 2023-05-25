@@ -275,7 +275,8 @@ public class PayrollManagerImpl implements PayrollManager {
                     .equalsIgnoreCase("Basic Salary") || allSalaryInfoEntity.getCategory()
                     .equalsIgnoreCase("Allowances")) && allSalaryInfoEntity.getAmount() != 0) {
 
-                if (!allSalaryInfoEntity.getType().equalsIgnoreCase("basic_salary")) {
+                if (!(allSalaryInfoEntity.getType().equalsIgnoreCase("basic_salary") ||
+                        allSalaryInfoEntity.getType().equalsIgnoreCase("Budgetary Allowance"))) {
                     PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
                     payrollPdfInfoEarningObject.setTitle("Payroll");
                     payrollPdfInfoEarningObject.setEarnings(allSalaryInfoEntity.getType());
