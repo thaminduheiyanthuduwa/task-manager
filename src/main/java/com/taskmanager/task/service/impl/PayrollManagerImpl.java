@@ -375,6 +375,17 @@ public class PayrollManagerImpl implements PayrollManager {
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalDeductionForTasks());
         }
 
+        if (payroll.getEpfDeduction() > 0){
+            PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
+            payrollPdfInfoDeductionObject.setTitle("Payroll");
+            payrollPdfInfoDeductionObject.setDeduction("EPF Deduction");
+            payrollPdfInfoDeductionObject.setRate("");
+            payrollPdfInfoDeductionObject.setHours("");
+            payrollPdfInfoDeductionObject.setTotal(String.valueOf(payroll.getEpfDeduction()));
+            list2.add(payrollPdfInfoDeductionObject);
+            payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getEpfDeduction());
+        }
+
         if (payroll.getTotalOt() > 0){
             payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
             PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
