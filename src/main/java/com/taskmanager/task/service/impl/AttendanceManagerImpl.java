@@ -1297,10 +1297,13 @@ public class AttendanceManagerImpl implements AttendanceManager {
             AtomicReference<Double> lateAmountMorning = new AtomicReference<>(0D);
             AtomicReference<Double> totalNoPay = new AtomicReference<>(0D);
             AtomicReference<Double> newBasic = new AtomicReference<>(0D);
+            AtomicReference<Double> newGross = new AtomicReference<>(0D);
 
             if (!detailConfigTmp.isEmpty()) {
                 PayrollEntityDetails detailConfig = detailConfigTmp.get(0);
                 newBasic.updateAndGet(v -> v+detailConfig.getBasicSalary());
+                newGross.updateAndGet(v -> v+detailConfig.getGrossSalary());
+
                 attendanceEntities.forEach(attendanceEntity -> {
 
                     try {
@@ -1337,9 +1340,17 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     } catch (Exception e) {
                     }
 
-                    Double tmpNoPay = totalNoPay.get();
+                });
 
-                    newBasic.updateAndGet(v -> v+ tmpNoPay);
+                newBasic.updateAndGet(v -> v - totalNoPay.get());
+                newGross.updateAndGet(v -> v - totalNoPay.get());
+
+                attendanceEntities.forEach(attendanceEntity -> {
+
+
+
+
+
 
                     try {
 
@@ -1355,7 +1366,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                                 attendanceEntity.setOtAmount(setOTAmount);
                                 obj2.add(attendanceEntity);
                             } else {
-                                Float setOTAmount = (float) (val * ((detailConfig.getGrossSalary() / (240) ) * 1.5));
+                                Float setOTAmount = (float) (val * ((newGross.get() / (240) ) * 1.5));
                                 otAmount.updateAndGet(v -> v + setOTAmount);
                                 attendanceEntity.setOtAmount(setOTAmount);
                                 obj2.add(attendanceEntity);
@@ -1373,7 +1384,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                                         attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11)) {
                             float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate())*(-1)) / (60);
 
-                            Float amount = val * (newBasic.get().floatValue() / (30 * 8 * 60));
+                            Float amount = val * (newGross.get().floatValue() / (30 * 8 * 60));
                             lateAmountMorning.updateAndGet(v -> v + amount);
                             attendanceEntity.setMorningLateAmount(amount);
                             obj2.add(attendanceEntity);
@@ -1387,7 +1398,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                         if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
                             float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
 
-                            Float amount = val * ((newBasic.get().floatValue() / (30 * 8 * 60)));
+                            Float amount = val * ((newGross.get().floatValue() / (30 * 8 * 60)));
                             lateAmount.updateAndGet(v -> v + amount);
                             attendanceEntity.setLateAmount(amount);
                             obj2.add(attendanceEntity);
@@ -1398,7 +1409,6 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
 
                 });
-
 
                 PayrollEntityDetails tempObj = detailConfig;
 
@@ -1433,13 +1443,17 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 float deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
 
                 if (deduction > 0) {
-                    totalTaskDeduction = (newBasic.get().floatValue() / (30 * 8 *60)) * deduction;
+                    totalTaskDeduction = (newGross.get().floatValue() / (30 * 8 *60)) * deduction;
                 }
 
 
-                double tmpTotalGross = detailConfig.getGrossSalary();
+                double tmpTotalGross = newGross.get();
 
                 double tmpPayee = 0F;
+
+                if (integer == 274){
+                    System.out.println("");
+                }
 
                 if (tmpTotalGross < 100000){
                     tmpPayee = 0;
