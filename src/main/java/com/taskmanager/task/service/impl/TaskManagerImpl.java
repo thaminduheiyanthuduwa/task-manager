@@ -1492,7 +1492,7 @@ public class TaskManagerImpl implements TaskManager {
             Integer newDiff = daysBetween(taskListEntity.getEndDate(), taskListEntity.getStartDate());
 
             if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Daily") && days == 4) {
+                    .equalsIgnoreCase("Daily") && days == 3) {
 
                 TaskListEntity tempNew = (TaskListEntity) tempEntity.clone();
                 TaskListEntity oldTask = (TaskListEntity) tempEntity.clone();
@@ -1515,7 +1515,7 @@ public class TaskManagerImpl implements TaskManager {
                 newList.add(oldTask);
 
             } else if (taskListEntity.getRecurring() != null && taskListEntity.getRecurring()
-                    .equalsIgnoreCase("Weekly") && days == 11) {
+                    .equalsIgnoreCase("Weekly") && days == 9) {
 
                 TaskListEntity tempNew = tempEntity;
 

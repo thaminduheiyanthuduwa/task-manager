@@ -396,13 +396,13 @@ public class PayrollManagerImpl implements PayrollManager {
             list1.add(payrollPdfInfoEarningObject);
             payrollPdfInfoEarningObject.setTotal(String.valueOf(payroll.getTotalOt()));
         }
-
+        payroll.setGrossSalary(payroll.getGrossSalary() - payroll.getTotalNoPay());
         payrollPdfInfoObject.setTotalAmount(String.valueOf(payroll.getGrossSalary() - payroll.getTotalDeductions()));
 
         payrollPdfInfoObject.setPayrollPdfInfoEarningObjectList(list1);
         payrollPdfInfoObject.setPayrollPdfInfoDeductionObjects(list2);
         payrollPdfInfoObject.setPayrollPdfInfoBasicObjects(list3);
-        payroll.setGrossSalary(payroll.getGrossSalary() - payroll.getTotalNoPay());
+
         payrollPdfInfoObject.setPayrollEntityDetails(payroll);
 
         ResponseList responseList = new ResponseList();
