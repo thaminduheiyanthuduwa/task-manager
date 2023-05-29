@@ -104,4 +104,7 @@ public class AttendanceEntity {
     @Column(name=" morning_late_amount")
     private Float morningLateAmount;
 
+    @Column(name=" request_issue")
+    private Integer requestIssue;
+
 }

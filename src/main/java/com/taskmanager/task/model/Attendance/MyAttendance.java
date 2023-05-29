@@ -60,6 +60,9 @@ public class MyAttendance {
     @JsonProperty("morningLateTime")
     private String morningLateTime;
 
+    @JsonProperty("requestIssue")
+    private Integer requestIssue;
+
     public MyAttendance() {
     }
 }
