@@ -109,6 +109,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 erpAttendance.setApplyOt(0);
 
             erpAttendance.setAttendanceStatus(attendance.getPayRollStatus());
+            erpAttendance.setRequestIssue(attendance.getRequestIssue());
 
             outObj.add(erpAttendance);
         }
