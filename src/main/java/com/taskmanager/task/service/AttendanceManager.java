@@ -41,6 +41,8 @@ public interface AttendanceManager {
 
     ResponseList changeStatus(Integer id, Integer status, String date) throws ParseException;
 
+    ResponseList changeStatusForReviewIssue(Integer id, Integer status, String date) throws ParseException;
+
     ResponseList updateLeaveWithAttendance() throws ParseException;
 
     ResponseList updateRosterDatesWithAttendance() throws ParseException;

@@ -1055,6 +1055,23 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
     }
 
+
+    @Override
+    public ResponseList changeStatusForReviewIssue(Integer id, Integer status, String date) throws ParseException {
+
+        Optional<AttendanceEntity> detail = attendanceRepository.findById(id);
+
+        AttendanceEntity tmpObj = detail.get();
+
+        tmpObj.setRequestIssue(status);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+
+        return responseList;
+    }
+
     @Override
     public ResponseList updateLeaveWithAttendance() throws ParseException {
 

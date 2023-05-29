@@ -127,6 +127,14 @@ public class AttendanceController {
 
     }
 
+    @RequestMapping(value = "/update-status-for-request-issue/{id}/{status}/{date}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public ResponseList changeStatusForRequestIssue(@PathVariable(value = "id") int id,
+                                     @PathVariable(value = "status") int status,
+                                     @PathVariable(value = "date") String date) throws ParseException {
+        return attendanceManager.changeStatusForReviewIssue(id, status, date);
+
+    }
+
     @RequestMapping(value = "/update-leave-with-attendance", method = RequestMethod.GET, headers = "Accept=application/json")
     public ResponseList updateLeaveWithAttendance() throws ParseException {
         return attendanceManager.updateLeaveWithAttendance();
