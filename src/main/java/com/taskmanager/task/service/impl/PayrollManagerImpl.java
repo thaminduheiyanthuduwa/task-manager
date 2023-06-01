@@ -475,16 +475,18 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<AllLeaveReportObject> list = new ArrayList<>();
 
-        List<Object> data = payrollSummeryRepository.getPayrollLeaveReportData();
+        List<Object> dataList = payrollSummeryRepository.getPayrollLeaveReportData();
 
-        for (Object obj : data){
+        for (Object obj : dataList){
 
-            AllLeaveReportObject tmpObj = new AllLeaveReportObject(String.valueOf(data.get(0))
-                    ,String.valueOf(data.get(1)),String.valueOf(data.get(2)), String.valueOf(data.get(3)),
-                    String.valueOf(data.get(4)), String.valueOf(data.get(5)), String.valueOf(data.get(6)),
-                    String.valueOf(data.get(7)), String.valueOf(data.get(8)),
-                    String.valueOf(data.get(9)),String.valueOf(data.get(10)),String.valueOf(data.get(11)),
-                    String.valueOf(data.get(12)),String.valueOf(data.get(13)));
+            Object[] data =  ((Object[]) obj);
+
+            AllLeaveReportObject tmpObj = new AllLeaveReportObject(String.valueOf(data[0]),
+                    String.valueOf(data[1]), String.valueOf(data[2]),
+                    String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
+                    String.valueOf(data[6]), String.valueOf(data[7]),
+                    String.valueOf(data[8]),String.valueOf(data[9]),String.valueOf(data[10]),
+                    String.valueOf(data[1]),String.valueOf(data[12]),String.valueOf(data[13]));
 
             list.add(tmpObj);
 
