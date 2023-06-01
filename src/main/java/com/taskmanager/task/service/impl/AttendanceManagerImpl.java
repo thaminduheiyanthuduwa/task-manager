@@ -1468,7 +1468,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                 float deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
 
                 if (deduction > 0) {
-                    totalTaskDeduction = (newGross.get().floatValue() / (30 * 8 *60)) * deduction;
+                    totalTaskDeduction = (newGross.get().floatValue() / (30 * 8)) * deduction;
                 }
 
 
