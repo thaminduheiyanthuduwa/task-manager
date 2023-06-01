@@ -505,13 +505,16 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<MorningLateReportObject> list = new ArrayList<>();
 
-        List<Object> data = payrollSummeryRepository.getMorningLateReportData();
+        List<Object> dataList = payrollSummeryRepository.getMorningLateReportData();
 
-        for (Object obj : data){
+        for (Object obj : dataList){
 
-            MorningLateReportObject tmpObj = new MorningLateReportObject(String.valueOf(data.get(0))
-                    ,String.valueOf(data.get(1)),String.valueOf(data.get(2)), String.valueOf(data.get(3)),
-                    String.valueOf(data.get(4)), String.valueOf(data.get(5)), String.valueOf(data.get(6)));
+            Object[] data =  ((Object[]) obj);
+
+            MorningLateReportObject tmpObj = new MorningLateReportObject(String.valueOf(data[0]),
+                    String.valueOf(data[1]), String.valueOf(data[2]),
+                    String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
+                    String.valueOf(data[6]));
 
             list.add(tmpObj);
 
