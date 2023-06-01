@@ -1,10 +1,7 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
-import com.taskmanager.task.model.Payroll.PayrollPdfInfoBasicObject;
-import com.taskmanager.task.model.Payroll.PayrollPdfInfoDeductionObject;
-import com.taskmanager.task.model.Payroll.PayrollPdfInfoEarningObject;
-import com.taskmanager.task.model.Payroll.PayrollPdfInfoObject;
+import com.taskmanager.task.model.Payroll.*;
 import com.taskmanager.task.repository.*;
 import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.service.PayrollManager;
@@ -476,16 +473,27 @@ public class PayrollManagerImpl implements PayrollManager {
     @Override
     public ResponseList getPayrollLeaveReportData(String start, String end) {
 
+        List<AllLeaveReportObject> list = new ArrayList<>();
 
         List<Object> data = payrollSummeryRepository.getPayrollLeaveReportData();
 
-        Object element = data.get(0);
+        for (Object obj : data){
 
-         = ((Object[]) element)[0];
+            AllLeaveReportObject tmpObj = new AllLeaveReportObject(String.valueOf(data.get(0))
+                    ,String.valueOf(data.get(1)),String.valueOf(data.get(2)), String.valueOf(data.get(3)),
+                    String.valueOf(data.get(4)), String.valueOf(data.get(5)), String.valueOf(data.get(6)),
+                    String.valueOf(data.get(7)), String.valueOf(data.get(8)),
+                    String.valueOf(data.get(9)),String.valueOf(data.get(10)),String.valueOf(data.get(11)),
+                    String.valueOf(data.get(12)),String.valueOf(data.get(13)));
+
+            list.add(tmpObj);
+
+        }
+
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
-        responseList.setData(data);
+        responseList.setData(list);
         return responseList;
 
     }
