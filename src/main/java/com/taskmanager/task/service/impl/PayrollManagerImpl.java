@@ -312,7 +312,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
         Float tmpNoPay = 0F;
 
-        if (payroll.getTotalNoPay() > 0){
+        if (payroll.getTotalNoPay() != null && payroll.getTotalNoPay() > 0){
 
             tmpNoPay = payroll.getTotalNoPay();
             PayrollPdfInfoBasicObject payrollPdfInfoBasicObject2 = new PayrollPdfInfoBasicObject();
@@ -330,7 +330,7 @@ public class PayrollManagerImpl implements PayrollManager {
         payrollPdfInfoBasicObject3.setBasic("Finalized Basic Salary");
         payrollPdfInfoBasicObject3.setRate("");
         payrollPdfInfoBasicObject3.setHours("");
-        payrollPdfInfoBasicObject3.setTotal(String.valueOf(payroll.getBasicSalary()-payroll.getTotalNoPay()));
+        payrollPdfInfoBasicObject3.setTotal(String.valueOf(payroll.getBasicSalary()- ((payroll.getTotalNoPay() != null) ? payroll.getTotalNoPay() : 0F)));
         list3.add(payrollPdfInfoBasicObject3);
 
         if (payroll.getTotalMorningLate() > 0){
@@ -364,7 +364,7 @@ public class PayrollManagerImpl implements PayrollManager {
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getPayee());
         }
 
-        if (payroll.getPayee() > 0){
+        if (payroll.getTotalDeductionForTasks() > 0){
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("Task Deduction");
