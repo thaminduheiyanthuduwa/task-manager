@@ -471,10 +471,18 @@ public class PayrollManagerImpl implements PayrollManager {
             responseList.setCode(400);
             return responseList;
         }
+    }
+
+    @Override
+    public ResponseList getPayrollLeaveReportData(String start, String end) {
 
 
+        List<Object> data = payrollSummeryRepository.getPayrollLeaveReportData();
 
-
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(data);
+        return responseList;
 
     }
 
