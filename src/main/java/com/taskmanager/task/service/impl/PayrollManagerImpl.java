@@ -263,7 +263,7 @@ public class PayrollManagerImpl implements PayrollManager {
         payrollPdfInfoObject.setEpfNo(emp.getEpfNumber());
         payrollPdfInfoObject.setDesignation(emp.getDesignation());
         payrollPdfInfoObject.setDesignation(emp.getDesignation());
-        payrollPdfInfoObject.setDate("2023-Apr");
+        payrollPdfInfoObject.setDate("2023-May");
 
         List<PayrollPdfInfoEarningObject> list1 = new ArrayList<>();
         List<PayrollPdfInfoBasicObject> list3 = new ArrayList<>();

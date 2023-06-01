@@ -182,7 +182,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList getAttendanceByIDForMonth(int id) {
 
-        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-04-01", "2023-05-01");
+        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-05-01", "2023-06-01");
 
         List<AttendanceDetailsForPdf> list = new ArrayList<>();
 
@@ -1306,7 +1306,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         List<PayrollEntityDetails> obj = new ArrayList<>();
         List<AttendanceEntity> obj2 = new ArrayList<>();
 
-        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-04-01", "2023-05-01");
+        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-05-01", "2023-06-01");
 
         Map<Integer, List<AttendanceEntity>> groupOt = listObj.stream().collect(groupingBy(AttendanceEntity::getEmpId));
 
