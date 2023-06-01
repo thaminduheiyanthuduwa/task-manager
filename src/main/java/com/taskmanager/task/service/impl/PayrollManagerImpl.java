@@ -479,6 +479,10 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<Object> data = payrollSummeryRepository.getPayrollLeaveReportData();
 
+        Object element = data.get(0);
+
+         = ((Object[]) element)[0];
+
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
         responseList.setData(data);

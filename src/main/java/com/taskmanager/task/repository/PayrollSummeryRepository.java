@@ -13,9 +13,12 @@ import java.util.List;
 public interface PayrollSummeryRepository extends JpaRepository<PayrollSummery, Integer > {
 
     @Query(nativeQuery = true,
-            value = "SELECT p.id, p.name_in_full, d.dept_name, adi.department_name as Admin_Department_Id,p.person_type,p.hr_employee_status, cas.tot as Casual, anu.tot as Annual, day_off.tot as Day_Off_Apr,  spe.tot as Special_Leave, probation_half_day.tot as Probation_Half_Day, short_leave.tot as Short_Leave, \n" +
-                    "no_pay_weekday.count as No_Pay_Weekday,\n" +
-                    "no_pay_weekend.count as No_Pay_Weekend\n" +
+            value = "SELECT p.id, p.name_in_full, IFNULL(d.dept_name,'NOT FOUND'), IFNULL(adi.department_name,'NOT FOUND') as Admin_Department_Id,\n" +
+                    "IFNULL(p.person_type,'NOT FOUND') ,IFNULL(p.hr_employee_status,'NOT FOUND'), \n" +
+                    "IFNULL(cas.tot,0) as Casual, IFNULL(anu.tot,0) as Annual, IFNULL(day_off.tot,0) as Day_Off_Apr,  IFNULL(spe.tot,0) as Special_Leave, \n" +
+                    "IFNULL(probation_half_day.tot,0) as Probation_Half_Day, IFNULL(short_leave.tot,0) as Short_Leave, \n" +
+                    "IFNULL(no_pay_weekday.count,0) as No_Pay_Weekday,\n" +
+                    "IFNULL(no_pay_weekend.count,0) as No_Pay_Weekend\n" +
                     "FROM people p \n" +
                     "left join departments d on p.dept_id = d.dept_id \n" +
                     "left join admin_departments adi on adi.admin_department_id = p.admin_department_id \n" +
