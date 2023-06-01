@@ -80,4 +80,11 @@ public class PayrollController {
 
     }
 
+
+    @RequestMapping(value = "/get-payroll-leave-report-data/{start}/{end}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getPayrollLeaveReportData(@PathVariable String start, @PathVariable String end) {
+        return payrollManager.getPayrollLeaveReportData(start, end);
+
+    }
+
 }
