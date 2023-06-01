@@ -28,5 +28,7 @@ public interface PayrollManager {
     ResponseList changePayRollSummaryStatus(int status);
 
     ResponseList getPayrollLeaveReportData(String start, String end);
+    ResponseList getMorningLateReportData(String start, String end);
+
 
 }

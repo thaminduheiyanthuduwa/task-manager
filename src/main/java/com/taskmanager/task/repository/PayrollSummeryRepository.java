@@ -34,5 +34,19 @@ public interface PayrollSummeryRepository extends JpaRepository<PayrollSummery, 
                     "where p.hr_employee_status in ('ACTIVE','PERMANENT','PROBATION','CONTRACT') and p.person_type in ('lecturer','individual','employee',' intern');")
     List<Object> getPayrollLeaveReportData();
 
+    @Query(nativeQuery = true,
+            value = "SELECT p.id, p.name_in_full, IFNULL(d.dept_name,'NOT FOUND'), IFNULL(adi.department_name,'NOT FOUND') as Admin_Department_Id,\n" +
+                    "IFNULL(p.person_type,'NOT FOUND') ,IFNULL(p.hr_employee_status,'NOT FOUND'), ((obj.amount * (-1))/60) as morning_late\n" +
+                    "FROM people p \n" +
+                    "left join departments d on p.dept_id = d.dept_id \n" +
+                    "left join admin_departments adi on adi.admin_department_id = p.admin_department_id \n" +
+                    "left join (SELECT at.emp_id, sum(at.morning_late) as amount FROM attendance at \n" +
+                    "where at.date >= '2023-05-01' and at.date < '2023-06-01' and \n" +
+                    "(at.apply_late = 0 or at.apply_late = 5) and at.pay_roll_status in (2,3,4,5,7,11)\n" +
+                    "group by at.emp_id \n" +
+                    "having sum(at.morning_late) < 0) obj on obj.emp_id = p.id\n" +
+                    "where p.hr_employee_status in ('ACTIVE','PERMANENT','PROBATION','CONTRACT') and p.person_type in ('lecturer','individual','employee',' intern');")
+    List<Object> getMorningLateReportData();
+
 
 }

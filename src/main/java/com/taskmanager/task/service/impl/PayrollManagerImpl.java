@@ -498,5 +498,30 @@ public class PayrollManagerImpl implements PayrollManager {
 
     }
 
+    @Override
+    public ResponseList getMorningLateReportData(String start, String end) {
+
+        List<MorningLateReportObject> list = new ArrayList<>();
+
+        List<Object> data = payrollSummeryRepository.getMorningLateReportData();
+
+        for (Object obj : data){
+
+            MorningLateReportObject tmpObj = new MorningLateReportObject(String.valueOf(data.get(0))
+                    ,String.valueOf(data.get(1)),String.valueOf(data.get(2)), String.valueOf(data.get(3)),
+                    String.valueOf(data.get(4)), String.valueOf(data.get(5)), String.valueOf(data.get(6)));
+
+            list.add(tmpObj);
+
+        }
+
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        return responseList;
+
+    }
+
 
 }

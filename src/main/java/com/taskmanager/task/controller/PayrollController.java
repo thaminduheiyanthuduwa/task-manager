@@ -87,4 +87,10 @@ public class PayrollController {
 
     }
 
+    @RequestMapping(value = "/get-morning-late-amount/{start}/{end}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getMorningLateReportData(@PathVariable String start, @PathVariable String end) {
+        return payrollManager.getMorningLateReportData(start, end);
+
+    }
+
 }
