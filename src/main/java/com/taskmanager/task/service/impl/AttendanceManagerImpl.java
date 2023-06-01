@@ -348,6 +348,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         attendanceEntityGetIdObj.setStatus(newObj.getStatus());
         attendanceEntityGetIdObj.setApproved_by_id(newObj.getApproved_by_id());
         attendanceEntityGetIdObj.setSupervisorComment(newObj.getSupervisorComment());
+        attendanceEntityGetIdObj.setRequestIssue(newObj.getRequestIssue());
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
@@ -363,6 +364,10 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         AttendanceEntity attendanceObj = attendance.get();
 
+        if (attendanceObj.getRequestIssue() == 3){
+            attendanceObj.setInTime(createAttendance.getInTimeNew());
+            attendanceObj.setOutTime(createAttendance.getOutTimeNew());
+        }
         if (attendanceObj.getInTime().equalsIgnoreCase("")) {
             attendanceObj.setInTime(createAttendance.getInTimeNew());
         }
@@ -1064,6 +1069,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
         AttendanceEntity tmpObj = detail.get();
 
         tmpObj.setRequestIssue(status);
+
+        attendanceRepository.save(tmpObj);
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);

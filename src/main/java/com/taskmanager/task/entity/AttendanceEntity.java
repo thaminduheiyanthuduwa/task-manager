@@ -105,6 +105,6 @@ public class AttendanceEntity {
     private Float morningLateAmount;
 
     @Column(name=" request_issue")
-    private Integer requestIssue;
+    private Integer requestIssue = 0;
 
 }

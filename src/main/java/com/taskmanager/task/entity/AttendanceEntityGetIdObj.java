@@ -40,5 +40,7 @@ public class AttendanceEntityGetIdObj {
 
     private String supervisorComment;
 
+    private Integer requestIssue;
+
 
 }

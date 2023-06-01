@@ -37,4 +37,7 @@ public class CreateAttendance {
 
     @JsonProperty("approvedDate")
     private String approvedDate;
+
+    @JsonProperty("requestIssue")
+    private Integer requestIssue;
 }
