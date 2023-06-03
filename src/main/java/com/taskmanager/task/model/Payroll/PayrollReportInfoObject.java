@@ -22,10 +22,6 @@ public class PayrollReportInfoObject {
 
     private String basicSalary;
 
-    private String basic_salary;
-
-    private String Budgetary_Allowance;
-
     private String Academic_Incentive_Payment;
 
     private String Attendance_Incentive_Payment;
@@ -68,9 +64,6 @@ public class PayrollReportInfoObject {
 
     private String Travelling_Allo_22;
 
-
-
-
     private String noPay;
 
     private String setFinalizedBasicSalary;
@@ -81,39 +74,11 @@ public class PayrollReportInfoObject {
 
     private String grossSalary;
 
-    private String salaryForEPF_ETF;
-
-    private String housingAllowance;
-
-    private String travellingAllowance;
-
-    private String hodIncentivePayment;
-
-    private String deanIncentivePmt;
-
-    private String incentiveForResearch;
-
-    private String performanceIncentive;
-
-    private String quarterPerformanceIncentive;
-
-    private String taskIncentivePayment;
-
-    private String reimbursement;
-
-    private String mscIncentivePayment;
-
-    private String dvcIncentivePayment;
-
-    private String crisisIncentivePayment;
-
     private String totalSalary;
 
     private String payee;
 
     private String epf8;
-
-    private String swa;
 
     private String lateAttendance;
 
@@ -122,8 +87,6 @@ public class PayrollReportInfoObject {
     private String penalty;
 
     private String loan;
-
-    private String salaryAdvance;
 
     private String totalDeduction;
 

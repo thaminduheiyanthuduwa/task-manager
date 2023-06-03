@@ -548,7 +548,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
                 List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository.getAllSalaryInfoByName(empDetailEntity.getNameInFull());
 
-                payrollReportInfoObject.setId(String.valueOf(empDetailEntity));
+                payrollReportInfoObject.setId(String.valueOf(empDetailEntity.getId()));
                 payrollReportInfoObject.setName(empDetailEntity.getNameInFull());
                 payrollReportInfoObject.setEpfNo(empDetailEntity.getEpfNumber());
                 payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
