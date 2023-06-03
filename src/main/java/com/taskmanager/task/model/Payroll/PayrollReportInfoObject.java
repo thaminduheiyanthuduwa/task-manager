@@ -64,6 +64,8 @@ public class PayrollReportInfoObject {
 
     private String Travelling_Allo_22;
 
+    private String Task_Incentive_Payment;
+
     private String noPay;
 
     private String setFinalizedBasicSalary;

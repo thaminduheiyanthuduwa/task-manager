@@ -606,6 +606,8 @@ public class PayrollManagerImpl implements PayrollManager {
                                 payrollReportInfoObject.setPerformance_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
                             } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travellening Allo 22")) {
                                 payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Task Incentive Payment")) {
+                                payrollReportInfoObject.setTask_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
                             }
                         }
                     } else if ((allSalaryInfoEntity.getCategory()
@@ -700,6 +702,12 @@ public class PayrollManagerImpl implements PayrollManager {
                 }
                 payrollReportInfoObject.setGrossSalary(String.valueOf(payroll.getGrossSalary() - (payroll.getTotalNoPay() != null ? payroll.getTotalNoPay() : 0)));
                 payrollReportInfoObject.setTotal(String.valueOf(payroll.getGrossSalary() - (payroll.getTotalDeductions() != null ? payroll.getTotalDeductions() : 0)));
+
+
+                payrollReportInfoObject.setEpf12(String.valueOf(payroll.getEpfAddition()));
+                payrollReportInfoObject.setEpf8(String.valueOf(payroll.getEpfDeduction()));
+                payrollReportInfoObject.setEtf3(String.valueOf(payroll.getEtf()));
+                payrollReportInfoObject.setTotalDeduction(String.valueOf(payroll.getTotalDeductions()));
 
                 payrollReportInfoObjectsList.add(payrollReportInfoObject);
             }
