@@ -21,10 +21,10 @@ public class PayrollEntityDetails {
     private int id;
 
     @Column(name = "payroll_id")
-    private Integer payrollId;
+    private Integer payrollId = 0;
 
     @Column(name = "emp_id")
-    private Integer empId;
+    private Integer empId = 0;
 
     @Column(name = "serial_id")
     private String serialId;
@@ -33,7 +33,7 @@ public class PayrollEntityDetails {
     private String name;
 
     @Column(name = "is_no_pay")
-    private Integer isNoPay;
+    private Integer isNoPay ;
 
     @Column(name = "is_ot")
     private Integer isOt;
@@ -42,7 +42,7 @@ public class PayrollEntityDetails {
     private Integer isLate;
 
     @Column(name = "advance")
-    private Float advance;
+    private Float advance = 0F;
 
     @Column(name = "is_active")
     private Integer isActive;
@@ -57,55 +57,55 @@ public class PayrollEntityDetails {
     private Integer isNoPayBasic;
 
     @Column(name = "total_ot")
-    private Float totalOt;
+    private Float totalOt = 0F;
 
     @Column(name = "total_no_pay")
-    private Float totalNoPay;
+    private Float totalNoPay = 0F;
 
     @Column(name = "basic_salary")
-    private Float basicSalary;
+    private Float basicSalary = 0F;
 
     @Column(name = "not_applicable")
     private Integer notApplicable;
 
     @Column(name = "gross_salary")
-    private Float grossSalary;
+    private Float grossSalary = 0F;
 
     @Column(name = "total_late_amount")
-    private Float totalLateAmount;
+    private Float totalLateAmount = 0F;
 
     @Column(name = "total_morning_late")
-    private Float totalMorningLate;
+    private Float totalMorningLate = 0F;
 
     @Column(name = "epf_deduction")
-    private Float epfDeduction;
+    private Float epfDeduction = 0F;
 
     @Column(name = "epf_addition")
-    private Float epfAddition;
+    private Float epfAddition = 0F;
 
     @Column(name = "etf")
-    private Float etf;
+    private Float etf = 0F;
 
     @Column(name = "total_deductions")
-    private Float totalDeductions;
+    private Float totalDeductions = 0F;
 
     @Column(name = "total_additions")
-    private Float totalAdditions;
+    private Float totalAdditions = 0F;
 
     @Column(name = "total_working_hours")
-    private Float totalWorkingHours;
+    private Float totalWorkingHours = 0F;
 
     @Column(name = "total_task_hours")
-    private Float totalTaskHours;
+    private Float totalTaskHours = 0F;
 
     @Column(name = "total_deduction_for_tasks")
-    private Float totalDeductionForTasks;
+    private Float totalDeductionForTasks = 0F;
 
     @Column(name = "published")
     private Integer published;
 
     @Column(name = "payee")
-    private Float payee;
+    private Float payee = 0F;
 
     public PayrollEntityDetails() {}
 

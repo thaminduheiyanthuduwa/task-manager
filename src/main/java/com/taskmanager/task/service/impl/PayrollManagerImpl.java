@@ -541,25 +541,75 @@ public class PayrollManagerImpl implements PayrollManager {
 
             PayrollReportInfoObject payrollReportInfoObject = new PayrollReportInfoObject();
 
-            PayrollEntityDetails payroll = payrollDetailsRepository.findByEmpId(empDetailEntity.getId()).get(0);
+            List<PayrollEntityDetails> payrollList = payrollDetailsRepository.findByEmpId(empDetailEntity.getId());
 
-            List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository.getAllSalaryInfoByName(empDetailEntity.getNameInFull());
+            if (!payrollList.isEmpty()) {
+                PayrollEntityDetails payroll = payrollList.get(0);
 
-            payrollReportInfoObject.setId(String.valueOf(empDetailEntity));
-            payrollReportInfoObject.setName(empDetailEntity.getNameInFull());
-            payrollReportInfoObject.setEpfNo(empDetailEntity.getEpfNumber());
-            payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
-            payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
-            payrollReportInfoObject.setDate("2023-May");
+                List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository.getAllSalaryInfoByName(empDetailEntity.getNameInFull());
 
-            salaryInfo.forEach(allSalaryInfoEntity -> {
+                payrollReportInfoObject.setId(String.valueOf(empDetailEntity));
+                payrollReportInfoObject.setName(empDetailEntity.getNameInFull());
+                payrollReportInfoObject.setEpfNo(empDetailEntity.getEpfNumber());
+                payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
+                payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
+                payrollReportInfoObject.setDate("2023-May");
 
-                if ((allSalaryInfoEntity.getCategory()
-                        .equalsIgnoreCase("Basic Salary") || allSalaryInfoEntity.getCategory()
-                        .equalsIgnoreCase("Allowances")) && allSalaryInfoEntity.getAmount() != 0) {
+                salaryInfo.forEach(allSalaryInfoEntity -> {
 
-                    if (!(allSalaryInfoEntity.getType().equalsIgnoreCase("basic_salary") ||
-                            allSalaryInfoEntity.getType().equalsIgnoreCase("Budgetary Allowance"))) {
+                    if ((allSalaryInfoEntity.getCategory()
+                            .equalsIgnoreCase("Basic Salary") || allSalaryInfoEntity.getCategory()
+                            .equalsIgnoreCase("Allowances")) && allSalaryInfoEntity.getAmount() != 0) {
+
+                        if (!(allSalaryInfoEntity.getType().equalsIgnoreCase("basic_salary") ||
+                                allSalaryInfoEntity.getType().equalsIgnoreCase("Budgetary Allowance"))) {
+
+                            if (allSalaryInfoEntity.getType().equalsIgnoreCase("Academic Incentive Payment")) {
+                                payrollReportInfoObject.setAcademic_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Attendance Incentive Payment")) {
+                                payrollReportInfoObject.setAttendance_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Crisis Allowance")) {
+                                payrollReportInfoObject.setCrisis_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Dean Incentive Payment")) {
+                                payrollReportInfoObject.setDean_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Fixed OT")) {
+                                payrollReportInfoObject.setFixed_OT(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Fixed Service Charges")) {
+                                payrollReportInfoObject.setFixed_Service_Charges(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("HOD Incentive Payment")) {
+                                payrollReportInfoObject.setHOD_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Insurance Premium")) {
+                                payrollReportInfoObject.setInsurance_Premium(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Leadership Incentive  Payment")) {
+                                payrollReportInfoObject.setLeadership_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Neatness Incentive Payment")) {
+                                payrollReportInfoObject.setNeatness_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Performance Incentive Payment")) {
+                                payrollReportInfoObject.setPerformance_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Rent Reimbursement")) {
+                                payrollReportInfoObject.setRent_Reimbursement(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Research Incentive Payment")) {
+                                payrollReportInfoObject.setResearch_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Service Charges")) {
+                                payrollReportInfoObject.setService_Charges(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travelling Allowance")) {
+                                payrollReportInfoObject.setTravelling_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("MSc Qualification Incentive")) {
+                                payrollReportInfoObject.setMSc_Qualification_Incentive(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Crisis_Allowances _2022")) {
+                                payrollReportInfoObject.setCrisis_Allowances_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("DVC Incentive Allowance")) {
+                                payrollReportInfoObject.setDVC_Incentive_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("MSC_Phd_Incentive")) {
+                                payrollReportInfoObject.setMSC_Phd_Incentive(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Performance _2022")) {
+                                payrollReportInfoObject.setPerformance_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travellening Allo 22")) {
+                                payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
+                            }
+                        }
+                    } else if ((allSalaryInfoEntity.getCategory()
+                            .equalsIgnoreCase("Deductions")) && allSalaryInfoEntity.getAmount() != 0) {
 
                         if (allSalaryInfoEntity.getType().equalsIgnoreCase("Academic Incentive Payment")) {
                             payrollReportInfoObject.setAcademic_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
@@ -605,102 +655,54 @@ public class PayrollManagerImpl implements PayrollManager {
                             payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
                         }
                     }
-                }
-                else if ((allSalaryInfoEntity.getCategory()
-                        .equalsIgnoreCase("Deductions")) && allSalaryInfoEntity.getAmount() != 0) {
 
-                    if (allSalaryInfoEntity.getType().equalsIgnoreCase("Academic Incentive Payment")) {
-                        payrollReportInfoObject.setAcademic_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Attendance Incentive Payment")) {
-                        payrollReportInfoObject.setAttendance_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Crisis Allowance")) {
-                        payrollReportInfoObject.setCrisis_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Dean Incentive Payment")) {
-                        payrollReportInfoObject.setDean_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Fixed OT")) {
-                        payrollReportInfoObject.setFixed_OT(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Fixed Service Charges")) {
-                        payrollReportInfoObject.setFixed_Service_Charges(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("HOD Incentive Payment")) {
-                        payrollReportInfoObject.setHOD_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Insurance Premium")) {
-                        payrollReportInfoObject.setInsurance_Premium(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Leadership Incentive  Payment")) {
-                        payrollReportInfoObject.setLeadership_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Neatness Incentive Payment")) {
-                        payrollReportInfoObject.setNeatness_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Performance Incentive Payment")) {
-                        payrollReportInfoObject.setPerformance_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Rent Reimbursement")) {
-                        payrollReportInfoObject.setRent_Reimbursement(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Research Incentive Payment")) {
-                        payrollReportInfoObject.setResearch_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Service Charges")) {
-                        payrollReportInfoObject.setService_Charges(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travelling Allowance")) {
-                        payrollReportInfoObject.setTravelling_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("MSc Qualification Incentive")) {
-                        payrollReportInfoObject.setMSc_Qualification_Incentive(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Crisis_Allowances _2022")) {
-                        payrollReportInfoObject.setCrisis_Allowances_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("DVC Incentive Allowance")) {
-                        payrollReportInfoObject.setDVC_Incentive_Allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("MSC_Phd_Incentive")) {
-                        payrollReportInfoObject.setMSC_Phd_Incentive(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Performance _2022")) {
-                        payrollReportInfoObject.setPerformance_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travellening Allo 22")) {
-                        payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
-                    }
+                });
+
+                payrollReportInfoObject.setBasicSalary(String.valueOf(payroll.getBasicSalary()));
+
+
+                if (payroll.getTotalNoPay() != null && payroll.getTotalNoPay() > 0) {
+
+                    payrollReportInfoObject.setNoPay(String.valueOf(payroll.getTotalNoPay()));
+
                 }
 
-            });
-
-            payrollReportInfoObject.setBasicSalary(String.valueOf(payroll.getBasicSalary()));
-
+                payrollReportInfoObject.setSetFinalizedBasicSalary(String.valueOf(payroll
+                        .getBasicSalary() - ((payroll.getTotalNoPay() != null) ? payroll.getTotalNoPay() : 0F)));
 
 
-            if (payroll.getTotalNoPay() != null && payroll.getTotalNoPay() > 0){
+                if (payroll.getTotalMorningLate() != null && payroll.getTotalMorningLate() > 0) {
+                    payrollReportInfoObject.setMorningLate(String.valueOf(payroll.getTotalMorningLate()));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalMorningLate());
+                }
+                if (payroll.getTotalLateAmount() != null && payroll.getTotalLateAmount() > 0) {
+                    payrollReportInfoObject.setLateAttendance(String.valueOf(payroll.getTotalLateAmount()));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalLateAmount());
+                }
+                if (payroll.getPayee() != null && payroll.getPayee() > 0) {
+                    payrollReportInfoObject.setPayee(String.valueOf(payroll.getPayee()));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getPayee());
+                }
 
-                payrollReportInfoObject.setNoPay(String.valueOf(payroll.getTotalNoPay()));
+                if (payroll.getTotalDeductionForTasks() != null && payroll.getTotalDeductionForTasks() > 0) {
+                    payrollReportInfoObject.setTaskDeduction(String.valueOf(payroll.getTotalDeductionForTasks()));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalDeductionForTasks());
+                }
 
+                if (payroll.getEpfDeduction() != null && payroll.getEpfDeduction() > 0) {
+                    payrollReportInfoObject.setEpf8(String.valueOf(payroll.getEpfDeduction()));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getEpfDeduction());
+                }
+
+                if (payroll.getTotalOt() != null && payroll.getTotalOt() > 0) {
+                    payrollReportInfoObject.setOtAmount(String.valueOf(payroll.getTotalOt()));
+                    payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
+                }
+                payrollReportInfoObject.setGrossSalary(String.valueOf(payroll.getGrossSalary() - (payroll.getTotalNoPay() != null ? payroll.getTotalNoPay() : 0)));
+                payrollReportInfoObject.setTotal(String.valueOf(payroll.getGrossSalary() - (payroll.getTotalDeductions() != null ? payroll.getTotalDeductions() : 0)));
+
+                payrollReportInfoObjectsList.add(payrollReportInfoObject);
             }
-
-            payrollReportInfoObject.setSetFinalizedBasicSalary(String.valueOf(payroll
-                    .getBasicSalary()- ((payroll.getTotalNoPay() != null) ? payroll.getTotalNoPay() : 0F)));
-
-
-            if (payroll.getTotalMorningLate() > 0){
-                payrollReportInfoObject.setMorningLate(String.valueOf(payroll.getTotalMorningLate()));
-                payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalMorningLate());
-            }
-            if (payroll.getTotalLateAmount() > 0){
-                payrollReportInfoObject.setLateAttendance(String.valueOf(payroll.getTotalLateAmount()));
-                payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalLateAmount());
-            }
-            if (payroll.getPayee() > 0){
-                payrollReportInfoObject.setPayee(String.valueOf(payroll.getPayee()));
-                payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getPayee());
-            }
-
-            if (payroll.getTotalDeductionForTasks() > 0){
-                payrollReportInfoObject.setTaskDeduction(String.valueOf(payroll.getTotalDeductionForTasks()));
-                payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalDeductionForTasks());
-            }
-
-            if (payroll.getEpfDeduction() > 0){
-                payrollReportInfoObject.setEpf8(String.valueOf(payroll.getEpfDeduction()));
-                payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getEpfDeduction());
-            }
-
-            if (payroll.getTotalOt() > 0){
-                payrollReportInfoObject.setOtAmount(String.valueOf(payroll.getTotalOt()));
-                payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
-            }
-            payrollReportInfoObject.setGrossSalary(String.valueOf(payroll.getGrossSalary() - payroll.getTotalNoPay()));
-            payrollReportInfoObject.setTotal(String.valueOf(payroll.getGrossSalary() - payroll.getTotalDeductions()));
-
-            payrollReportInfoObjectsList.add(payrollReportInfoObject);
 
         });
 
