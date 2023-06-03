@@ -93,4 +93,9 @@ public class PayrollController {
 
     }
 
+    @RequestMapping(value = "/get-payroll-report-info", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getPayrollReportInfo() {
+        return payrollManager.getPayrollReportInfo();
+
+    }
 }

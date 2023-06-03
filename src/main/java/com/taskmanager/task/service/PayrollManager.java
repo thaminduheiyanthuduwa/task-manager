@@ -30,5 +30,7 @@ public interface PayrollManager {
     ResponseList getPayrollLeaveReportData(String start, String end);
     ResponseList getMorningLateReportData(String start, String end);
 
+    ResponseList getPayrollReportInfo();
+
 
 }
