@@ -486,7 +486,7 @@ public class PayrollManagerImpl implements PayrollManager {
                     String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
                     String.valueOf(data[6]), String.valueOf(data[7]),
                     String.valueOf(data[8]),String.valueOf(data[9]),String.valueOf(data[10]),
-                    String.valueOf(data[1]),String.valueOf(data[12]),String.valueOf(data[13]));
+                    String.valueOf(data[11]),String.valueOf(data[12]),String.valueOf(data[13]));
 
             list.add(tmpObj);
 
@@ -498,6 +498,32 @@ public class PayrollManagerImpl implements PayrollManager {
         responseList.setData(list);
         return responseList;
 
+    }
+
+    @Override
+    public ResponseList getTaskCountReportData(String start, String end) {
+
+        List<AllTaskReportObject> list = new ArrayList<>();
+
+        List<Object> dataList = payrollSummeryRepository.getTaskReportData();
+
+        for (Object obj : dataList){
+
+            Object[] data =  ((Object[]) obj);
+
+            AllTaskReportObject tmpObj = new AllTaskReportObject(String.valueOf(data[0]),
+                    String.valueOf(data[1]), String.valueOf(data[2]),
+                    String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
+                    String.valueOf(data[6]), String.valueOf(data[7]));
+
+            list.add(tmpObj);
+
+        }
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        return responseList;
     }
 
     @Override
