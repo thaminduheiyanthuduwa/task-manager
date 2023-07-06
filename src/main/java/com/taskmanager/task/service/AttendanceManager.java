@@ -53,4 +53,6 @@ public interface AttendanceManager {
 
     ResponseList getOTProcessDates();
 
+    ResponseList getMinorStaffAttendance(String start, String end);
+
 }
