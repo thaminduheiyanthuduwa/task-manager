@@ -2,6 +2,7 @@ package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
 import com.taskmanager.task.model.Attendance.*;
+import com.taskmanager.task.model.Payroll.AllLeaveReportObject;
 import com.taskmanager.task.repository.*;
 import com.taskmanager.task.response.AttendanceDateRangeObj;
 import com.taskmanager.task.response.ResponseList;
@@ -1617,6 +1618,35 @@ public class AttendanceManagerImpl implements AttendanceManager {
         responseList.setMsg("Success");
 
         return responseList;
+    }
+
+    @Override
+    public ResponseList getMinorStaffAttendance(String start, String end) {
+
+        List<MinorStaffAttendanceObject> list = new ArrayList<>();
+
+        List<Object> dataList = attendanceRepository.getMinoStaffAttendanceByDate(start, end);
+
+        for (Object obj : dataList){
+
+            Object[] data =  ((Object[]) obj);
+
+            MinorStaffAttendanceObject tmpObj = new MinorStaffAttendanceObject(String.valueOf(data[0]),
+                    String.valueOf(data[1]), String.valueOf(data[2]),
+                    String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
+                    String.valueOf(data[6]), String.valueOf(data[7]));
+
+            list.add(tmpObj);
+
+        }
+
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        return responseList;
+
+
     }
 
 
