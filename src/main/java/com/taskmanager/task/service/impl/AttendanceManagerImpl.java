@@ -115,7 +115,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         }
 //        outObj.sort(Comparator.comparing(MyAttendance::getId).reversed());
 
-        String url = "http://localhost:8080/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
+        String url = "http://localhost:8085/main-erp/get-my-attendance/" + emp.get().getSerialNumber();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -396,7 +396,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         SimpleDateFormat convertDateToTime = new SimpleDateFormat("HH:mm:ss");
 
-        String url = "http://localhost:8080/main-erp/get-my-yesterday-attendance/"+id;
+        String url = "http://localhost:8085/main-erp/get-my-yesterday-attendance/"+id;
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -521,7 +521,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
             Optional<EmpDetailEntity> people = empDetailRepository.findById(idUser);
 
-            String url = "http://localhost:8080/main-erp/get-my-yesterday-attendance-for-emp/"+id+"/"+people.get().getSerialNumber();
+            String url = "http://localhost:8085/main-erp/get-my-yesterday-attendance-for-emp/"+id+"/"+people.get().getSerialNumber();
 
             RestTemplate restTemplate = new RestTemplate();
 
@@ -1082,7 +1082,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList updateLeaveWithAttendance() throws ParseException {
 
-        List<LeaveEntity> listObj = leaveRepository.findAll();
+        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-06-01");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
@@ -1137,7 +1137,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<AttendanceEntity> listObj = attendanceRepository.findAll();
+        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-06-01", "2023-08-01");
 
         List<AttendanceEntity> newList = new ArrayList<>();
 
@@ -1145,11 +1145,15 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         groupOt.forEach((integer, attendanceEntities) -> {
 
-            if (integer == 296){
+            if (integer == 642){
                 System.out.println("");
             }
 
             attendanceEntities.forEach(attendanceEntity -> {
+
+                if (attendanceEntity.getId() == 32216){
+                    System.out.println("");
+                }
 
                 long seconds = 0L;
                 long seconds2 = 0L;
@@ -1400,6 +1404,8 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     } catch (Exception e) {
                     }
 
+                    Float morningLateTmpTime = 0F;
+
                     try {
 
                         if ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5)  && attendanceEntity.getMorningLate() != null &&
@@ -1408,7 +1414,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
                                         attendanceEntity.getPayRollStatus() == 4 || attendanceEntity.getPayRollStatus() == 5 ||
                                         attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11)) {
                             float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate())*(-1)) / (60);
-
+                            morningLateTmpTime = val;
                             Float amount = val * (newGross.get().floatValue() / (30 * 8 * 60));
                             lateAmountMorning.updateAndGet(v -> v + amount);
                             attendanceEntity.setMorningLateAmount(amount);
@@ -1421,7 +1427,12 @@ public class AttendanceManagerImpl implements AttendanceManager {
                     try {
 
                         if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
+
                             float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
+
+                            if (morningLateTmpTime > 0) {
+                                val = val - morningLateTmpTime;
+                            }
 
                             Float amount = val * ((newGross.get().floatValue() / (30 * 8 * 60)));
                             lateAmount.updateAndGet(v -> v + amount);

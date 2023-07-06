@@ -38,7 +38,7 @@ public class PeopleManagerImpl implements PeopleManager {
     @Override
     public ResponseList updatePeopleTable() throws ParseException {
 
-        String url = "http://localhost:8080/main-erp/people/update-people-list";
+        String url = "http://localhost:8085/main-erp/people/update-people-list";
 
         RestTemplate restTemplate = new RestTemplate();
 

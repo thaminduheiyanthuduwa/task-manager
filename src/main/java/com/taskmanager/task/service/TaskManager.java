@@ -52,7 +52,7 @@ public interface TaskManager {
 
     ResponseList getTotalEstimateByTask(int task);
 
-    void setRecurring();
+    void setRecurring(Integer date);
 
     void changeCompleteStatus();
 
