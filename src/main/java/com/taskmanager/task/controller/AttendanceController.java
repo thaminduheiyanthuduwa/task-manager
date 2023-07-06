@@ -175,10 +175,18 @@ public class AttendanceController {
     }
 
     @RequestMapping(value = "/get-minor-staff-report/{start}/{end}", method = RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseList getMinorStaffDate(@PathVariable(value = "start") String start,
+    public ResponseList getMinorStaffAttendanceReport(@PathVariable(value = "start") String start,
                                           @PathVariable(value = "end") String end) {
 
         return attendanceManager.getMinorStaffAttendance(start, end);
+
+    }
+
+    @RequestMapping(value = "/get-minor-staff-leave-report/{start}/{end}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getMinorStaffLeaveReport(@PathVariable(value = "start") String start,
+                                          @PathVariable(value = "end") String end) {
+
+        return attendanceManager.getMinorStaffLeave(start, end);
 
     }
 

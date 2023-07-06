@@ -55,4 +55,6 @@ public interface AttendanceManager {
 
     ResponseList getMinorStaffAttendance(String start, String end);
 
+    ResponseList getMinorStaffLeave(String start, String end);
+
 }
