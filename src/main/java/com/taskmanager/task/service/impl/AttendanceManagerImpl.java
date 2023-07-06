@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1403,11 +1404,15 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
-                        if ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5)  && attendanceEntity.getMorningLate() != null &&
+                        SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+                        LocalDate date = LocalDate.parse(convertDateToDateOnly.format(attendanceEntity.getDate()), DateTimeFormatter.ISO_DATE);
+                        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+                        if (dayOfWeek.equalsIgnoreCase("saturday") && ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5)  && attendanceEntity.getMorningLate() != null &&
                                 Integer.parseInt(attendanceEntity.getMorningLate()) < 0 &&
                                 (attendanceEntity.getPayRollStatus() == 2 || attendanceEntity.getPayRollStatus() == 3 ||
                                         attendanceEntity.getPayRollStatus() == 4 || attendanceEntity.getPayRollStatus() == 5 ||
-                                        attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11)) {
+                                        attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11))) {
                             float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate())*(-1)) / (60);
 
                             Float amount = val * (newGross.get().floatValue() / (30 * 8 * 60));
@@ -1421,7 +1426,11 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
                     try {
 
-                        if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
+                        SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+                        LocalDate date = LocalDate.parse(convertDateToDateOnly.format(attendanceEntity.getDate()), DateTimeFormatter.ISO_DATE);
+                        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+                        if (dayOfWeek.equalsIgnoreCase("saturday") && Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
                             float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
 
                             Float amount = val * ((newGross.get().floatValue() / (30 * 8 * 60)));

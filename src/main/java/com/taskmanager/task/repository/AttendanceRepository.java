@@ -54,7 +54,7 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
             value = "select (IFNULL(obj1.total_count,0) + IFNULL(obj2.total_available_leaves,0)) as count    from people pe \n" +
                     "left join (SELECT lm.emp_id, sum(lm.total_leave) as total_count FROM leave_manager lm WHERE lm.status = 5 AND lm.from_date >= '2023-06-01' AND lm.to_date < '2023-07-01' and lm.leave_type not in ('Special Company Holiday - May','Day Off - May')  GROUP BY lm.emp_id) obj1\n" +
                     "on obj1.emp_id = pe.id\n" +
-                    "left join (SELECT al.emp_id, SUM(al.original_leaves) as total_available_leaves FROM available_leaves al WHERE al.type like '%may%' GROUP BY al.emp_id) obj2 on obj2.emp_id = pe.id\n" +
+                    "left join (SELECT al.emp_id, SUM(al.original_leaves) as total_available_leaves FROM available_leaves al WHERE al.type like '%June%' GROUP BY al.emp_id) obj2 on obj2.emp_id = pe.id\n" +
                     "where pe.id = :emp_id")
     float getMonthLeaveDatesForPayRoll(@Param("emp_id") Integer emp_id);
 
