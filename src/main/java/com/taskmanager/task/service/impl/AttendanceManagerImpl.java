@@ -1649,6 +1649,32 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
     }
 
+    @Override
+    public ResponseList getMinorStaffLeave(String start, String end) {
+
+        List<MinorStaffLeaveObject> list = new ArrayList<>();
+
+        List<Object> dataList = attendanceRepository.getMinoStaffLeaveByDate(start, end);
+
+        for (Object obj : dataList){
+
+            Object[] data =  ((Object[]) obj);
+
+            MinorStaffLeaveObject tmpObj = new MinorStaffLeaveObject(String.valueOf(data[0]),
+                    String.valueOf(data[1]), String.valueOf(data[2]));
+
+            list.add(tmpObj);
+
+        }
+
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        return responseList;
+
+    }
+
 
 }
 

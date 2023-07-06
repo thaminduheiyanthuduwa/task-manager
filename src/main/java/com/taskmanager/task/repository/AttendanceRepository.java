@@ -77,6 +77,20 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
                     "at.date >= :start_date and at.date <= :end_date order by pe.name_in_full, at.date) obj;")
     List<Object> getMinoStaffAttendanceByDate(@Param("start_date") String start_date, @Param("end_date") String end_date);
 
+    @Query(nativeQuery = true,
+            value = "select id,name_in_full, count(id) as leave_count\n" +
+                    "from(select pe.id, pe.name_in_full, IFNULL(at.date,'') as attendance_date, CASE WHEN " +
+                    "(at.in_time = '' or at.in_time is null) and (at.out_time = '' or at.out_time is null) " +
+                    "THEN 'Leave'ELSE at.in_time END AS in_time, CASE WHEN (at.in_time = '' or at.in_time " +
+                    "is null) and (at.out_time = '' or at.out_time is null) THEN 'Leave'ELSE at.out_time " +
+                    "END AS out_time, at.total_working_hours/60 as working_hour_in_min , " +
+                    "at.total_working_hours/(60*60) as working_hour_in_hour, pe.minor_staff_type " +
+                    "from attendance at left join people pe on at.emp_id = pe.id where pe.person_type = 'minor' " +
+                    "and at.date >= :start_date and at.date < :end_date order by pe.name_in_full, at.date) obj\n" +
+                    "where in_time = 'Leave' and out_time = 'Leave'\n" +
+                    "group by id,name_in_full;")
+    List<Object> getMinoStaffLeaveByDate(@Param("start_date") String start_date, @Param("end_date") String end_date);
+
 
 
 
