@@ -20,6 +20,8 @@ public class PayrollReportInfoObject {
 
     private String date;
 
+    private String department;
+
     private String basicSalary;
 
     private String Academic_Incentive_Payment;
@@ -99,6 +101,16 @@ public class PayrollReportInfoObject {
     private String etf3;
 
     private String total;
+
+    private String otherDeduction;
+
+    private String swa;
+
+    private String advances;
+
+    private String quarter_performance_incentive_payment;
+
+    private String promotional_allowance;
 
 
 }

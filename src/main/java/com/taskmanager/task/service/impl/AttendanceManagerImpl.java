@@ -183,7 +183,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList getAttendanceByIDForMonth(int id) {
 
-        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-05-01", "2023-06-01");
+        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-08-01", "2023-09-01");
 
         List<AttendanceDetailsForPdf> list = new ArrayList<>();
 
@@ -1083,7 +1083,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList updateLeaveWithAttendance() throws ParseException {
 
-        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-06-01");
+        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-08-01");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
@@ -1138,7 +1138,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-06-01", "2023-08-01");
+        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-07-01", "2023-09-01");
 
         List<AttendanceEntity> newList = new ArrayList<>();
 
@@ -1311,231 +1311,240 @@ public class AttendanceManagerImpl implements AttendanceManager {
         List<PayrollEntityDetails> obj = new ArrayList<>();
         List<AttendanceEntity> obj2 = new ArrayList<>();
 
-        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-05-01", "2023-06-01");
+        SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        Map<Integer, List<AttendanceEntity>> groupOt = listObj.stream().collect(groupingBy(AttendanceEntity::getEmpId));
+//        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-06-01", "2023-07-01");
 
-        groupOt.forEach((integer, attendanceEntities) -> {
+        for (int x = 0; x < 800; x++) {
+
+             List<AttendanceEntity> listObj = attendanceRepository.findByDateRangeAndId("2023-08-01", "2023-09-01", x);
+
+            Map<Integer, List<AttendanceEntity>> groupOt = listObj.stream().collect(groupingBy(AttendanceEntity::getEmpId));
+
+            groupOt.forEach((integer, attendanceEntities) -> {
 
 
-            List<PayrollEntityDetails> detailConfigTmp = payrollDetailsRepository
-                    .findByEmpId(integer);
+                List<PayrollEntityDetails> detailConfigTmp = payrollDetailsRepository
+                        .findByEmpId(integer);
 
 
-            AtomicReference<Double> otAmount = new AtomicReference<>(0D);
-            AtomicReference<Double> lateAmount = new AtomicReference<>(0D);
-            AtomicReference<Double> lateAmountMorning = new AtomicReference<>(0D);
-            AtomicReference<Double> totalNoPay = new AtomicReference<>(0D);
-            AtomicReference<Double> newBasic = new AtomicReference<>(0D);
-            AtomicReference<Double> newGross = new AtomicReference<>(0D);
+                AtomicReference<Double> otAmount = new AtomicReference<>(0D);
+                AtomicReference<Double> lateAmount = new AtomicReference<>(0D);
+                AtomicReference<Double> lateAmountMorning = new AtomicReference<>(0D);
+                AtomicReference<Double> totalNoPay = new AtomicReference<>(0D);
+                AtomicReference<Double> newBasic = new AtomicReference<>(0D);
+                AtomicReference<Double> newGross = new AtomicReference<>(0D);
 
-            if (!detailConfigTmp.isEmpty()) {
-                PayrollEntityDetails detailConfig = detailConfigTmp.get(0);
-                newBasic.updateAndGet(v -> v+detailConfig.getBasicSalary());
-                newGross.updateAndGet(v -> v+detailConfig.getGrossSalary());
+                if (!detailConfigTmp.isEmpty()) {
+                    PayrollEntityDetails detailConfig = detailConfigTmp.get(0);
+                    newBasic.updateAndGet(v -> v + detailConfig.getBasicSalary());
+                    newGross.updateAndGet(v -> v + detailConfig.getGrossSalary());
 
-                attendanceEntities.forEach(attendanceEntity -> {
+                    attendanceEntities.forEach(attendanceEntity -> {
 
-                    try {
 
-                        if (attendanceEntity.getPayRollStatus() == 8) {
+                        try {
 
-                            if (detailConfig.getIsNoPayBasic() == 1) {
-                                Float amount = ((detailConfig.getBasicSalary() / 30));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
-                            } else {
-                                Float amount = ((detailConfig.getGrossSalary() / 30));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
+                            if (attendanceEntity.getPayRollStatus() == 8) {
+
+                                if (detailConfig.getIsNoPayBasic() == 1) {
+                                    Float amount = ((detailConfig.getBasicSalary() / 30));
+                                    totalNoPay.updateAndGet(v -> v + amount);
+                                    attendanceEntity.setNoPayAmount(amount);
+                                    obj2.add(attendanceEntity);
+                                } else {
+                                    Float amount = ((detailConfig.getGrossSalary() / 30));
+                                    totalNoPay.updateAndGet(v -> v + amount);
+                                    attendanceEntity.setNoPayAmount(amount);
+                                    obj2.add(attendanceEntity);
+                                }
+
+                            } else if (attendanceEntity.getPayRollStatus() == -1) {
+
+                                if (detailConfig.getIsNoPayBasic() == 1) {
+                                    Float amount = ((detailConfig.getBasicSalary() / 60));
+                                    totalNoPay.updateAndGet(v -> v + amount);
+                                    attendanceEntity.setNoPayAmount(amount);
+                                    obj2.add(attendanceEntity);
+                                } else {
+                                    Float amount = ((detailConfig.getGrossSalary() / 60));
+                                    totalNoPay.updateAndGet(v -> v + amount);
+                                    attendanceEntity.setNoPayAmount(amount);
+                                    obj2.add(attendanceEntity);
+                                }
+
                             }
+                        } catch (Exception e) {
+                        }
 
-                        } else if (attendanceEntity.getPayRollStatus() == -1) {
+                    });
 
-                            if (detailConfig.getIsNoPayBasic() == 1) {
-                                Float amount = ((detailConfig.getBasicSalary() / 60));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
-                            } else {
-                                Float amount = ((detailConfig.getGrossSalary() / 60));
-                                totalNoPay.updateAndGet(v -> v + amount);
-                                attendanceEntity.setNoPayAmount(amount);
-                                obj2.add(attendanceEntity);
+                    newBasic.updateAndGet(v -> v - totalNoPay.get());
+                    newGross.updateAndGet(v -> v - totalNoPay.get());
+
+                    attendanceEntities.forEach(attendanceEntity -> {
+
+                        LocalDate date = LocalDate
+                                .parse(convertDateToDateOnly.format(attendanceEntity.getDate()), formatter);
+                        DayOfWeek dayOfWeek = date.getDayOfWeek();
+                        String dayName = dayOfWeek.name().toLowerCase();
+
+                        try {
+
+
+                            if ((attendanceEntity.getApplyOt() == 1 || attendanceEntity.getApplyOt() == 3) &&
+                                    attendanceEntity.getOtTime() != null &&
+                                    Integer.parseInt(attendanceEntity.getOtTime()) > 0) {
+                                float val = (float) Integer.parseInt(attendanceEntity.getOtTime()) / (60 * 60);
+
+                                if (detailConfig.getIsOtBasic() == 1) {
+//                                    Float setOTAmount = (float) (val * ((newBasic.get() / (240)) * 1.5));
+                                    Float setOTAmount = 0F;
+                                    otAmount.updateAndGet(v -> v + setOTAmount);
+                                    otAmount.updateAndGet(v -> v + setOTAmount);
+//                                    attendanceEntity.setOtAmount(setOTAmount);
+                                    attendanceEntity.setOtAmount(0F);
+                                    obj2.add(attendanceEntity);
+                                } else {
+//                                    Float setOTAmount = (float) (val * ((newGross.get() / (240)) * 1.5));
+                                    Float setOTAmount = 0F;
+                                    otAmount.updateAndGet(v -> v + setOTAmount);
+//                                    attendanceEntity.setOtAmount(setOTAmount);
+                                    attendanceEntity.setOtAmount(0F);
+                                    obj2.add(attendanceEntity);
+                                }
                             }
-
+                        } catch (Exception e) {
                         }
-                    } catch (Exception e) {
-                    }
 
-                });
+                        Float morningLateTmpTime = 0F;
 
-                newBasic.updateAndGet(v -> v - totalNoPay.get());
-                newGross.updateAndGet(v -> v - totalNoPay.get());
+                        try {
 
-                attendanceEntities.forEach(attendanceEntity -> {
-
-
-
-
-
-
-                    try {
-
-
-                        if ((attendanceEntity.getApplyOt() == 1 || attendanceEntity.getApplyOt() == 3) &&
-                                attendanceEntity.getOtTime() != null &&
-                                Integer.parseInt(attendanceEntity.getOtTime()) > 0) {
-                            float val = (float) Integer.parseInt(attendanceEntity.getOtTime()) / (60*60);
-
-                            if (detailConfig.getIsOtBasic() == 1) {
-                                Float setOTAmount = (float) (val * ((newBasic.get() / (240) ) * 1.5));
-                                otAmount.updateAndGet(v -> v + setOTAmount);
-                                attendanceEntity.setOtAmount(setOTAmount);
+                            if (!(dayName.equalsIgnoreCase("saturday") || dayName.equalsIgnoreCase("sunday")) && ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5) && attendanceEntity.getMorningLate() != null &&
+                                    Integer.parseInt(attendanceEntity.getMorningLate()) < 0 &&
+                                    (attendanceEntity.getPayRollStatus() == 2 || attendanceEntity.getPayRollStatus() == 3 ||
+                                            attendanceEntity.getPayRollStatus() == 4 || attendanceEntity.getPayRollStatus() == 5 ||
+                                            attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11))) {
+                                float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate()) * (-1)) / (60);
+                                morningLateTmpTime = val;
+                                Float amount = val * (newGross.get().floatValue() / (30 * 8 * 60));
+                                lateAmountMorning.updateAndGet(v -> v + amount);
+                                attendanceEntity.setMorningLateAmount(amount);
                                 obj2.add(attendanceEntity);
-                            } else {
-                                Float setOTAmount = (float) (val * ((newGross.get() / (240) ) * 1.5));
-                                otAmount.updateAndGet(v -> v + setOTAmount);
-                                attendanceEntity.setOtAmount(setOTAmount);
+
+                            }
+                        } catch (Exception e) {
+                        }
+
+                        try {
+
+                            if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
+
+                                float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
+
+                                if (morningLateTmpTime > 0) {
+                                    val = val - morningLateTmpTime;
+                                }
+
+                                Float amount = val * ((newGross.get().floatValue() / (30 * 8 * 60)));
+                                lateAmount.updateAndGet(v -> v + amount);
+                                attendanceEntity.setLateAmount(amount);
                                 obj2.add(attendanceEntity);
+
                             }
+                        } catch (Exception e) {
                         }
-                    } catch (Exception e) {
-                    }
-
-                    Float morningLateTmpTime = 0F;
-
-                    try {
-
-                        if ((attendanceEntity.getApplyLate() == 0 || attendanceEntity.getApplyLate() == 5)  && attendanceEntity.getMorningLate() != null &&
-                                Integer.parseInt(attendanceEntity.getMorningLate()) < 0 &&
-                                (attendanceEntity.getPayRollStatus() == 2 || attendanceEntity.getPayRollStatus() == 3 ||
-                                        attendanceEntity.getPayRollStatus() == 4 || attendanceEntity.getPayRollStatus() == 5 ||
-                                        attendanceEntity.getPayRollStatus() == 7 || attendanceEntity.getPayRollStatus() == 11)) {
-                            float val = (float) (Integer.parseInt(attendanceEntity.getMorningLate())*(-1)) / (60);
-                            morningLateTmpTime = val;
-                            Float amount = val * (newGross.get().floatValue() / (30 * 8 * 60));
-                            lateAmountMorning.updateAndGet(v -> v + amount);
-                            attendanceEntity.setMorningLateAmount(amount);
-                            obj2.add(attendanceEntity);
-
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-
-                        if (Integer.parseInt(attendanceEntity.getLateTime()) > 0) {
-
-                            float val = Float.parseFloat(attendanceEntity.getLateTime()) / (60);
-
-                            if (morningLateTmpTime > 0) {
-                                val = val - morningLateTmpTime;
-                            }
-
-                            Float amount = val * ((newGross.get().floatValue() / (30 * 8 * 60)));
-                            lateAmount.updateAndGet(v -> v + amount);
-                            attendanceEntity.setLateAmount(amount);
-                            obj2.add(attendanceEntity);
-
-                        }
-                    } catch (Exception e) {
-                    }
 
 
-                });
+                    });
 
-                PayrollEntityDetails tempObj = detailConfig;
+                    PayrollEntityDetails tempObj = detailConfig;
 
-                List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository
-                        .getAllSalaryInfoByName(tempObj.getName());
+                    List<AllSalaryInfoEntity> salaryInfo = allSalaryInfoRepository
+                            .getAllSalaryInfoByEmpId(tempObj.getEmpId());
 
-                Float etf = 0F;
-                Float totalDeductions = 0F;
-                Float totalAdditions = 0F;
+                    Float etf = 0F;
+                    Float totalDeductions = 0F;
+                    Float totalAdditions = 0F;
 
-                for (AllSalaryInfoEntity salary : salaryInfo){
+                    for (AllSalaryInfoEntity salary : salaryInfo) {
 
 //                    if (salary.getType().equalsIgnoreCase("EPF 8%"))
 //                        etf = salary.getAmount();
-                    if (salary.getCategory().equalsIgnoreCase("Deductions")){
-                        totalDeductions += salary.getAmount();
+                        if (salary.getCategory().equalsIgnoreCase("Deductions")) {
+                            totalDeductions += salary.getAmount();
+                        }
+                        if (salary.getCategory().equalsIgnoreCase("Allowances")
+                                && !salary.getType().equalsIgnoreCase("Budgetary Allowance")) {
+                            totalAdditions += salary.getAmount();
+                        }
                     }
-                    if (salary.getCategory().equalsIgnoreCase("Allowances")
-                            && !salary.getType().equalsIgnoreCase("Budgetary Allowance")){
-                        totalAdditions += salary.getAmount();
+
+                    float monthLeaveDatesForPayRoll = attendanceRepository.getMonthLeaveDatesForPayRoll(integer);
+                    Integer monthEstimation = attendanceRepository.getMonthEstimation(integer);
+                    float totalTaskDeduction = 0F;
+
+                    if (monthEstimation == null) {
+                        monthEstimation = 0;
                     }
+
+                    float deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
+
+                    if (deduction > 0) {
+                        totalTaskDeduction = (newGross.get().floatValue() / (30 * 8)) * deduction;
+                    }
+
+
+                    double tmpTotalGross = newGross.get();
+
+                    double tmpPayee = 0F;
+
+                    if (integer == 274) {
+                        System.out.println("");
+                    }
+
+                    if (tmpTotalGross < 100000) {
+                        tmpPayee = 0;
+                    } else if (tmpTotalGross > 100000 && tmpTotalGross < 141668) {
+                        tmpPayee = (tmpTotalGross - 100000) * 0.06;
+                    } else if (tmpTotalGross < 183334) {
+                        tmpPayee = 2501.22 + (tmpTotalGross - 141667) * 0.12;
+                    } else if (tmpTotalGross < 225001) {
+                        tmpPayee = 7501.14 + (tmpTotalGross - 183333) * 0.18;
+                    } else if (tmpTotalGross < 266668) {
+                        tmpPayee = 15001.2 + (tmpTotalGross - 225000) * 0.24;
+                    } else if (tmpTotalGross < 308334) {
+                        tmpPayee = 25001.28 + (tmpTotalGross - 266667) * 0.3;
+                    } else {
+                        tmpPayee = 37501.38 + (tmpTotalGross - 308333) * 0.36;
+                    }
+
+
+                    tempObj.setTotalLateAmount(lateAmount.get().floatValue());
+                    tempObj.setTotalOt(otAmount.get().floatValue());
+                    tempObj.setTotalNoPay(totalNoPay.get().floatValue());
+                    tempObj.setTotalMorningLate(lateAmountMorning.get().floatValue());
+                    tempObj.setTotalDeductions(totalDeductions);
+                    tempObj.setTotalAdditions(totalAdditions);
+                    tempObj.setEtf((float) (newBasic.get() * 0.03));
+                    tempObj.setEpfAddition((float) (newBasic.get() * 0.12));
+                    tempObj.setEpfDeduction((float) (newBasic.get() * 0.08));
+                    tempObj.setTotalWorkingHours(Float.valueOf(monthLeaveDatesForPayRoll));
+                    tempObj.setTotalTaskHours(Float.valueOf(monthEstimation));
+                    tempObj.setTotalDeductionForTasks(totalTaskDeduction);
+                    tempObj.setPayee((float) tmpPayee);
+                    obj.add(tempObj);
+
                 }
 
-                float monthLeaveDatesForPayRoll = attendanceRepository.getMonthLeaveDatesForPayRoll(integer);
-                Integer monthEstimation = attendanceRepository.getMonthEstimation(integer);
-                float totalTaskDeduction = 0F;
+            });
 
-                if (monthEstimation == null){
-                    monthEstimation = 0;
-                }
+            attendanceRepository.saveAll(obj2);
+            payrollDetailsRepository.saveAll(obj);
 
-                float deduction = ((30 - monthLeaveDatesForPayRoll) * 8) - monthEstimation;
-
-                if (deduction > 0) {
-                    totalTaskDeduction = (newGross.get().floatValue() / (30 * 8)) * deduction;
-                }
-
-
-                double tmpTotalGross = newGross.get();
-
-                double tmpPayee = 0F;
-
-                if (integer == 274){
-                    System.out.println("");
-                }
-
-                if (tmpTotalGross < 100000){
-                    tmpPayee = 0;
-                }
-                else if (tmpTotalGross > 100000 && tmpTotalGross < 141668){
-                    tmpPayee = (tmpTotalGross -100000) * 0.06;
-                }
-                else if (tmpTotalGross < 183334){
-                    tmpPayee = 2501.22 + (tmpTotalGross-141667) * 0.12;
-                }
-                else if (tmpTotalGross < 225001){
-                    tmpPayee = 7501.14 + (tmpTotalGross-183333) * 0.18;
-                }
-                else if (tmpTotalGross < 266668){
-                    tmpPayee = 15001.2 + (tmpTotalGross-225000) * 0.24;
-                }
-                else if (tmpTotalGross < 308334){
-                    tmpPayee = 25001.28 + (tmpTotalGross-266667) * 0.3;
-                }
-                else {
-                    tmpPayee = 37501.38 + (tmpTotalGross-308333) * 0.36;
-                }
-
-
-                tempObj.setTotalLateAmount(lateAmount.get().floatValue());
-                tempObj.setTotalOt(otAmount.get().floatValue());
-                tempObj.setTotalNoPay(totalNoPay.get().floatValue());
-                tempObj.setTotalMorningLate(lateAmountMorning.get().floatValue());
-                tempObj.setTotalDeductions(totalDeductions);
-                tempObj.setTotalAdditions(totalAdditions);
-                tempObj.setEtf((float) (newBasic.get() * 0.03));
-                tempObj.setEpfAddition((float) (newBasic.get() * 0.12));
-                tempObj.setEpfDeduction((float) (newBasic.get() * 0.08));
-                tempObj.setTotalWorkingHours(Float.valueOf(monthLeaveDatesForPayRoll));
-                tempObj.setTotalTaskHours(Float.valueOf(monthEstimation));
-                tempObj.setTotalDeductionForTasks(totalTaskDeduction);
-                tempObj.setPayee((float) tmpPayee);
-                obj.add(tempObj);
-
-            }
-
-        });
-
-        attendanceRepository.saveAll(obj2);
-        payrollDetailsRepository.saveAll(obj);
+        }
 
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);

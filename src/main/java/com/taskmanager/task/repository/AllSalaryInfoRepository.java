@@ -14,15 +14,15 @@ public interface AllSalaryInfoRepository extends JpaRepository<AllSalaryInfoEnti
     List<AllSalaryInfoEntity> findAll();
 
     @Query(nativeQuery = true,
-            value = "SELECT * FROM `all_salary_info` WHERE name = :id")
-    List<AllSalaryInfoEntity> getAllSalaryInfoByName(@Param("id") String id);
+            value = "SELECT * FROM `all_salary_info` WHERE emp_id = :id")
+    List<AllSalaryInfoEntity> getAllSalaryInfoByEmpId(@Param("id") Integer id);
 
     @Query(nativeQuery = true,
-            value = "SELECT * FROM `all_salary_info` WHERE name = :id and type in ('Budgetary Allowance', 'basic_salary')")
-    List<AllSalaryInfoEntity> getBasicSalaryInfoByName(@Param("id") String id);
+            value = "SELECT * FROM `all_salary_info` WHERE emp_id = :id and type in ('Budgetary Allowance', 'basic_salary')")
+    List<AllSalaryInfoEntity> getBasicSalaryInfoByEmpId(@Param("id") Integer id);
 
     @Query(nativeQuery = true,
-            value = "SELECT * FROM `all_salary_info` WHERE name = :id and category in ('Basic Salary','Allowances')")
-    List<AllSalaryInfoEntity> getGrossSalaryInfoByName(@Param("id") String id);
+            value = "SELECT * FROM `all_salary_info` WHERE emp_id = :id and category in ('Basic Salary','Allowances')")
+    List<AllSalaryInfoEntity> getGrossSalaryInfoByEmpId(@Param("id") Integer id);
 
 }

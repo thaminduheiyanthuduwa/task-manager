@@ -99,7 +99,7 @@ public class PeopleManagerImpl implements PeopleManager {
 //                    empDetailEntity.setCreatedAt(String.valueOf(temp.get("createdAt")));
 //                    empDetailEntity.setUpdatedAt(String.valueOf(temp.get("updatedAt")));
 //                    empDetailEntity.setDeletedAt(String.valueOf(temp.get("deletedAt")));
-                    list.add(empDetailEntity);
+                    //list.add(empDetailEntity);
                 });
             }
             else {
