@@ -38,7 +38,7 @@ public class PeopleManagerImpl implements PeopleManager {
     @Override
     public ResponseList updatePeopleTable() throws ParseException {
 
-        String url = "http://localhost:8080/main-erp/people/update-people-list";
+        String url = "http://localhost:8085/main-erp/people/update-people-list";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -99,7 +99,7 @@ public class PeopleManagerImpl implements PeopleManager {
 //                    empDetailEntity.setCreatedAt(String.valueOf(temp.get("createdAt")));
 //                    empDetailEntity.setUpdatedAt(String.valueOf(temp.get("updatedAt")));
 //                    empDetailEntity.setDeletedAt(String.valueOf(temp.get("deletedAt")));
-                    list.add(empDetailEntity);
+                    //list.add(empDetailEntity);
                 });
             }
             else {

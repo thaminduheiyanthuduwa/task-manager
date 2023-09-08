@@ -163,10 +163,10 @@ public class TaskController {
 
     }
 
-    @RequestMapping(value = "/start-recurring", method = RequestMethod.GET, headers = "Accept=application/json")
-    public void setRecurring() {
+    @RequestMapping(value = "/start-recurring/{date}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public void setRecurring(@PathVariable Integer date) {
 
-        taskManager.setRecurring();
+        taskManager.setRecurring(date);
 
     }
 

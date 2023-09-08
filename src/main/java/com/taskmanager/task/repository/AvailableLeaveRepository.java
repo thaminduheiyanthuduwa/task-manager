@@ -16,7 +16,7 @@ public interface AvailableLeaveRepository extends JpaRepository<AvailableLeaveEn
     List<AvailableLeaveEntity> findByEmpId(@Param("empId") Integer id);
 
     @Query(nativeQuery = true,
-            value = "SELECT available_leaves FROM available_leaves WHERE type = 'Day Off - June' and emp_id = :id")
+            value = "SELECT available_leaves FROM available_leaves WHERE type = 'Day Off - Aug' and emp_id = :id")
     Integer getAvailableOffDayLeave(@Param("id") int id);
 
     @Query(nativeQuery = true,
