@@ -184,7 +184,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList getAttendanceByIDForMonth(int id) {
 
-        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-08-01", "2023-09-01");
+        List<AttendanceEntity> attendanceList = attendanceRepository.findByEmpIdAndDateRange(id,"2023-09-01", "2023-10-01");
 
         List<AttendanceDetailsForPdf> list = new ArrayList<>();
 
@@ -1084,7 +1084,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList updateLeaveWithAttendance() throws ParseException {
 
-        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-08-01");
+        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-09-01");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
@@ -1139,7 +1139,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-07-01", "2023-09-01");
+        List<AttendanceEntity> listObj = attendanceRepository.findByDateRange("2023-08-01", "2023-10-01");
 
         List<AttendanceEntity> newList = new ArrayList<>();
 
@@ -1319,7 +1319,7 @@ public class AttendanceManagerImpl implements AttendanceManager {
 
         for (int x = 0; x < 800; x++) {
 
-             List<AttendanceEntity> listObj = attendanceRepository.findByDateRangeAndId("2023-08-01", "2023-09-01", x);
+             List<AttendanceEntity> listObj = attendanceRepository.findByDateRangeAndId("2023-09-01", "2023-10-01", x);
 
             Map<Integer, List<AttendanceEntity>> groupOt = listObj.stream().collect(groupingBy(AttendanceEntity::getEmpId));
 

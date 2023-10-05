@@ -282,7 +282,7 @@ public class PayrollManagerImpl implements PayrollManager {
         payrollPdfInfoObject.setEpfNo(emp.getEpfNumber());
         payrollPdfInfoObject.setDesignation(emp.getDesignation());
         payrollPdfInfoObject.setDesignation(emp.getDesignation());
-        payrollPdfInfoObject.setDate("2023-Aug");
+        payrollPdfInfoObject.setDate("2023-Sep");
 
         List<PayrollPdfInfoEarningObject> list1 = new ArrayList<>();
         List<PayrollPdfInfoBasicObject> list3 = new ArrayList<>();
@@ -604,7 +604,7 @@ public class PayrollManagerImpl implements PayrollManager {
                     payrollReportInfoObject.setEpfNo(empDetailEntity.getEpfNumber());
                     payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
                     payrollReportInfoObject.setDesignation(empDetailEntity.getDesignation());
-                    payrollReportInfoObject.setDate("2023-Aug");
+                    payrollReportInfoObject.setDate("2023-Sep");
 
                     salaryInfo.forEach(allSalaryInfoEntity -> {
 
