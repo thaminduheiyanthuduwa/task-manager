@@ -1,12 +1,14 @@
 package com.taskmanager.task.service.impl;
 
 import com.taskmanager.task.entity.*;
+import com.taskmanager.task.model.Attendance.MinorStaffAttendanceObject;
 import com.taskmanager.task.model.Payroll.*;
 import com.taskmanager.task.repository.*;
 import com.taskmanager.task.response.ResponseList;
 import com.taskmanager.task.service.PayrollManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedWriter;
@@ -14,9 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class PayrollManagerImpl implements PayrollManager {
@@ -36,6 +35,15 @@ public class PayrollManagerImpl implements PayrollManager {
 
     @Autowired
     private PayrollDetailsRepository payrollDetailsRepository;
+
+    @Autowired
+    private AllSalaryInfoBreakdownRepository allSalaryInfoBreakdownRepository;
+
+    @Autowired
+    private SalaryInfoMasterCategoryRepository salaryInfoMasterCategoryRepository;
+
+    @Autowired
+    private PayrollSettingRepository payrollSettingRepository;
 
 
     @Override
@@ -77,8 +85,8 @@ public class PayrollManagerImpl implements PayrollManager {
         String content = "";
 
         int x = 0;
-        for (AllSalaryInfoEntity obj : allSalaryInfoEntities){
-            content += "("+(obj.getId())+","+(obj.getEmpId() != null ? obj.getEmpId() : " ") + ",'" +(obj.getName() != null ? obj.getName() : " ") + "','" +(obj.getCategory() != null ? obj.getCategory() : " ") + "','" +(obj.getType() != null ? obj.getType() : " ") + "'," +(obj.getAmount() != null ? obj.getAmount() : " ") + ",'" +(obj.getMonth() != null ? obj.getMonth() : " ") + "'),\n";
+        for (AllSalaryInfoEntity obj : allSalaryInfoEntities) {
+            content += "(" + (obj.getId()) + "," + (obj.getEmpId() != null ? obj.getEmpId() : " ") + ",'" + (obj.getName() != null ? obj.getName() : " ") + "','" + (obj.getCategory() != null ? obj.getCategory() : " ") + "','" + (obj.getType() != null ? obj.getType() : " ") + "'," + (obj.getAmount() != null ? obj.getAmount() : " ") + ",'" + (obj.getMonth() != null ? obj.getMonth() : " ") + "'),\n";
             //allSalaryInfoRepository.save(obj);
             x++;
         }
@@ -89,7 +97,6 @@ public class PayrollManagerImpl implements PayrollManager {
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the file: " + e.getMessage());
         }
-
 
 
 //        allSalaryInfoRepository.saveAll(allSalaryInfoEntities);
@@ -212,15 +219,15 @@ public class PayrollManagerImpl implements PayrollManager {
 
         PayrollEntityDetails obj = detail.get();
 
-        if (status == 1){
+        if (status == 1) {
             Integer val = obj.getIsOtBasic();
             obj.setIsOtBasic(val == 1 ? 0 : 1);
         }
-        if (status == 2){
+        if (status == 2) {
             Integer val = obj.getIsNoPayBasic();
             obj.setIsNoPayBasic(val == 1 ? 0 : 1);
         }
-        if (status == 3){
+        if (status == 3) {
             Integer val = obj.getNotApplicable();
             obj.setNotApplicable(val == 1 ? 0 : 1);
         }
@@ -256,7 +263,6 @@ public class PayrollManagerImpl implements PayrollManager {
 
     @Override
     public ResponseList processOt() throws ParseException {
-
 
 
         ResponseList responseList = new ResponseList();
@@ -304,8 +310,7 @@ public class PayrollManagerImpl implements PayrollManager {
                     payrollPdfInfoEarningObject.setTotal(String.valueOf(allSalaryInfoEntity.getAmount()));
                     list1.add(payrollPdfInfoEarningObject);
                 }
-            }
-            else if ((allSalaryInfoEntity.getCategory()
+            } else if ((allSalaryInfoEntity.getCategory()
                     .equalsIgnoreCase("Deductions")) && allSalaryInfoEntity.getAmount() != 0) {
 
                 PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
@@ -331,7 +336,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
         Float tmpNoPay = 0F;
 
-        if (payroll.getTotalNoPay() != null && payroll.getTotalNoPay() > 0){
+        if (payroll.getTotalNoPay() != null && payroll.getTotalNoPay() > 0) {
 
             tmpNoPay = payroll.getTotalNoPay();
             PayrollPdfInfoBasicObject payrollPdfInfoBasicObject2 = new PayrollPdfInfoBasicObject();
@@ -349,10 +354,10 @@ public class PayrollManagerImpl implements PayrollManager {
         payrollPdfInfoBasicObject3.setBasic("Finalized Basic Salary");
         payrollPdfInfoBasicObject3.setRate("");
         payrollPdfInfoBasicObject3.setHours("");
-        payrollPdfInfoBasicObject3.setTotal(String.valueOf(payroll.getBasicSalary()- ((payroll.getTotalNoPay() != null) ? payroll.getTotalNoPay() : 0F)));
+        payrollPdfInfoBasicObject3.setTotal(String.valueOf(payroll.getBasicSalary() - ((payroll.getTotalNoPay() != null) ? payroll.getTotalNoPay() : 0F)));
         list3.add(payrollPdfInfoBasicObject3);
 
-        if (payroll.getTotalMorningLate() > 0){
+        if (payroll.getTotalMorningLate() > 0) {
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("Morning Late");
@@ -362,7 +367,7 @@ public class PayrollManagerImpl implements PayrollManager {
             list2.add(payrollPdfInfoDeductionObject);
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalMorningLate());
         }
-        if (payroll.getTotalLateAmount() > 0){
+        if (payroll.getTotalLateAmount() > 0) {
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("Late Amount");
@@ -372,7 +377,7 @@ public class PayrollManagerImpl implements PayrollManager {
             list2.add(payrollPdfInfoDeductionObject);
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalLateAmount());
         }
-        if (payroll.getPayee() > 0){
+        if (payroll.getPayee() > 0) {
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("Payee");
@@ -383,7 +388,7 @@ public class PayrollManagerImpl implements PayrollManager {
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getPayee());
         }
 
-        if (payroll.getTotalDeductionForTasks() > 0){
+        if (payroll.getTotalDeductionForTasks() > 0) {
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("Task Deduction");
@@ -394,7 +399,7 @@ public class PayrollManagerImpl implements PayrollManager {
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getTotalDeductionForTasks());
         }
 
-        if (payroll.getEpfDeduction() > 0){
+        if (payroll.getEpfDeduction() > 0) {
             PayrollPdfInfoDeductionObject payrollPdfInfoDeductionObject = new PayrollPdfInfoDeductionObject();
             payrollPdfInfoDeductionObject.setTitle("Payroll");
             payrollPdfInfoDeductionObject.setDeduction("EPF Deduction");
@@ -405,7 +410,7 @@ public class PayrollManagerImpl implements PayrollManager {
             payroll.setTotalDeductions(payroll.getTotalDeductions() + payroll.getEpfDeduction());
         }
 
-        if (payroll.getTotalOt() > 0){
+        if (payroll.getTotalOt() > 0) {
             payroll.setGrossSalary(payroll.getGrossSalary() + payroll.getTotalOt());
             PayrollPdfInfoEarningObject payrollPdfInfoEarningObject = new PayrollPdfInfoEarningObject();
             payrollPdfInfoEarningObject.setTitle("Payroll");
@@ -440,13 +445,12 @@ public class PayrollManagerImpl implements PayrollManager {
         List<PayrollSummery> newList = payRoll.stream().filter(payrollSummery -> payrollSummery
                 .getStatus() == 1 || payrollSummery.getStatus() == 3).toList();
 
-        if (!newList.isEmpty()){
+        if (!newList.isEmpty()) {
             ResponseList responseList = new ResponseList();
             responseList.setCode(400);
             responseList.setMsg("Already Created a payroll for this month");
             return responseList;
-        }
-        else {
+        } else {
             PayrollSummery payrollSummery = new PayrollSummery();
             payrollSummery.setProcessDate(new Date());
             payrollSummery.setStatus(1);
@@ -471,9 +475,9 @@ public class PayrollManagerImpl implements PayrollManager {
         List<PayrollSummery> newList = payRoll.stream().filter(payrollSummery -> payrollSummery
                 .getStatus() == 1 || payrollSummery.getStatus() == 3).toList();
 
-        if (!newList.isEmpty()){
+        if (!newList.isEmpty()) {
 
-            if (status == 2){
+            if (status == 2) {
 //                allSalaryInfoRepository.deleteAll();
                 payrollDetailsRepository.deleteAll();
             }
@@ -484,8 +488,7 @@ public class PayrollManagerImpl implements PayrollManager {
             ResponseList responseList = new ResponseList();
             responseList.setCode(200);
             return responseList;
-        }
-        else {
+        } else {
             ResponseList responseList = new ResponseList();
             responseList.setCode(400);
             return responseList;
@@ -499,16 +502,16 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<Object> dataList = payrollSummeryRepository.getPayrollLeaveReportData();
 
-        for (Object obj : dataList){
+        for (Object obj : dataList) {
 
-            Object[] data =  ((Object[]) obj);
+            Object[] data = ((Object[]) obj);
 
             AllLeaveReportObject tmpObj = new AllLeaveReportObject(String.valueOf(data[0]),
                     String.valueOf(data[1]), String.valueOf(data[2]),
                     String.valueOf(data[3]), String.valueOf(data[4]), String.valueOf(data[5]),
                     String.valueOf(data[6]), String.valueOf(data[7]),
-                    String.valueOf(data[8]),String.valueOf(data[9]),String.valueOf(data[10]),
-                    String.valueOf(data[11]),String.valueOf(data[12]),String.valueOf(data[13]));
+                    String.valueOf(data[8]), String.valueOf(data[9]), String.valueOf(data[10]),
+                    String.valueOf(data[11]), String.valueOf(data[12]), String.valueOf(data[13]));
 
             list.add(tmpObj);
 
@@ -529,9 +532,9 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<Object> dataList = payrollSummeryRepository.getTaskReportData();
 
-        for (Object obj : dataList){
+        for (Object obj : dataList) {
 
-            Object[] data =  ((Object[]) obj);
+            Object[] data = ((Object[]) obj);
 
             AllTaskReportObject tmpObj = new AllTaskReportObject(String.valueOf(data[0]),
                     String.valueOf(data[1]), String.valueOf(data[2]),
@@ -555,9 +558,9 @@ public class PayrollManagerImpl implements PayrollManager {
 
         List<Object> dataList = payrollSummeryRepository.getMorningLateReportData();
 
-        for (Object obj : dataList){
+        for (Object obj : dataList) {
 
-            Object[] data =  ((Object[]) obj);
+            Object[] data = ((Object[]) obj);
 
             MorningLateReportObject tmpObj = new MorningLateReportObject(String.valueOf(data[0]),
                     String.valueOf(data[1]), String.valueOf(data[2]),
@@ -580,7 +583,6 @@ public class PayrollManagerImpl implements PayrollManager {
     public ResponseList getPayrollReportInfo() {
 
         List<PayrollReportInfoObject> payrollReportInfoObjectsList = new ArrayList<>();
-
 
 
         List<EmpDetailEntity> emp = empDetailRepository.getEmpDetailListById();
@@ -659,15 +661,15 @@ public class PayrollManagerImpl implements PayrollManager {
                                     payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
                                 } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Task Incentive Payment")) {
                                     payrollReportInfoObject.setTask_Incentive_Payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                                }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Advances")) {
+                                } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Advances")) {
                                     payrollReportInfoObject.setAdvances(String.valueOf(allSalaryInfoEntity.getAmount()));
-                                }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("swa")) {
+                                } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("swa")) {
                                     payrollReportInfoObject.setSwa(String.valueOf(allSalaryInfoEntity.getAmount()));
-                                }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Other Deductions")) {
+                                } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Other Deductions")) {
                                     payrollReportInfoObject.setOtherDeduction(String.valueOf(allSalaryInfoEntity.getAmount()));
-                                }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Quarter Performance  Incentive Payment")) {
+                                } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Quarter Performance  Incentive Payment")) {
                                     payrollReportInfoObject.setQuarter_performance_incentive_payment(String.valueOf(allSalaryInfoEntity.getAmount()));
-                                }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Promotional Allowance")) {
+                                } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Promotional Allowance")) {
                                     payrollReportInfoObject.setPromotional_allowance(String.valueOf(allSalaryInfoEntity.getAmount()));
                                 }
                             }
@@ -716,13 +718,13 @@ public class PayrollManagerImpl implements PayrollManager {
                                 payrollReportInfoObject.setPerformance_2022(String.valueOf(allSalaryInfoEntity.getAmount()));
                             } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Travellening Allo 22")) {
                                 payrollReportInfoObject.setTravelling_Allo_22(String.valueOf(allSalaryInfoEntity.getAmount()));
-                            }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Advances")) {
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Advances")) {
                                 payrollReportInfoObject.setAdvances(String.valueOf(allSalaryInfoEntity.getAmount()));
-                            }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("swa")) {
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("swa")) {
                                 payrollReportInfoObject.setSwa(String.valueOf(allSalaryInfoEntity.getAmount()));
-                            }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Other Deductions")) {
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Other Deductions")) {
                                 payrollReportInfoObject.setOtherDeduction(String.valueOf(allSalaryInfoEntity.getAmount()));
-                            }else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Loan")) {
+                            } else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Loan")) {
                                 payrollReportInfoObject.setLoan(String.valueOf(allSalaryInfoEntity.getAmount()));
                             }
                         }
@@ -792,8 +794,6 @@ public class PayrollManagerImpl implements PayrollManager {
         });
 
 
-
-
         ResponseList responseList = new ResponseList();
         responseList.setCode(200);
         responseList.setData(payrollReportInfoObjectsList);
@@ -802,8 +802,340 @@ public class PayrollManagerImpl implements PayrollManager {
         return responseList;
     }
 
+    @Override
+    public ResponseList getBasicSalaryInfoById(Integer id) {
 
-    private List<Integer> getList1(){
+        List<AllSalaryInfoEntity> list = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategory(id, "Basic Salary");
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        responseList.setMsg("Success");
+
+        return responseList;
+
+
+    }
+
+    @Override
+    public ResponseList getAllowanceSalaryInfoById(Integer id) {
+
+        List<AllSalaryInfoEntity> list = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategory(id, "Allowances");
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        responseList.setMsg("Success");
+
+        return responseList;
+
+
+    }
+
+    @Override
+    public ResponseList getDeductionsSalaryInfoById(Integer id) {
+
+        List<AllSalaryInfoEntity> list = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategory(id, "Deductions");
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(list);
+        responseList.setMsg("Success");
+
+        return responseList;
+
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseList updateSalaryById(Integer id, String category,
+                                         String type, Float amount, String reason,
+                                         Integer updatedUser, String additionType) {
+
+        List<AllSalaryInfoEntity> allSalaryInfo = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategoryAndType(id, category, type);
+
+        Optional<EmpDetailEntity> emp = empDetailRepository.findById(id);
+
+        ResponseList responseList = new ResponseList();
+
+
+        if (emp.isEmpty()) {
+            responseList.setCode(400);
+            responseList.setMsg("User Not Found");
+        } else if (allSalaryInfo.size() > 1) {
+            responseList.setCode(300);
+            responseList.setMsg("Found More Than One data");
+        } else if (allSalaryInfo.isEmpty() && additionType.equalsIgnoreCase("Deduction")) {
+            responseList.setCode(301);
+            responseList.setMsg("Initial Value Cannot Be a Deduction");
+        } else if (allSalaryInfo.isEmpty()) {
+            AllSalaryInfoEntity allSalaryInfoEntity = new AllSalaryInfoEntity();
+            allSalaryInfoEntity.setEmpId(id);
+            allSalaryInfoEntity.setName(emp.get().getNameInFull());
+            allSalaryInfoEntity.setCategory(category);
+            allSalaryInfoEntity.setType(type);
+            allSalaryInfoEntity.setAmount(0F);
+            allSalaryInfoEntity.setStatus(0);
+            allSalaryInfoEntity.setMonth("");
+            allSalaryInfoEntity.setCreatedDate(new Date());
+            AllSalaryInfoEntity obj = allSalaryInfoRepository.save(allSalaryInfoEntity);
+
+
+            AllSalaryInfoBreakdownEntity allSalaryInfoBreakdownEntity
+                    = new AllSalaryInfoBreakdownEntity();
+            allSalaryInfoBreakdownEntity.setEmpId(id);
+            allSalaryInfoBreakdownEntity.setName(emp.get().getNameInFull());
+            allSalaryInfoBreakdownEntity.setCategory(category);
+            allSalaryInfoBreakdownEntity.setType(type);
+            allSalaryInfoBreakdownEntity.setAmount(amount);
+            allSalaryInfoBreakdownEntity.setStatus(0);
+            allSalaryInfoBreakdownEntity.setReason(reason);
+            allSalaryInfoBreakdownEntity.setCreatedDate(new Date());
+            allSalaryInfoBreakdownEntity.setMonth("");
+            allSalaryInfoBreakdownEntity.setUpdatedDate(new Date());
+            allSalaryInfoBreakdownEntity.setUpdatedBy(updatedUser);
+            allSalaryInfoBreakdownEntity.setMainDataId(obj.getId());
+            if (additionType.equalsIgnoreCase("Addition"))
+                allSalaryInfoBreakdownEntity.setAdditionType(1);
+            else if (additionType.equalsIgnoreCase("Deduction"))
+                allSalaryInfoBreakdownEntity.setAdditionType(0);
+            allSalaryInfoBreakdownRepository.save(allSalaryInfoBreakdownEntity);
+
+            responseList.setCode(200);
+            responseList.setMsg("Successfully Updated");
+        } else {
+
+            AllSalaryInfoBreakdownEntity allSalaryInfoBreakdownEntity
+                    = new AllSalaryInfoBreakdownEntity();
+            allSalaryInfoBreakdownEntity.setEmpId(id);
+            allSalaryInfoBreakdownEntity.setName(emp.get().getNameInFull());
+            allSalaryInfoBreakdownEntity.setCategory(category);
+            allSalaryInfoBreakdownEntity.setType(type);
+            allSalaryInfoBreakdownEntity.setAmount(amount);
+            allSalaryInfoBreakdownEntity.setStatus(0);
+            allSalaryInfoBreakdownEntity.setMonth("");
+            allSalaryInfoBreakdownEntity.setReason(reason);
+            allSalaryInfoBreakdownEntity.setUpdatedDate(new Date());
+            allSalaryInfoBreakdownEntity.setUpdatedBy(updatedUser);
+            allSalaryInfoBreakdownEntity.setCreatedDate(new Date());
+            allSalaryInfoBreakdownEntity.setMainDataId(allSalaryInfo.get(0).getId());
+            if (additionType.equalsIgnoreCase("Addition"))
+                allSalaryInfoBreakdownEntity.setAdditionType(1);
+            else if (additionType.equalsIgnoreCase("Deduction"))
+                allSalaryInfoBreakdownEntity.setAdditionType(0);
+            allSalaryInfoBreakdownRepository.save(allSalaryInfoBreakdownEntity);
+
+            responseList.setCode(200);
+            responseList.setMsg("Successfully Updated");
+
+            AllSalaryInfoEntity allSalaryInfoEntity = allSalaryInfo.get(0);
+            allSalaryInfoEntity.setStatus(0);
+            allSalaryInfoRepository.save(allSalaryInfoEntity);
+
+        }
+        return responseList;
+    }
+
+
+    @Override
+    public ResponseList getSalaryForEachType(Integer id) {
+
+        List<AllSalaryInfoBreakdownEntity> allSalaryInfo = allSalaryInfoBreakdownRepository.getSalaryByMainTypeId(id);
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(allSalaryInfo);
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList updateSalaryForEachType(Integer id, Integer status, Integer updatedUser) {
+
+        Optional<AllSalaryInfoBreakdownEntity> allSalaryInfoObj = allSalaryInfoBreakdownRepository.findById(id);
+        AllSalaryInfoBreakdownEntity allSalaryInfo = null;
+
+        ResponseList responseList = new ResponseList();
+
+        if (allSalaryInfoObj.isEmpty()) {
+            responseList.setCode(400);
+            responseList.setMsg("No Salary Breakdown Found");
+        } else {
+            allSalaryInfo = allSalaryInfoObj.get();
+            List<AllSalaryInfoEntity> mainSalary = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategoryAndType(allSalaryInfo.getEmpId(),
+                    allSalaryInfo.getCategory(), allSalaryInfo.getType());
+
+            if (mainSalary.isEmpty()) {
+                responseList.setCode(400);
+                responseList.setMsg("Main Salary Not Found");
+            } else if (mainSalary.size() > 1) {
+                responseList.setCode(400);
+                responseList.setMsg("Found More Than One Main Salary");
+            } else {
+                AllSalaryInfoBreakdownEntity subSalary = allSalaryInfo;
+                subSalary.setUpdatedBy(updatedUser);
+                if (status == 1) {
+                    subSalary.setApprovedBy(updatedUser);
+                    subSalary.setApprovedDate(new Date());
+                }
+                subSalary.setStatus(status);
+                subSalary.setUpdatedDate(new Date());
+
+                List<AllSalaryInfoBreakdownEntity> dataListForMainStatus = allSalaryInfoBreakdownRepository.getSalaryByMainTypeId(subSalary.getMainDataId());
+
+                Integer statusMain = 0;
+
+                for (AllSalaryInfoBreakdownEntity obj : dataListForMainStatus) {
+                    if (obj.getStatus() == 0) {
+                        statusMain = 0;
+                        break;
+                    } else if (obj.getStatus() == 1) {
+                        statusMain = 1;
+                    } else if (statusMain != 1 && obj.getStatus() == 2) {
+                        statusMain = 2;
+                    }
+                }
+
+                AllSalaryInfoEntity mainSalaryObj = mainSalary.get(0);
+                mainSalaryObj.setStatus(statusMain);
+                if (subSalary.getAdditionType() == 1 && status == 1)
+                    mainSalaryObj.setAmount(mainSalaryObj.getAmount() + subSalary.getAmount());
+                else if (subSalary.getAdditionType() == 0 && status == 1) {
+                    if ((mainSalaryObj.getAmount() - subSalary.getAmount()) < 0) {
+                        responseList.setCode(1001);
+                        responseList.setMsg("Salary Cannot Be a Negative Value");
+                        return responseList;
+                    }
+                    mainSalaryObj.setAmount(mainSalaryObj.getAmount() - subSalary.getAmount());
+
+                }
+                saveToDbForStatusUpdate(subSalary, mainSalaryObj);
+                responseList.setCode(200);
+                responseList.setMsg("Successfully Updated the Salary");
+            }
+
+
+        }
+
+        return responseList;
+
+    }
+
+    @Override
+    public ResponseList updateMasterSalaryCategory(String category, String type, Integer updatedUser) {
+
+        List<SalaryInfoMasterCategory> masterCategory = salaryInfoMasterCategoryRepository.getSalaryMasterTypeByType(type);
+
+        ResponseList responseList = new ResponseList();
+
+        if (masterCategory.isEmpty()){
+
+            SalaryInfoMasterCategory salaryInfoMasterCategory = new SalaryInfoMasterCategory();
+            salaryInfoMasterCategory.setCategory(category);
+            salaryInfoMasterCategory.setType(type);
+            salaryInfoMasterCategory.setCreatedBy(updatedUser);
+            salaryInfoMasterCategory.setCreatedDate(new Date());
+            salaryInfoMasterCategoryRepository.save(salaryInfoMasterCategory);
+            responseList.setCode(200);
+            responseList.setMsg("Successfully Updated");
+
+        }
+        else {
+            responseList.setCode(1001);
+            responseList.setMsg("Type Already Exists");
+        }
+
+
+        return responseList;
+
+
+    }
+
+    @Override
+    public ResponseList getMasterSalaryTypeByCategory(String category) {
+
+        List<SalaryInfoMasterCategory> masterCategory = salaryInfoMasterCategoryRepository.getSalaryMasterTypeByCategory(category);
+
+        ArrayList<String> obj = new ArrayList<>();
+
+        masterCategory.forEach(salaryInfoMasterCategory -> {
+            obj.add(salaryInfoMasterCategory.getType());
+        });
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(obj);
+        return responseList;
+    }
+
+    @Override
+    public ResponseList getMasterPayrollSettings(Integer id) {
+
+        List<Object> list = payrollSettingRepository.getPayrollSettingByEmpId(id);
+
+        List<PayrollSettingObject> returnList = new ArrayList<>();
+
+        for (Object obj : list){
+
+            Object[] data =  ((Object[]) obj);
+
+            Integer createdBy = null;
+
+            try {
+                createdBy = Integer.valueOf(String.valueOf(data[4]));
+            }
+            catch (Exception e){
+
+            }
+
+            PayrollSettingObject tmpObj = new PayrollSettingObject(Integer.valueOf(String.valueOf(data[0])),
+                    Integer.valueOf(String.valueOf(data[1])), String.valueOf(data[2]),
+                    String.valueOf(data[3]), createdBy);
+
+            returnList.add(tmpObj);
+
+        }
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setData(returnList);
+        return responseList;
+
+
+    }
+
+    @Override
+    public ResponseList updateMasterPayrollSettings(Integer id, Integer status) {
+
+        ResponseList responseList = new ResponseList();
+
+        Optional<MasterPayrollSettings> obj = payrollSettingRepository.findById(id);
+
+        if (obj.isEmpty()){
+            responseList.setCode(400);
+            responseList.setMsg("Setting Not found");
+        }
+        else {
+            MasterPayrollSettings tmpObj = obj.get();
+            tmpObj.setSettingValue(status);
+            payrollSettingRepository.save(tmpObj);
+            responseList.setCode(200);
+            responseList.setMsg("Success");
+        }
+
+        return responseList;
+
+    }
+
+    @Transactional
+    public void saveToDbForStatusUpdate(AllSalaryInfoBreakdownEntity subSalary, AllSalaryInfoEntity mainSalaryObj) {
+        allSalaryInfoBreakdownRepository.save(subSalary);
+        allSalaryInfoRepository.save(mainSalaryObj);
+    }
+
+
+    private List<Integer> getList1() {
 
         List<Integer> list = new ArrayList<>();
         list.add(42);
@@ -872,7 +1204,7 @@ public class PayrollManagerImpl implements PayrollManager {
 
     }
 
-    public List<Integer> getList2(){
+    public List<Integer> getList2() {
 
         List<Integer> list2 = new ArrayList<>();
         list2.add(258);
@@ -925,7 +1257,7 @@ public class PayrollManagerImpl implements PayrollManager {
         list2.add(671);
         list2.add(673);
 
-        return  list2;
+        return list2;
 
 
     }

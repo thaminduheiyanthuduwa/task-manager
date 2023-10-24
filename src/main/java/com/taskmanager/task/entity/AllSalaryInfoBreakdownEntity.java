@@ -13,8 +13,8 @@ import java.util.Date;
 @Setter
 @Builder
 @AllArgsConstructor
-@Table(name = "all_salary_info")
-public class AllSalaryInfoEntity {
+@Table(name = "all_salary_info_breakdown")
+public class AllSalaryInfoBreakdownEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +51,21 @@ public class AllSalaryInfoEntity {
     @Column(name = "approved_by")
     private Integer approvedBy;
 
-    public AllSalaryInfoEntity() {}
+    @Column(name = "updated_date")
+    private Date updatedDate;
+
+    @Column(name = "updated_by")
+    private Integer updatedBy;
+
+    @Column(name = "main_data_id")
+    private Integer mainDataId;
+
+    @Column(name = "addition_type")
+    private Integer additionType;
+
+    @Column(name = "reason")
+    private String reason;
+
+    public AllSalaryInfoBreakdownEntity() {}
 
 }

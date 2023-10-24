@@ -35,5 +35,27 @@ public interface PayrollManager {
 
     ResponseList getPayrollReportInfo();
 
+    ResponseList getBasicSalaryInfoById(Integer id);
+
+    ResponseList getAllowanceSalaryInfoById(Integer id);
+
+    ResponseList getDeductionsSalaryInfoById(Integer id);
+
+    ResponseList updateSalaryById(Integer id, String category,
+                                  String type, Float amount, String reason,
+                                  Integer updatedUser, String additionType);
+
+    ResponseList getSalaryForEachType(Integer id);
+
+    ResponseList updateSalaryForEachType(Integer id, Integer status, Integer updatedUser);
+
+    ResponseList updateMasterSalaryCategory(String category, String type, Integer updatedUser);
+
+    ResponseList getMasterSalaryTypeByCategory(String category);
+
+    ResponseList getMasterPayrollSettings(Integer id);
+
+    ResponseList updateMasterPayrollSettings(Integer id, Integer status);
+
 
 }
