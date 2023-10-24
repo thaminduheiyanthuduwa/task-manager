@@ -130,8 +130,9 @@ public class PayrollController {
                                          @RequestParam @NonNull Float amount,
                                          @RequestParam @NonNull String reason,
                                          @RequestParam(value = "updated_user") @NonNull Integer updatedUser,
-                                         @RequestParam(value = "addition_type") @NonNull String additionType) {
-        return payrollManager.updateSalaryById(id, category, type, amount, reason, updatedUser, additionType);
+                                         @RequestParam(value = "addition_type") @NonNull String additionType,
+                                         @RequestParam(value = "effective_date") @NonNull String effectiveDate) throws ParseException {
+        return payrollManager.updateSalaryById(id, category, type, amount, reason, updatedUser, additionType, effectiveDate);
 
     }
 
@@ -170,6 +171,12 @@ public class PayrollController {
     @RequestMapping(value = "/update-master-payroll-setting/{id}/{status}", method = RequestMethod.PUT, headers = "Accept=application/json")
     public ResponseList updateMasterPayrollSettings(@PathVariable Integer id, @PathVariable Integer status) {
         return payrollManager.updateMasterPayrollSettings(id, status);
+
+    }
+
+    @RequestMapping(value = "/get-pending-approval-list", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseList getPendingApprovalList() {
+        return payrollManager.getPendingApprovalList();
 
     }
 }

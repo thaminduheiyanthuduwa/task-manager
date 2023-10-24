@@ -66,6 +66,9 @@ public class AllSalaryInfoBreakdownEntity {
     @Column(name = "reason")
     private String reason;
 
+    @Column(name = "effective_date")
+    private Date effectiveDate;
+
     public AllSalaryInfoBreakdownEntity() {}
 
 }

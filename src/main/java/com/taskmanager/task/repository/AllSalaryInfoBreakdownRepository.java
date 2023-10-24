@@ -23,5 +23,9 @@ public interface AllSalaryInfoBreakdownRepository extends JpaRepository<AllSalar
             value = "SELECT * FROM `all_salary_info_breakdown` WHERE main_data_id = :id ORDER BY id DESC")
     List<AllSalaryInfoBreakdownEntity> getSalaryByMainTypeId(@Param("id") Integer id);
 
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM `all_salary_info_breakdown` WHERE status = 0")
+    List<AllSalaryInfoBreakdownEntity> getPendingApprovalList();
+
 
 }

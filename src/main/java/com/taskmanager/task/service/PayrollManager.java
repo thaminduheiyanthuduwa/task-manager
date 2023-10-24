@@ -43,7 +43,8 @@ public interface PayrollManager {
 
     ResponseList updateSalaryById(Integer id, String category,
                                   String type, Float amount, String reason,
-                                  Integer updatedUser, String additionType);
+                                  Integer updatedUser, String additionType,
+                                  String effectiveDate) throws ParseException;
 
     ResponseList getSalaryForEachType(Integer id);
 
@@ -56,6 +57,8 @@ public interface PayrollManager {
     ResponseList getMasterPayrollSettings(Integer id);
 
     ResponseList updateMasterPayrollSettings(Integer id, Integer status);
+
+    ResponseList getPendingApprovalList();
 
 
 }

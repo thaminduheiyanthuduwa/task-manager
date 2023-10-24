@@ -5,6 +5,7 @@ import com.taskmanager.task.model.Attendance.MinorStaffAttendanceObject;
 import com.taskmanager.task.model.Payroll.*;
 import com.taskmanager.task.repository.*;
 import com.taskmanager.task.response.ResponseList;
+import com.taskmanager.task.response.leave.SupervisorLeaveList;
 import com.taskmanager.task.service.PayrollManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -851,7 +853,11 @@ public class PayrollManagerImpl implements PayrollManager {
     @Transactional
     public ResponseList updateSalaryById(Integer id, String category,
                                          String type, Float amount, String reason,
-                                         Integer updatedUser, String additionType) {
+                                         Integer updatedUser, String additionType, String effectiveDate) throws ParseException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date date = formatter.parse(effectiveDate);
 
         List<AllSalaryInfoEntity> allSalaryInfo = allSalaryInfoRepository.getAllSalaryInfoByEmpIdAndCategoryAndType(id, category, type);
 
@@ -885,6 +891,7 @@ public class PayrollManagerImpl implements PayrollManager {
             AllSalaryInfoBreakdownEntity allSalaryInfoBreakdownEntity
                     = new AllSalaryInfoBreakdownEntity();
             allSalaryInfoBreakdownEntity.setEmpId(id);
+            allSalaryInfoBreakdownEntity.setEffectiveDate(date);
             allSalaryInfoBreakdownEntity.setName(emp.get().getNameInFull());
             allSalaryInfoBreakdownEntity.setCategory(category);
             allSalaryInfoBreakdownEntity.setType(type);
@@ -909,6 +916,7 @@ public class PayrollManagerImpl implements PayrollManager {
             AllSalaryInfoBreakdownEntity allSalaryInfoBreakdownEntity
                     = new AllSalaryInfoBreakdownEntity();
             allSalaryInfoBreakdownEntity.setEmpId(id);
+            allSalaryInfoBreakdownEntity.setEffectiveDate(date);
             allSalaryInfoBreakdownEntity.setName(emp.get().getNameInFull());
             allSalaryInfoBreakdownEntity.setCategory(category);
             allSalaryInfoBreakdownEntity.setType(type);
@@ -1128,6 +1136,49 @@ public class PayrollManagerImpl implements PayrollManager {
 
     }
 
+    @Override
+    public ResponseList getPendingApprovalList() {
+
+        List<EmpDetailEntity> list = empDetailRepository.findAll();
+
+        List<AllSalaryInfoBreakdownEntity> pendingList = allSalaryInfoBreakdownRepository
+                .getPendingApprovalList();
+
+        List<Integer> empList = new ArrayList<>();
+
+        pendingList.forEach(allSalaryInfoBreakdownEntity -> {
+            if (!empList.contains(allSalaryInfoBreakdownEntity.getEmpId()))
+                empList.add(allSalaryInfoBreakdownEntity.getEmpId());
+        });
+
+        List<SupervisorLeaveList> supervisorLists = new ArrayList<>();
+
+        list.forEach(empDetailEntity -> {
+
+            if (empList.contains(empDetailEntity.getId())) {
+                SupervisorLeaveList supervisorList = new SupervisorLeaveList();
+                supervisorList.setId(empDetailEntity.getId());
+                supervisorList.setEmail(empDetailEntity.getEmail());
+                supervisorList.setNicNo(empDetailEntity.getNicNo());
+                supervisorList.setGivenName(empDetailEntity.getGivenName());
+                supervisorList.setNameInFull(empDetailEntity.getNameInFull());
+                supervisorList.setContactNo(empDetailEntity.getContactNo());
+                supervisorList.setContactNo(empDetailEntity.getContactNo());
+                supervisorList.setSupervisor(empDetailEntity.getSupervisor());
+                supervisorLists.add(supervisorList);
+            }
+
+        });
+
+        ResponseList responseList = new ResponseList();
+        responseList.setCode(200);
+        responseList.setMsg("Success");
+        responseList.setData(supervisorLists);
+
+        return responseList;
+
+    }
+
     @Transactional
     public void saveToDbForStatusUpdate(AllSalaryInfoBreakdownEntity subSalary, AllSalaryInfoEntity mainSalaryObj) {
         allSalaryInfoBreakdownRepository.save(subSalary);
@@ -1258,9 +1309,6 @@ public class PayrollManagerImpl implements PayrollManager {
         list2.add(673);
 
         return list2;
-
-
     }
-
-
 }
+
