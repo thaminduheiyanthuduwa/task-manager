@@ -700,12 +700,23 @@ public class PayrollManagerImpl implements PayrollManager {
 
                             if (allSalaryInfoEntity.getType().equalsIgnoreCase("Loan")) {
                                 payrollReportInfoObject.setLoan(String.valueOf(amount));
+                                payroll.setTotalDeductions(payroll.getTotalDeductions() + amount);
+
+                            }
+                            else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Other Deduction")) {
+                                payrollReportInfoObject.setLoan(String.valueOf(amount));
+                                payroll.setTotalDeductions(payroll.getTotalDeductions() + amount);
+                            }
+                            else if (allSalaryInfoEntity.getType().equalsIgnoreCase("Bank Charges")) {
+                                payrollReportInfoObject.setLoan(String.valueOf(amount));
+                                payroll.setTotalDeductions(payroll.getTotalDeductions() + amount);
                             }
                         }
 
                     });
 
                     payrollReportInfoObject.setSwa(String.valueOf(payroll.getSwa() != null ? payroll.getSwa() : 0));
+                    payroll.setTotalDeductions(payroll.getTotalDeductions() + (payroll.getSwa() != null ? payroll.getSwa() : 0));
 
                     Float basicSal;
 
