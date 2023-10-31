@@ -772,8 +772,10 @@ public class PayrollManagerImpl implements PayrollManager {
                         tmpGross = payroll.getGrossSalary();
 
 
-                    payrollReportInfoObject.setGrossSalary(String.valueOf(tmpGross - (payroll.getTotalNoPay() != null ? payroll.getTotalNoPay() : 0)));
-                    payrollReportInfoObject.setTotal(String.valueOf(tmpGross - (payroll.getTotalDeductions() != null ? payroll.getTotalDeductions() : 0)));
+                    float finaGross = tmpGross - (payroll.getTotalNoPay() != null ? payroll.getTotalNoPay() : 0);
+
+                    payrollReportInfoObject.setGrossSalary(String.valueOf(finaGross));
+                    payrollReportInfoObject.setTotal(String.valueOf(finaGross - (payroll.getTotalDeductions() != null ? payroll.getTotalDeductions() : 0)));
 
 
                     payrollReportInfoObject.setEpf12(String.valueOf(payroll.getEpfAddition()));
