@@ -107,6 +107,9 @@ public class PayrollEntityDetails {
     @Column(name = "payee")
     private Float payee = 0F;
 
+    @Column(name = "swa")
+    private Float swa = 0F;
+
     public PayrollEntityDetails() {}
 
 }

@@ -26,7 +26,7 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
                                            @Param("endDate") String endDate);
 
     @Query(nativeQuery = true,
-            value = "select * from attendance WHERE date >= :startDate and date < :endDate and emp_id = :id")
+            value = "select * from attendance WHERE date >= :startDate and date <= :endDate and emp_id = :id")
     List<AttendanceEntity> findByDateRangeAndId(@Param("startDate") String startDate,
                                            @Param("endDate") String endDate, @Param("id") Integer id);
 
@@ -57,15 +57,14 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
 
     @Query(nativeQuery = true,
             value = "select (IFNULL(obj1.total_count,0) + IFNULL(obj2.total_available_leaves,0)) as count    from people pe \n" +
-                    "left join (SELECT lm.emp_id, sum(lm.total_leave) as total_count FROM leave_manager lm WHERE lm.status = 5 AND lm.from_date >= '2023-09-01' AND lm.to_date < '2023-10-01' and lm.leave_type not in ('Special Company Holiday - Aug','Day Off - Aug','Convocation 2023 Leave')  GROUP BY lm.emp_id) obj1\n" +
-                    "on obj1.emp_id = pe.id\n" +
-                    "left join (SELECT al.emp_id, SUM(al.original_leaves) as total_available_leaves FROM available_leaves al WHERE al.type like '%Aug%' GROUP BY al.emp_id) obj2 on obj2.emp_id = pe.id\n" +
-                    "where pe.id = :emp_id")
-    float getMonthLeaveDatesForPayRoll(@Param("emp_id") Integer emp_id);
+                    "left join (SELECT lm.emp_id, sum(lm.total_leave) as total_count FROM leave_manager lm WHERE lm.status = 5 AND lm.from_date >= :start AND lm.to_date <= :end and lm.leave_type not in (SELECT distinct leave_type FROM leave_manager where from_date >= '2023-10-01' and from_date <= '2023-10-31')  GROUP BY lm.emp_id) obj1\n" +
+                    "                    on obj1.emp_id = pe.id\n" +
+                    "                    left join (SELECT al.emp_id, SUM(al.original_leaves) as total_available_leaves FROM available_leaves al WHERE al.type like '%Oct%' GROUP BY al.emp_id) obj2 on obj2.emp_id = pe.id where pe.id = :emp_id\n")
+    float getMonthLeaveDatesForPayRoll(@Param("emp_id") Integer emp_id, @Param("start") String start, @Param("end") String end);
 
     @Query(nativeQuery = true,
-            value = "SELECT IFNULL(SUM(IFNULL(tl.estimate,0)),0) as count FROM task_list tl WHERE tl.status = 5 AND tl.start_date >= '2023-09-01' AND tl.start_date < '2023-10-01' AND tl.user_id = :emp_id GROUP BY tl.user_id;")
-    Integer getMonthEstimation(@Param("emp_id") Integer emp_id);
+            value = "SELECT IFNULL(SUM(IFNULL(tl.estimate,0)),0) as count FROM task_list tl WHERE tl.status = 5 AND tl.start_date >= :start AND tl.start_date < :end AND tl.user_id = :emp_id GROUP BY tl.user_id;")
+    Integer getMonthEstimation(@Param("emp_id") Integer emp_id, @Param("start") String start, @Param("end") String end);
 
     @Query(nativeQuery = true,
             value = "select id,name_in_full,attendance_date,IFNULL(in_time,''), IFNULL(out_time,''),\n" +

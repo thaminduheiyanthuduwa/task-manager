@@ -24,49 +24,25 @@ public class PayrollReportInfoObject {
 
     private String basicSalary;
 
-    private String Academic_Incentive_Payment;
-
-    private String Attendance_Incentive_Payment;
-
-    private String Crisis_Allowance;
-
-    private String Dean_Incentive_Payment;
-
-    private String Fixed_OT;
-
-    private String Fixed_Service_Charges;
-
-    private String HOD_Incentive_Payment;
-
-    private String Insurance_Premium;
-
-    private String Leadership_Incentive_Payment;
-
-    private String Neatness_Incentive_Payment;
-
-    private String Performance_Incentive_Payment;
-
-    private String Rent_Reimbursement;
-
-    private String Research_Incentive_Payment;
-
-    private String Service_Charges;
-
-    private String Travelling_Allowance;
-
-    private String MSc_Qualification_Incentive;
-
-    private String Crisis_Allowances_2022;
-
-    private String DVC_Incentive_Allowance;
-
-    private String MSC_Phd_Incentive;
-
-    private String Performance_2022;
-
-    private String Travelling_Allo_22;
-
-    private String Task_Incentive_Payment;
+    private String travellingAllowance;
+    private String taskIncentivePayment;
+    private String rentReimbursement;
+    private String quarterPerformanceIncentiveII;
+    private String quarterPerformanceAllowanceII;
+    private String performanceIncentive;
+    private String performanceAllowance;
+    private String mscMphillPhdIncentivePayment;
+    private String insurancePremium;
+    private String incentiveForResearch;
+    private String inflationIncentivePayment;
+    private String housingAllowance;
+    private String hodIncentivePayment;
+    private String governmentApprovedAllowance2016;
+    private String dvcIncentiveAllowance;
+    private String deanIncentivePayment;
+    private String crisisIncentivePayment;
+    private String annualIncentivePayment;
+    private String academicIncentivePayment;
 
     private String noPay;
 
@@ -102,15 +78,6 @@ public class PayrollReportInfoObject {
 
     private String total;
 
-    private String otherDeduction;
-
     private String swa;
-
-    private String advances;
-
-    private String quarter_performance_incentive_payment;
-
-    private String promotional_allowance;
-
 
 }

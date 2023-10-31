@@ -163,6 +163,9 @@ public class EmpDetailEntity {
     @Column(name = "minor_staff_type")
     private String minorStaffType;
 
+    @Column(name = "tmp_working_days")
+    private Integer tmpWorkingDays;
+
     public EmpDetailEntity() {}
 
 }
