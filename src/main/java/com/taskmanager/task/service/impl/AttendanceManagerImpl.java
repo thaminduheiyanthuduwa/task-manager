@@ -1084,12 +1084,17 @@ public class AttendanceManagerImpl implements AttendanceManager {
     @Override
     public ResponseList updateLeaveWithAttendance() throws ParseException {
 
-        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-11-01");
+        List<LeaveEntity> listObj = leaveRepository.getLeaveByDate("2023-10-01");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         SimpleDateFormat convertDateToDateOnly = new SimpleDateFormat("yyyy-MM-dd");
         List<AttendanceEntity> newObj = new ArrayList<>();
         listObj.forEach(leaveEntity -> {
+
+            if(leaveEntity.getEmpId() == 696){
+                System.out.println("");
+            }
+
             if (leaveEntity.getStatus() == 5) {
                 String s = convertDateToDateOnly.format(leaveEntity.getFromDate());
                 String e = convertDateToDateOnly.format(leaveEntity.getToDate());
