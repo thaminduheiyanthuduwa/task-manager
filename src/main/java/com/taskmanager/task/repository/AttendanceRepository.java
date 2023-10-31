@@ -63,7 +63,7 @@ public interface AttendanceRepository extends JpaRepository<AttendanceEntity, In
     float getMonthLeaveDatesForPayRoll(@Param("emp_id") Integer emp_id, @Param("start") String start, @Param("end") String end);
 
     @Query(nativeQuery = true,
-            value = "SELECT IFNULL(SUM(IFNULL(tl.estimate,0)),0) as count FROM task_list tl WHERE tl.status = 5 AND tl.start_date >= :start AND tl.start_date < :end AND tl.user_id = :emp_id GROUP BY tl.user_id;")
+            value = "SELECT IFNULL(SUM(IFNULL(tl.estimate,0)),0) as count FROM task_list tl WHERE tl.status = 5 AND tl.start_date >= :start AND tl.start_date <= :end AND tl.user_id = :emp_id GROUP BY tl.user_id;")
     Integer getMonthEstimation(@Param("emp_id") Integer emp_id, @Param("start") String start, @Param("end") String end);
 
     @Query(nativeQuery = true,
